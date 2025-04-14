@@ -1,0 +1,15 @@
+
+.home-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  /* Media queries for responsive design */
+  @media (max-width: 900px) {
+    .home-page {
+      padding: 0;
+    }
+  }

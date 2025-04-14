@@ -1,0 +1,160 @@
+/* src/components/AuthContainer/AuthContainer.css */
+.login-register-container {
+    display: flex;
+    width: 900px;
+    height: 600px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+  }
+  
+  /* Left panel styling */
+  .left-panel {
+    flex: 1;
+    background: linear-gradient(135deg, #442777 0%, #262952 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .left-panel::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.05);
+    top: -50%;
+    left: -50%;
+    transform: rotate(-15deg);
+  }
+  
+  .brand {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 100px;
+    position: absolute;
+    top: 40px;
+    left: 40px;
+  }
+  
+  .brand-dot {
+    color: #4ecdc4;
+  }
+  
+  .main-title {
+    font-size: 52px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+  
+  .tagline {
+    font-size: 24px;
+    font-weight: 300;
+    opacity: 0.8;
+  }
+  
+  /* Forms container styling */
+  .forms-container {
+    flex: 1;
+    background-color: white;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .form-card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 0.6s ease-in-out;
+  }
+  
+  .login-form, .register-form {
+    position: absolute;
+    top: 0;
+    padding: 40px 30px;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .login-active .login-form {
+    transform: translateY(0);
+    opacity: 1;
+    z-index: 2;
+  }
+  
+  .login-active .register-form {
+    transform: translateY(100%);
+    opacity: 0;
+    z-index: 1;
+  }
+  
+  .register-active .login-form {
+    transform: translateY(-100%);
+    opacity: 0;
+    z-index: 1;
+  }
+  
+  .register-active .register-form {
+    transform: translateY(0);
+    opacity: 1;
+    z-index: 2;
+  }
+  
+  /* Media queries for responsiveness */
+  @media (max-width: 900px) {
+    .login-register-container {
+      width: 100%;
+      height: 100vh;
+      border-radius: 0;
+      flex-direction: column;
+    }
+  
+    .left-panel {
+      padding: 30px;
+      height: 35vh;
+    }
+  
+    .brand {
+      margin-bottom: 30px;
+      position: relative;
+      top: 0;
+      left: 0;
+    }
+  
+    .main-title {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+  
+    .tagline {
+      font-size: 18px;
+    }
+  
+    .forms-container {
+      height: 65vh;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .left-panel {
+      padding: 20px;
+    }
+  
+    .login-form, .register-form {
+      padding: 20px;
+    }
+  }

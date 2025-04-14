@@ -1,0 +1,35 @@
+
+.form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 8px;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  
+  .form-input:focus {
+    border-color: #442777;
+  }
+  
+  .input-error {
+    border-color: #e74c3c !important;
+  }
+  
+  .input-error-message {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 5px;
+  }
