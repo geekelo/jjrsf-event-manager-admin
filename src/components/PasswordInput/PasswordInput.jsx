@@ -58,7 +58,7 @@ export const PasswordInput = ({
         </div>
         
         }
-         {showForgot && <Link to="/auth/forgot-password" className="forgot-link">Forgot Password?</Link>}
+         {showForgot && <Link to="#" className="forgot-link">Forgot Password?</Link>}
     </div>
   );
 };
