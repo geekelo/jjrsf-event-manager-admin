@@ -5,6 +5,7 @@
   
   .form-label {
     display: block;
+    text-align: start;
     font-size: 14px;
     color: #555;
     margin-bottom: 8px;
