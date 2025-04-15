@@ -1,0 +1,284 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f5f5f5;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Login Page Container */
+.admin-login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f8f7fa;
+}
+
+.admin-login-wrapper {
+  display: flex;
+  flex-direction: row;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 100%;
+  max-width: 1200px;
+  min-height: 550px;
+}
+
+/* Left Column */
+.admin-login-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  background-color: #442777; /* Primary brand color */
+  color: white;
+  flex: 1;
+  font-family: 'Poppins', sans-serif;
+}
+
+.admin-login-logo {
+  max-width: 180px;
+  margin-bottom: 30px;
+}
+
+.admin-login-welcome {
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.admin-login-message {
+  font-size: 16px;
+  text-align: center;
+  margin-top: 0;
+  line-height: 1.5;
+  max-width: 80%;
+}
+
+/* Right Column */
+.admin-login-right {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.admin-login-title {
+  font-size: 32px;
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: #333;
+}
+
+.admin-login-subtitle {
+  font-size: 16px;
+  margin-bottom: 30px;
+  color: #6a5f8a; /* Secondary brand color */
+}
+
+.admin-login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-form-group {
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.admin-form-label {
+  display: block;
+  font-size: 0.9rem;
+  color: #444;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.admin-form-input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.admin-form-input:focus {
+  outline: none;
+  border-color: #442777; /* Primary brand color */
+  box-shadow: 0 0 0 3px rgba(68, 39, 119, 0.1);
+}
+
+.admin-form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0 25px;
+}
+
+.admin-form-remember {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: #6a5f8a; /* Secondary brand color */
+}
+
+.admin-form-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #442777; /* Primary brand color */
+}
+
+.admin-form-forgot {
+  font-size: 14px;
+  color: #442777; /* Primary brand color */
+  font-weight: 500;
+}
+
+.admin-form-button {
+  padding: 14px;
+  background-color: #442777; /* Primary brand color */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.admin-form-button:hover {
+  background-color: #3a2065;
+}
+
+.admin-form-button:disabled {
+  background-color: #6a5f8a;
+  cursor: not-allowed;
+}
+
+/* Password visibility toggle */
+.admin-password-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.admin-password-input-container input {
+  width: 100%;
+  padding-right: 45px;
+}
+
+.admin-password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #6a5f8a;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.admin-password-toggle-btn:hover {
+  color: #442777;
+}
+
+.admin-password-toggle-btn:focus {
+  outline: none;
+  color: #442777;
+}
+
+/* Error message styling */
+.admin-form-error {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Spinner for loading state */
+.admin-spinner {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 3px solid white;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .admin-login-wrapper {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .admin-login-left {
+    padding: 30px 20px;
+    text-align: center;
+    flex: none;
+  }
+
+  .admin-login-logo {
+    max-width: 140px;
+    margin-bottom: 20px;
+  }
+  
+  .admin-login-welcome {
+    font-size: 24px;
+  }
+
+  .admin-login-right {
+    padding: 30px 20px;
+    width: 100%;
+  }
+
+  .admin-login-title {
+    font-size: 28px;
+  }
+  
+  .admin-login-subtitle {
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+
+  .admin-form-group {
+    margin-bottom: 20px;
+  }
+
+  .admin-form-button {
+    padding: 12px;
+  }
+}
