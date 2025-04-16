@@ -23,7 +23,10 @@ function EventsPage() {
     endDate: '',
     description: '',
     location: '',
-    status: 'planning'
+    status: 'ongoing', // Changed from 'planning' to 'ongoing'
+    registrationDeadline: '', // New field
+    isOnsite: false,          // New field
+    isOffline: false          // New field
   });
 
   // Filter states
@@ -69,7 +72,7 @@ function EventsPage() {
       endDate: '2025-08-05',
       description: 'Join us in giving back to the community through various activities.',
       location: 'Multiple Locations',
-      status: 'planning'
+      status: 'ongoing' // Changed from 'planning'
     },
     {
       id: 5,
@@ -78,7 +81,7 @@ function EventsPage() {
       endDate: '2025-12-15',
       description: 'An elegant evening supporting youth development programs.',
       location: 'Riverside Hotel',
-      status: 'planning'
+      status: 'ongoing' // Changed from 'planning'
     },
     {
       id: 6,
@@ -117,7 +120,10 @@ function EventsPage() {
       endDate: '',
       description: '',
       location: '',
-      status: 'planning'
+      status: 'ongoing', // Changed from 'planning' to 'ongoing'
+      registrationDeadline: '',  // Reset this too
+      isOnsite: false,           // Reset this too
+      isOffline: false           // Reset this too
     });
   };
 
@@ -160,7 +166,10 @@ function EventsPage() {
       endDate: '',
       description: '',
       location: '',
-      status: 'planning'
+      status: 'ongoing', // Changed from 'planning' to 'ongoing'
+      registrationDeadline: '',  // Reset this too
+      isOnsite: false,           // Reset this too
+      isOffline: false           // Reset this too
     });
   };
 
@@ -238,8 +247,8 @@ function EventsPage() {
     switch(status) {
       case 'upcoming':
         return 'event-status-upcoming';
-      case 'planning':
-        return 'event-status-planning';
+      case 'ongoing': // Changed from 'planning'
+        return 'event-status-ongoing'; // You might want to update this class name too
       case 'completed':
         return 'event-status-completed';
       default:

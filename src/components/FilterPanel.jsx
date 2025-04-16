@@ -22,7 +22,7 @@ const FilterPanel = ({ filters, onClose, onChange, onApply }) => {
             onChange={onChange}
           >
             <option value="all">All Statuses</option>
-            <option value="planning">Planning</option>
+            <option value="ongoing">Ongoing</option>
             <option value="upcoming">Upcoming</option>
             <option value="completed">Completed</option>
           </select>

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faSave, faCalendarCheck, faMapMarkerAlt, faGlobe } from '@fortawesome/free-solid-svg-icons';
 
 const CreateEventModal = ({ newEventData, onClose, onSubmit, onChange }) => {
   const modalRef = useRef(null);
@@ -9,6 +9,16 @@ const CreateEventModal = ({ newEventData, onClose, onSubmit, onChange }) => {
     if (modalRef.current && !modalRef.current.contains(e.target)) {
       onClose();
     }
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    onChange({
+      target: {
+        name: name,
+        value: checked
+      }
+    });
   };
 
   return (
@@ -62,9 +72,30 @@ const CreateEventModal = ({ newEventData, onClose, onSubmit, onChange }) => {
             </div>
           </div>
 
+          {/* Registration Deadline Field */}
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="location">Location <span className="required">*</span></label>
+              <label htmlFor="registrationDeadline">
+                <FontAwesomeIcon icon={faCalendarCheck} className="form-icon" /> 
+                Registration Deadline
+              </label>
+              <input
+                type="date"
+                id="registrationDeadline"
+                name="registrationDeadline"
+                value={newEventData.registrationDeadline || ''}
+                onChange={onChange}
+                max={newEventData.startDate} // Deadline should be before start date
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="location">
+                <FontAwesomeIcon icon={faMapMarkerAlt} className="form-icon" />
+                Location <span className="required">*</span>
+              </label>
               <input
                 type="text"
                 id="location"
@@ -77,6 +108,42 @@ const CreateEventModal = ({ newEventData, onClose, onSubmit, onChange }) => {
             </div>
           </div>
 
+          {/* Event Type Checkboxes */}
+          <div className="form-row">
+            <div className="form-group">
+              <label className="checkbox-group-label">Event Type</label>
+              <div className="checkbox-group">
+                <div className="checkbox-option">
+                  <input
+                    type="checkbox"
+                    id="isOnsite"
+                    name="isOnsite"
+                    checked={newEventData.isOnsite || false}
+                    onChange={handleCheckboxChange}
+                  />
+                  <label htmlFor="isOnsite">
+                    <FontAwesomeIcon icon={faMapMarkerAlt} className="form-icon" />
+                    Onsite
+                  </label>
+                </div>
+                
+                <div className="checkbox-option">
+                  <input
+                    type="checkbox"
+                    id="isOffline"
+                    name="isOffline"
+                    checked={newEventData.isOffline || false}
+                    onChange={handleCheckboxChange}
+                  />
+                  <label htmlFor="isOffline">
+                    <FontAwesomeIcon icon={faGlobe} className="form-icon" />
+                    Offline
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="status">Status</label>
@@ -86,7 +153,7 @@ const CreateEventModal = ({ newEventData, onClose, onSubmit, onChange }) => {
                 value={newEventData.status}
                 onChange={onChange}
               >
-                <option value="planning">Planning</option>
+                <option value="ongoing">Ongoing</option>
                 <option value="upcoming">Upcoming</option>
                 <option value="completed">Completed</option>
               </select>
