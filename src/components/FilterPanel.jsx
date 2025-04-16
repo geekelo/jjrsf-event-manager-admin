@@ -1,0 +1,72 @@
+import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes, faCheck, faSort } from '@fortawesome/free-solid-svg-icons';
+
+const FilterPanel = ({ filters, onClose, onChange, onApply }) => {
+  return (
+    <div className="filter-panel">
+      <div className="filter-panel-header">
+        <h3>Filter & Sort Events</h3>
+        <button className="close-button" onClick={onClose}>
+          <FontAwesomeIcon icon={faTimes} />
+        </button>
+      </div>
+
+      <div className="filter-panel-content">
+        <div className="filter-group">
+          <label className="filter-label">Status</label>
+          <select
+            name="status"
+            className="filter-select"
+            value={filters.status}
+            onChange={onChange}
+          >
+            <option value="all">All Statuses</option>
+            <option value="ongoing">Ongoing</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+
+        <div className="filter-group">
+          <label className="filter-label">Date Range</label>
+          <select
+            name="dateRange"
+            className="filter-select"
+            value={filters.dateRange}
+            onChange={onChange}
+          >
+            <option value="all">All Dates</option>
+            <option value="upcoming30">Next 30 Days</option>
+            <option value="upcoming90">Next 90 Days</option>
+            <option value="past">Past Events</option>
+          </select>
+        </div>
+
+        <div className="filter-group">
+          <label className="filter-label">
+            <FontAwesomeIcon icon={faSort} /> Sort By
+          </label>
+          <select
+            name="sortBy"
+            className="filter-select"
+            value={filters.sortBy}
+            onChange={onChange}
+          >
+            <option value="date">Date (Oldest First)</option>
+            <option value="name">Name (A-Z)</option>
+            <option value="status">Status</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="filter-panel-footer">
+        <button className="apply-filters-button" onClick={onApply}>
+          <FontAwesomeIcon icon={faCheck} /> Apply Filters
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default FilterPanel;

@@ -1,18 +1,24 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AdminLoginPage from './pages/AdminLogin';
+import EventsPage from './pages/Events';
 import './App.css';
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Set the login page as the default route */}
+        {/* Login routes */}
         <Route path="/login" element={<AdminLoginPage />} />
+        
+        {/* Event routes */}
+        <Route path="/events" element={<EventsPage />} />
+        <Route path="/events/:id" element={<div>Event Management Page (Coming Soon)</div>} />
+        <Route path="/events/create" element={<div>Create Event Page (Coming Soon)</div>} />
         
         {/* Redirect root to login page */}
         <Route path="/" element={<Navigate replace to="/login" />} />
         
-        {/* Add other routes here in the future */}
+        {/* Catch all undefined routes */}
         <Route path="*" element={<Navigate replace to="/login" />} />
       </Routes>
     </Router>
