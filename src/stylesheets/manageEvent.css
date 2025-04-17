@@ -99,12 +99,18 @@ section {
   font-size: 14px;
   color: #666;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
 }
 
 .detail-value {
   font-size: 16px;
   color: #333;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .detail-value.description {
@@ -689,12 +695,19 @@ section {
 .checkbox-item input[type="checkbox"]:checked::after {
   content: "✓";
   position: absolute;
+  color: white;
+  font-size: 16px; /* Slightly larger for better visibility */
+  font-weight: bold;
+  
+  /* Center the checkmark properly */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
+  
+  /* Ensure proper alignment */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   line-height: 1;
 }
 
@@ -797,4 +810,216 @@ section {
   color: #666;
   font-size: 0.85rem;
   margin-top: 8px;
+}
+
+/* Add these styles to manageEvent.css */
+
+/* Field icon styling */
+.field-icon {
+  margin-right: 8px;
+  color: #442777;
+  width: 16px;
+}
+
+.checkbox-icon {
+  margin-right: 5px;
+  color: #442777;
+  font-size: 14px;
+}
+
+/* Improved Event Type styling */
+.event-type-group {
+  margin-bottom: 20px;
+}
+
+.event-type-checkboxes {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  margin-bottom: 8px;
+  flex-wrap: wrap; /* Allow wrapping on very narrow screens */
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Improved checkbox styling with centered checkmark */
+.checkbox-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #442777;
+  border-radius: 4px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: white;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.checkbox-item input[type="checkbox"]:checked {
+  background-color: #442777;
+  border-color: #442777;
+}
+
+.checkbox-item input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  color: white;
+  font-size: 16px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 1;
+}
+
+.checkbox-label {
+  font-size: 1rem;
+  color: #333;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+}
+
+/* Enhanced mobile responsiveness */
+@media (max-width: 768px) {
+  .edit-grid {
+    grid-template-columns: 1fr; /* Single column on mobile */
+    gap: 15px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  /* Make inputs larger on mobile for easier touch */
+  .form-group input[type="text"],
+  .form-group input[type="date"],
+  .form-group select,
+  .form-group textarea {
+    padding: 12px;
+    font-size: 16px; /* Prevent iOS zoom on focus */
+  }
+  
+  /* Improve checkbox touch areas on mobile */
+  .checkbox-item {
+    padding: 5px 0;
+  }
+  
+  .checkbox-item input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .checkbox-label {
+    font-size: 16px;
+  }
+  
+  /* Ensure buttons are large enough for touch */
+  .edit-actions button {
+    padding: 12px 16px;
+    min-height: 44px;
+  }
+  
+  /* Better URL container for mobile */
+  .url-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .url-container .event-url {
+    width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-all;
+  }
+  
+  .copy-button {
+    align-self: flex-end;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .event-type-checkboxes {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .checkbox-item {
+    width: 100%;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .section-header h2 {
+    margin-bottom: 0;
+  }
+  
+  .edit-actions {
+    width: 100%;
+  }
+}
+
+/* Improve form layout for better readability */
+.form-group label {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+/* Optimize date inputs for mobile */
+input[type="date"] {
+  -webkit-appearance: none;
+}
+
+/* Improve select dropdown on mobile */
+select {
+  background-position: right 12px center;
+  padding-right: 30px !important;
+}
+
+/* Add this to manageEvent.css */
+
+/* Icons in view mode */
+.detail-label .field-icon {
+  margin-right: 8px;
+  color: #442777;
+  width: 16px;
+}
+
+.detail-value .checkbox-icon {
+  margin-right: 5px;
+  color: #442777;
+  font-size: 14px;
+}
+
+/* Improve the display of detail labels with icons */
+.detail-label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+/* Ensure consistent spacing in view mode */
+.detail-value {
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
 }
