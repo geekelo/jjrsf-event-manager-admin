@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import EventsHeader from '../components/EventsHeader';
@@ -9,12 +9,17 @@ import NoEventsMessage from '../components/NoEventsMessage';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../stylesheets/events.css';
+import { createAxiosInstance } from '../config/axios';
 
 function EventsPage() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  
+  // Event and API states
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Form data for creating a new event
   const [newEventData, setNewEventData] = useState({
@@ -23,76 +28,42 @@ function EventsPage() {
     endDate: '',
     description: '',
     location: '',
-    status: 'ongoing', // Changed from 'planning' to 'ongoing'
-    registrationDeadline: '', // New field
-    isOnsite: false,          // New field
-    isOffline: false          // New field
+    status: 'ongoing',
+    registrationDeadline: '',
+    isOnsite: false,
+    isOffline: false
   });
 
   // Filter states
   const [filters, setFilters] = useState({
     status: 'all',
     dateRange: 'all',
-    sortBy: 'date' // 'date', 'name', 'status'
+    sortBy: 'date'
   });
-  
-  // Dummy data for events (will be replaced with API data)
-  const [events, setEvents] = useState([
-    {
-      id: 1,
-      name: 'Annual Charity Gala',
-      startDate: '2025-05-15',
-      endDate: '2025-05-15',
-      description: 'A prestigious event raising funds for education initiatives.',
-      location: 'Grand Hotel, Downtown',
-      status: 'upcoming'
-    },
-    {
-      id: 2,
-      name: 'Tech Conference 2025',
-      startDate: '2025-06-10',
-      endDate: '2025-06-12',
-      description: 'Bringing together industry leaders to discuss the latest innovations.',
-      location: 'Convention Center',
-      status: 'upcoming'
-    },
-    {
-      id: 3,
-      name: 'Summer Music Festival',
-      startDate: '2025-07-20',
-      endDate: '2025-07-22',
-      description: 'Three days of amazing performances from top artists.',
-      location: 'City Park',
-      status: 'upcoming'
-    },
-    {
-      id: 4,
-      name: 'Community Volunteer Day',
-      startDate: '2025-08-05',
-      endDate: '2025-08-05',
-      description: 'Join us in giving back to the community through various activities.',
-      location: 'Multiple Locations',
-      status: 'ongoing' // Changed from 'planning'
-    },
-    {
-      id: 5,
-      name: 'Winter Fundraiser Ball',
-      startDate: '2025-12-15',
-      endDate: '2025-12-15',
-      description: 'An elegant evening supporting youth development programs.',
-      location: 'Riverside Hotel',
-      status: 'ongoing' // Changed from 'planning'
-    },
-    {
-      id: 6,
-      name: 'Spring Cleanup Drive',
-      startDate: '2025-04-10',
-      endDate: '2025-04-10',
-      description: 'Environmental initiative to clean local parks and waterways.',
-      location: 'Citywide',
-      status: 'completed'
+
+  // Fetch foundation events data
+  const getfetchFoundationEvents = async () => {
+    try {
+      const axiosInstance = createAxiosInstance();  
+      const response = await axiosInstance.get('/api/v1/foundation_events'); 
+      return response.data;  // Return the data
+    } catch (error) {
+      toast.error('Failed to fetch events');
+      console.error(error);
+      return []; 
     }
-  ]);
+  };
+  
+
+  // Fetch events on page load
+  useEffect(() => {
+    const loadEvents = async () => {
+      const fetchedEvents = await getfetchFoundationEvents(); 
+      setEvents(fetchedEvents);  
+      setLoading(false);
+    };
+    loadEvents();
+  }, []);
 
   // Handle search input change
   const handleSearch = (e) => {
@@ -120,10 +91,10 @@ function EventsPage() {
       endDate: '',
       description: '',
       location: '',
-      status: 'ongoing', // Changed from 'planning' to 'ongoing'
-      registrationDeadline: '',  // Reset this too
-      isOnsite: false,           // Reset this too
-      isOffline: false           // Reset this too
+      status: 'ongoing',
+      registrationDeadline: '',
+      isOnsite: false,
+      isOffline: false
     });
   };
 
@@ -166,10 +137,10 @@ function EventsPage() {
       endDate: '',
       description: '',
       location: '',
-      status: 'ongoing', // Changed from 'planning' to 'ongoing'
-      registrationDeadline: '',  // Reset this too
-      isOnsite: false,           // Reset this too
-      isOffline: false           // Reset this too
+      status: 'ongoing',
+      registrationDeadline: '',
+      isOnsite: false,
+      isOffline: false
     });
   };
 
