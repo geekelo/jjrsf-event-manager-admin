@@ -15,10 +15,10 @@ const EventCard = ({ event, onManage, onViewDetails, getStatusBadgeClass, format
 
         <div className="event-dates">
           <FontAwesomeIcon icon={faCalendarDays} className="event-icon" />
-          {event.startDate === event.endDate ? (
-            <p>{formatDate(event.startDate)}</p>
+          {event.start_date === event.end_date ? (
+            <p>{formatDate(event.start_date)}</p>
           ) : (
-            <p>{formatDate(event.startDate)} - {formatDate(event.endDate)}</p>
+            <p>{formatDate(event.start_date)} - {formatDate(event.end_date)}</p>
           )}
         </div>
 
