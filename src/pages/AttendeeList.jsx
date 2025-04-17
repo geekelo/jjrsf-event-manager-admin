@@ -36,7 +36,7 @@ const AttendeeList = () => {
   const typeLabels = {
     registered: 'Registered Attendees',
     online: 'Online Attendees',
-    offline: 'In-Person Attendees',
+    offline: 'Onsite Attendees', // Changed from 'Offline Attendees'
     both: 'Hybrid Attendees',
     absent: 'Absent Registrants'
   };
@@ -54,7 +54,7 @@ const AttendeeList = () => {
   const statusOptions = {
     registered: ['All', 'Registered', 'Confirmed'],
     online: ['All', 'Attended Online', 'Late Join'],
-    offline: ['All', 'Attended In-Person', 'Early Check-in'],
+    offline: ['All', 'Attended In-Person', 'Early Check-in'], // Consider changing to 'Attended Onsite'
     both: ['All', 'Attended Hybrid', 'VIP'],
     absent: ['All', 'No-Show', 'Cancelled']
   };

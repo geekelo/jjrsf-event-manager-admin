@@ -77,14 +77,14 @@ const EventMetricsSection = ({ metrics, eventId }) => {
             <FontAwesomeIcon icon={faUserCheck} />
           </div>
           <div className="metric-content">
-            <h3>Total Attended Offline</h3>
+            <h3>Total Attended Onsite</h3>
             <p className="metric-description">Attendees who participated at the physical venue</p>
             <div className="metric-value">{metrics.totalAttendedOffline}</div>
           </div>
           <button 
             className="metrics-view-button"
             onClick={() => navigateToAttendees('offline')}
-            aria-label="View offline attendees"
+            aria-label="View onsite attendees"
           >
             <span className="view-text">
               <FontAwesomeIcon icon={faEye} /> View Attendee List
@@ -101,7 +101,7 @@ const EventMetricsSection = ({ metrics, eventId }) => {
           </div>
           <div className="metric-content">
             <h3>Total Attended Both</h3>
-            <p className="metric-description">Attendees who participated both online and offline</p>
+            <p className="metric-description">Attendees who participated both online and onsite</p>
             <div className="metric-value">{metrics.totalAttendedBoth}</div>
           </div>
           <button 
