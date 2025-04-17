@@ -6,6 +6,10 @@ export const getToken = () => {
     sessionStorage.setItem('admin_token', token);
   };
   
+  export const setUser = (user) => {
+    sessionStorage.setItem('admin_user', JSON.stringify(user));
+  };
+  
   export const removeToken = () => {
     sessionStorage.removeItem('admin_token');
   };

@@ -10,6 +10,7 @@ import {
 import "react-toastify/dist/ReactToastify.css";
 import "../stylesheets/adminLogin.css";
 import { createAxiosInstance } from "../config/axios";
+import { setToken, setUser } from "../lib/auth/token";
 
 function AdminLoginPage() {
   const navigate = useNavigate();
@@ -71,8 +72,8 @@ function AdminLoginPage() {
       const response = await axiosInstance.post("/api/v1/login", payload);
       const { token, user } = response.data;
 
-      sessionStorage.setItem("admin_token", token);
-      sessionStorage.setItem("admin_user", JSON.stringify(user));
+      setToken(token);
+      setUser(user);
 
       toast.success("Login successful! Redirecting...");
       setTimeout(() => {
