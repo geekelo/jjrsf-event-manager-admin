@@ -1,0 +1,51 @@
+import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendarDays, faLocationDot, faEllipsisVertical, faEye } from '@fortawesome/free-solid-svg-icons';
+
+const EventCard = ({ event, onManage, onViewDetails, getStatusBadgeClass, formatDate }) => {
+  return (
+    <div className="event-card">
+      <div className="event-card-content">
+        <div className="event-header">
+          <h3 className="event-name">{event.name}</h3>
+          <span className={`event-status ${getStatusBadgeClass(event.status)}`}>
+            {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+          </span>
+        </div>
+
+        <div className="event-dates">
+          <FontAwesomeIcon icon={faCalendarDays} className="event-icon" />
+          {event.startDate === event.endDate ? (
+            <p>{formatDate(event.startDate)}</p>
+          ) : (
+            <p>{formatDate(event.startDate)} - {formatDate(event.endDate)}</p>
+          )}
+        </div>
+
+        <p className="event-location">
+          <FontAwesomeIcon icon={faLocationDot} className="event-icon" />
+          {event.location}
+        </p>
+        <p className="event-description">{event.description}</p>
+      </div>
+
+      <div className="event-actions">
+        <button className="manage-event-button" onClick={() => onManage(event.id)}>
+          Manage
+        </button>
+        <div className="event-menu-dropdown">
+          <button className="event-menu-button">
+            <FontAwesomeIcon icon={faEllipsisVertical} />
+          </button>
+          <div className="event-menu-content">
+            <button onClick={() => onViewDetails(event)}>
+              <FontAwesomeIcon icon={faEye} /> View Details
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default EventCard;
