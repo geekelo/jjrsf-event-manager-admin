@@ -1,75 +1,95 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
-import 'react-toastify/dist/ReactToastify.css';
-import '../stylesheets/adminLogin.css';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faEye,
+  faEyeSlash,
+  faExclamationCircle,
+} from "@fortawesome/free-solid-svg-icons";
+import "react-toastify/dist/ReactToastify.css";
+import "../stylesheets/adminLogin.css";
+import { createAxiosInstance } from "../config/axios";
 
 function AdminLoginPage() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
-    
-    // Clear errors when user starts typing
+
+    // Clear error for field
     if (errors[e.target.name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [e.target.name]: null
+        [e.target.name]: null,
       }));
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.email) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
-    
+
     if (!formData.password) {
       newErrors.password = "Password is required";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validate form before submission
-    if (!validateForm()) {
-      return;
-    }
-    
+    if (!validateForm()) return;
     setLoading(true);
 
-    // Simulate login process
-    setTimeout(() => {
-      // Show success message
-      toast.success('Login successful! (Demo mode)');
+    try {
+      const axiosInstance = createAxiosInstance();
+
+      const payload = {
+        user: {
+          email: formData.email,
+          password: formData.password,
+        },
+      };
+
+      const response = await axiosInstance.post("/api/v1/login", payload);
+      const { token, user } = response.data;
+
+      sessionStorage.setItem("admin_token", token);
+      sessionStorage.setItem("admin_user", JSON.stringify(user));
+
+      toast.success("Login successful! Redirecting...");
+      setTimeout(() => {
+        navigate("/events");
+      }, 1500);
+    } catch (error) {
+      const errorMsg =
+        error.response?.data?.message ||
+        "Login failed. Please check your credentials.";
+      toast.error(errorMsg);
+    } finally {
       setLoading(false);
-      
-      // In the future, this will connect to an actual API
-      console.log('Login credentials:', formData);
-    }, 1500);
+    }
   };
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+    setShowPassword((prev) => !prev);
   };
 
   return (
@@ -87,20 +107,25 @@ function AdminLoginPage() {
         theme="colored"
       />
       <div className="admin-login-wrapper">
-        {/* Left Column */}
         <div className="admin-login-left">
-          <img src="/src/assets/jjrsf-logo.png" alt="Event Manager Admin Logo" className="admin-login-logo" />
+          <img
+            src="/src/assets/jjrsf-logo.png"
+            alt="Event Manager Admin Logo"
+            className="admin-login-logo"
+          />
           <h2 className="admin-login-welcome">Event Manager Admin</h2>
           <p className="admin-login-message">
-            Access the admin dashboard to manage events, users, and system settings.
+            Access the admin dashboard to manage events, users, and system
+            settings.
           </p>
         </div>
 
-        {/* Right Column */}
         <div className="admin-login-right">
           <h1 className="admin-login-title">Admin Login</h1>
-          <p className="admin-login-subtitle">Enter your credentials to access the admin portal</p>
-          
+          <p className="admin-login-subtitle">
+            Enter your credentials to access the admin portal
+          </p>
+
           <form className="admin-login-form" onSubmit={handleSubmit}>
             <div className="admin-form-group">
               <label htmlFor="email" className="admin-form-label">
@@ -130,7 +155,7 @@ function AdminLoginPage() {
               </label>
               <div className="admin-password-input-container">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   id="password"
                   name="password"
                   className="admin-form-input"
@@ -139,11 +164,11 @@ function AdminLoginPage() {
                   onChange={handleChange}
                   disabled={loading}
                 />
-                <button 
-                  type="button" 
-                  className="admin-password-toggle-btn" 
+                <button
+                  type="button"
+                  className="admin-password-toggle-btn"
                   onClick={togglePasswordVisibility}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                   tabIndex="0"
                 >
                   <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
@@ -166,7 +191,6 @@ function AdminLoginPage() {
                 />
                 <span>Remember me</span>
               </label>
-
               <Link to="/admin/forgot-password" className="admin-form-forgot">
                 Forgot Password?
               </Link>
@@ -182,7 +206,9 @@ function AdminLoginPage() {
                   <span className="admin-spinner"></span>
                   Signing in...
                 </>
-              ) : 'Sign In'}
+              ) : (
+                "Sign In"
+              )}
             </button>
           </form>
         </div>
