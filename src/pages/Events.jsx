@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import EventsHeader from '../components/EventsHeader';
 import EventCard from '../components/EventCard';
 import CreateEventModal from '../components/CreateEventModal';
@@ -10,6 +9,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../stylesheets/events.css';
 import { createAxiosInstance } from '../config/axios';
+import { formatDate } from '../components/utils/date';
+import { getStatusBadgeClass } from '../components/utils/status';
 
 function EventsPage() {
   const navigate = useNavigate();
