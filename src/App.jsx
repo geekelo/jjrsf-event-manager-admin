@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -6,41 +7,73 @@ import {
 } from "react-router-dom";
 import AdminLoginPage from "./pages/AdminLogin";
 import EventsPage from './pages/Events';
+import ManageEvent from './pages/ManageEvent';
+import AttendeeList from './pages/AttendeeList';
+import PasscodeManagement from './pages/PasscodeManagement';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./App.css";
 import ProtectedRoute from "./components/auth/protectedRoute";
-import Events from "./pages/Events";
 
 function App() {
   return (
     <Router>
+      <ToastContainer 
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <Routes>
         {/* Unprotected Routes */}
         <Route path="/admin/login" element={<AdminLoginPage />} />
 
+        {/* Protected Routes */}
         <Route
           path="/events"
           element={
             <ProtectedRoute>
-              <Events />
+              <EventsPage />
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/events/:eventId"
+          element={
+            <ProtectedRoute>
+              <ManageEvent />
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/events/:eventId/attendees/:type"
+          element={
+            <ProtectedRoute>
+              <AttendeeList />
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/events/:eventId/passcodes"
+          element={
+            <ProtectedRoute>
+              <PasscodeManagement />
             </ProtectedRoute>
           }
         />
 
         {/* Redirect root and wildcard to login */}
-        <Route path="/" element={<Navigate replace to="/admin/login" />} />
-        <Route path="*" element={<Navigate replace to="/admin/login" />} />
-        {/* Login routes */}
-       
-        {/* Event routes */}
-        <Route path="/events" element={<EventsPage />} />
-        <Route path="/events/:id" element={<div>Event Management Page (Coming Soon)</div>} />
-        <Route path="/events/create" element={<div>Create Event Page (Coming Soon)</div>} />
-        
-        {/* Redirect root to login page */}
-        <Route path="/" element={<Navigate replace to="/admin/login" />} />
-        
-        {/* Catch all undefined routes */}
-        <Route path="*" element={<Navigate replace to="/admin/login" />} />
+        <Route path="/" element={<Navigate replace to="/events" />} />
+        <Route path="*" element={<Navigate replace to="/events" />} />
       </Routes>
     </Router>
   );

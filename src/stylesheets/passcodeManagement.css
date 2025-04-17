@@ -1,0 +1,519 @@
+.passcode-management-page {
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #f8f9fa;
+}
+
+.passcode-management-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.passcode-header {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eaeaea;
+  background-color: #f8f9fa;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.back-button {
+  background-color: transparent;
+  border: none;
+  color: #442777;
+  font-size: 24px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.back-button:hover {
+  background-color: rgba(68, 39, 119, 0.1);
+}
+
+.passcode-header h1 {
+  font-size: 24px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-grow: 1;
+}
+
+.search-bar {
+  padding: 12px 20px;
+  background-color: white;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.search-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.search-input {
+  padding: 10px 12px 10px 36px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 100%;
+  font-size: 14px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #442777;
+  box-shadow: 0 0 0 2px rgba(68, 39, 119, 0.1);
+}
+
+.clear-search-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 5px;
+}
+
+.clear-search-button:hover {
+  color: #442777;
+}
+
+.passcode-list-container {
+  padding: 20px;
+}
+
+/* Desktop Table Styling */
+.passcode-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.passcode-table thead th {
+  background-color: #f8f9fa;
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #eaeaea;
+}
+
+.passcode-table tbody td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.passcode-value-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.passcode-value {
+  font-family: monospace;
+  letter-spacing: 1px;
+  font-size: 16px;
+}
+
+.toggle-visibility-button {
+  background: none;
+  border: none;
+  color: #777;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.toggle-visibility-button:hover {
+  background-color: #f0f0f0;
+  color: #442777;
+}
+
+.passcode-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-passcode-button,
+.delete-passcode-button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.edit-passcode-button {
+  background-color: #e8f4fd;
+  color: #2196f3;
+}
+
+.edit-passcode-button:hover {
+  background-color: #c7e4fb;
+}
+
+.delete-passcode-button {
+  background-color: #ffebee;
+  color: #e53935;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+}
+
+.delete-passcode-button:hover {
+  background-color: #ffcdd2;
+}
+
+/* Mobile Card Styling */
+.mobile-passcode-cards {
+  display: none;
+}
+
+.passcode-card {
+  background-color: white;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  padding: 12px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.card-title {
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-icon {
+  color: #442777;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.mobile-edit-button,
+.mobile-delete-button {
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobile-edit-button {
+  background-color: #e8f4fd;
+  color: #2196f3;
+}
+
+.mobile-edit-button:hover {
+  background-color: #c7e4fb;
+}
+
+.mobile-delete-button {
+  background-color: #ffebee;
+  color: #e53935;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-delete-button:hover {
+  background-color: #ffcdd2;
+}
+
+.card-body {
+  padding: 15px;
+}
+
+.card-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+}
+
+.field-label {
+  color: #666;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.field-value {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobile-toggle-button {
+  background: none;
+  border: none;
+  color: #777;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-toggle-button:hover {
+  background-color: #f0f0f0;
+}
+
+.toggle-icon {
+  font-size: 14px;
+}
+
+.no-passcodes-message {
+  padding: 40px 20px;
+  text-align: center;
+  color: #666;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.add-passcode-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: #442777;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 100%;
+}
+
+.add-passcode-button:hover {
+  background-color: #331c5a;
+}
+
+.passcode-form-container {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  border: 1px solid #eaeaea;
+}
+
+.passcode-form h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #442777;
+  font-size: 20px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #444;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #442777;
+  box-shadow: 0 0 0 2px rgba(68, 39, 119, 0.1);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.cancel-button,
+.save-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-button {
+  background-color: #f0f0f0;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+.cancel-button:hover {
+  background-color: #e0e0e0;
+}
+
+.save-button {
+  background-color: #442777;
+  color: white;
+  border: none;
+}
+
+.save-button:hover {
+  background-color: #331c5a;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.spinner {
+  border: 4px solid rgba(68, 39, 119, 0.1);
+  border-top: 4px solid #442777;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .passcode-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .search-container {
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .search-input-container {
+    width: 100%;
+  }
+  
+  .passcode-list-header {
+    display: none;
+  }
+  
+  .passcode-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    border-bottom: 1px solid #eaeaea;
+    position: relative;
+  }
+  
+  .passcode-name-col {
+    font-weight: 600;
+    font-size: 16px;
+  }
+  
+  .passcode-value-col {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .passcode-actions-col {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .cancel-button,
+  .save-button {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  /* Add mobile-specific labels */
+  .passcode-value-col::before {
+    content: 'Passcode: ';
+    font-weight: 600;
+    color: #666;
+    margin-right: 8px;
+  }
+}
