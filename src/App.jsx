@@ -29,6 +29,8 @@ function App() {
         draggable
         pauseOnHover
         theme="colored"
+        style={{ top: '60px' }} // Add this to position it below headers
+        className="toastify-container" // Add a custom class for targeting in CSS
       />
       <Routes>
         {/* Unprotected Routes */}
