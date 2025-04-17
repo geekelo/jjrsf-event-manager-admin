@@ -46,7 +46,7 @@ const PasscodeManagement = () => {
           setLoading(false);
         }, 800);
       } catch (error) {
-        toast.error('Failed to load passcodes');
+        toast.error('Failed to load passcodes', error);
         setLoading(false);
       }
     };

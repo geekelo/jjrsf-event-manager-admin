@@ -244,9 +244,9 @@ const EventDetailsSection = ({
               </select>
             </div>
             
-            <div className="form-group checkbox-group">
-              <label>Event Type</label>
-              <div className="checkboxes">
+            <div className="form-group event-type-group">
+              <label className="event-type-label">Event Type</label>
+              <div className="event-type-checkboxes">
                 <div className="checkbox-item">
                   <input
                     type="checkbox"
@@ -255,7 +255,7 @@ const EventDetailsSection = ({
                     checked={editFormData.isOnsite}
                     onChange={handleChange}
                   />
-                  <label htmlFor="isOnsite">Onsite</label>
+                  <label htmlFor="isOnsite" className="checkbox-label">Onsite</label>
                 </div>
                 <div className="checkbox-item">
                   <input
@@ -265,9 +265,10 @@ const EventDetailsSection = ({
                     checked={editFormData.isOffline}
                     onChange={handleChange}
                   />
-                  <label htmlFor="isOffline">Online</label>
+                  <label htmlFor="isOffline" className="checkbox-label">Online</label>
                 </div>
               </div>
+              <small className="event-type-hint">Select both for a hybrid event.</small>
             </div>
             
             <div className="form-group full-width">

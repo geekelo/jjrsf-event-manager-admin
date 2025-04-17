@@ -70,7 +70,7 @@ function ManageEvent() {
           setLoading(false);
         }, 800);
       } catch (error) {
-        toast.error('Failed to load event data');
+        toast.error('Failed to load event data', error);
         setLoading(false);
       }
     };
