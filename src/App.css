@@ -1,0 +1,22 @@
+/* Hide the empty Toastify section when it has no content */
+.Toastify:empty {
+  display: none !important;
+}
+
+/* Make sure the section doesn't take up space when no toasts are visible */
+.Toastify {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* Only allow pointer events on actual toasts */
+.Toastify__toast {
+  pointer-events: auto;
+}
+
+/* Custom class for better positioning */
+.toastify-container {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
