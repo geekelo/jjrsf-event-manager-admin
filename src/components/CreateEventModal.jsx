@@ -49,25 +49,25 @@ const CreateEventModal = ({ newEventData, onClose, onSubmit, onChange }) => {
 
           <div className="form-row two-columns">
             <div className="form-group">
-              <label htmlFor="startDate">Start Date <span className="required">*</span></label>
+              <label htmlFor="start_date">Start Date <span className="required">*</span></label>
               <input
                 type="date"
-                id="startDate"
-                name="startDate"
-                value={newEventData.startDate}
+                id="start_date"
+                name="start_date"
+                value={newEventData.start_date}
                 onChange={onChange}
                 required
               />
             </div>
             <div className="form-group">
-              <label htmlFor="endDate">End Date</label>
+              <label htmlFor="end_date">End Date</label>
               <input
                 type="date"
-                id="endDate"
-                name="endDate"
-                value={newEventData.endDate}
+                id="end_date"
+                name="end_date"
+                value={newEventData.end_date}
                 onChange={onChange}
-                min={newEventData.startDate}
+                min={newEventData.start_date}
               />
             </div>
           </div>
@@ -75,17 +75,17 @@ const CreateEventModal = ({ newEventData, onClose, onSubmit, onChange }) => {
           {/* Registration Deadline Field */}
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="registrationDeadline">
+              <label htmlFor="registration_deadline">
                 <FontAwesomeIcon icon={faCalendarCheck} className="form-icon" /> 
                 Registration Deadline
               </label>
               <input
                 type="date"
-                id="registrationDeadline"
-                name="registrationDeadline"
-                value={newEventData.registrationDeadline || ''}
+                id="registration_deadline"
+                name="registration_deadline"
+                value={newEventData.registration_deadline || ''}
                 onChange={onChange}
-                max={newEventData.startDate} // Deadline should be before start date
+                max={newEventData.start_date} // Deadline should be before start date
               />
             </div>
           </div>
@@ -116,28 +116,28 @@ const CreateEventModal = ({ newEventData, onClose, onSubmit, onChange }) => {
                 <div className="checkbox-option">
                   <input
                     type="checkbox"
-                    id="isOnsite"
-                    name="isOnsite"
-                    checked={newEventData.isOnsite || false}
+                    id="online"
+                    name="online"
+                    checked={newEventData.online || false}
                     onChange={handleCheckboxChange}
                   />
-                  <label htmlFor="isOnsite">
+                  <label htmlFor="online">
                     <FontAwesomeIcon icon={faMapMarkerAlt} className="form-icon" />
-                    Onsite
+                    Online
                   </label>
                 </div>
                 
                 <div className="checkbox-option">
                   <input
                     type="checkbox"
-                    id="isOffline"
-                    name="isOffline"
-                    checked={newEventData.isOffline || false}
+                    id="onsite"
+                    name="onsite"
+                    checked={newEventData.onsite || false}
                     onChange={handleCheckboxChange}
                   />
-                  <label htmlFor="isOffline">
+                  <label htmlFor="onsite">
                     <FontAwesomeIcon icon={faGlobe} className="form-icon" />
-                    Offline
+                    Onsite
                   </label>
                 </div>
               </div>

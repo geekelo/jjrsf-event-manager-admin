@@ -24,16 +24,16 @@ function EventsPage() {
   // Form data for creating a new event
   const [newEventData, setNewEventData] = useState({
     name: '',
-    startDate: '',
-    endDate: '',
+    start_date: '',
+    end_date: '',
     description: '',
     location: '',
-    status: 'ongoing',
-    registrationDeadline: '',
-    isOnsite: false,
-    isOffline: false
+    status: '',
+    registration_deadline: '',
+    online: '',
+    onsite: '',
   });
-
+console.log(newEventData)
   // Filter states
   const [filters, setFilters] = useState({
     status: 'all',
@@ -87,14 +87,14 @@ function EventsPage() {
     // Reset form data
     setNewEventData({
       name: '',
-      startDate: '',
-      endDate: '',
+      start_date: '',
+      end_date: '',
       description: '',
       location: '',
       status: 'ongoing',
-      registrationDeadline: '',
-      isOnsite: false,
-      isOffline: false
+      registration_deadline: '',
+      online: false,
+      onsite: false
     });
   };
 
@@ -108,41 +108,60 @@ function EventsPage() {
   };
 
   // Handle form submission
-  const handleSubmitEvent = (e) => {
+  const handleSubmitEvent = async (e) => {
     e.preventDefault();
-    
+  
     // Validation
-    if (!newEventData.name || !newEventData.startDate || !newEventData.location) {
+    if (!newEventData.name || !newEventData.start_date || !newEventData.location) {
       toast.error('Please fill in all required fields');
       return;
     }
-    
-    // Create new event with unique ID
-    const newEvent = {
-      ...newEventData,
-      id: events.length > 0 ? Math.max(...events.map(e => e.id)) + 1 : 1
+  
+    // Show loading state
+    setLoading(true);
+  
+    // Map the form data to the API format
+    const apiEventData = {
+      name: newEventData.name,
+      description: newEventData.description,
+      location: newEventData.location,
+      status: newEventData.status,
+      registration_deadline: newEventData.registration_deadline,
+      start_date: newEventData.start_date,  // Align with API field
+      end_date: newEventData.end_date,      // Align with API field
+      onsite: newEventData.onsite === 'true', // Convert 'onsite' to 'isOffline' (boolean)
+      online: newEventData.online === 'true'
     };
-    
-    // Add to events list
-    setEvents([...events, newEvent]);
-    
-    // Close form and show success message
-    setShowCreateForm(false);
-    toast.success(`Event "${newEventData.name}" created successfully!`);
-    
-    // Reset form data
-    setNewEventData({
-      name: '',
-      startDate: '',
-      endDate: '',
-      description: '',
-      location: '',
-      status: 'ongoing',
-      registrationDeadline: '',
-      isOnsite: false,
-      isOffline: false
-    });
+    try {
+      const axiosInstance = createAxiosInstance();
+      const response = await axiosInstance.post('/api/v1/foundation_events', { event: apiEventData });
+      const newEvent = response.data.event;
+      setEvents((prevEvents) => [newEvent, ...prevEvents].sort((a, b) => new Date(b.start_date) - new Date(a.start_date)));
+  
+      // Close form and show success message
+      setShowCreateForm(false);
+      toast.success(`Event "${newEvent.name}" created successfully!`);
+  
+      // Reset form data
+      setNewEventData({
+        name: '',
+        start_date: '',
+        end_date: '',
+        description: '',
+        location: '',
+        status: 'upcoming',
+        registration_deadline: '',
+        online: false,
+        onsite: false,
+      });
+    } catch (error) {
+      toast.error('Failed to create event');
+      console.error(error);
+    } finally {
+      setLoading(false); // Hide loading state
+    }
   };
+  
 
   // Toggle filter panel
   const handleToggleFilters = () => {
@@ -178,7 +197,7 @@ function EventsPage() {
     // Date range filter
     let matchesDate = true;
     const today = new Date();
-    const eventStartDate = new Date(event.startDate);
+    const eventStartDate = new Date(event.start_date);
     
     if (filters.dateRange === 'upcoming30') {
       const thirtyDaysFromNow = new Date();
@@ -198,7 +217,7 @@ function EventsPage() {
   // Sort filtered events
   const sortedEvents = [...filteredEvents].sort((a, b) => {
     if (filters.sortBy === 'date') {
-      return new Date(a.startDate) - new Date(b.startDate);
+      return new Date(a.start_date) - new Date(b.start_date);
     } else if (filters.sortBy === 'name') {
       return a.name.localeCompare(b.name);
     } else if (filters.sortBy === 'status') {
@@ -206,26 +225,6 @@ function EventsPage() {
     }
     return 0;
   });
-
-  // Format date to display in a more readable format
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
-  };
-
-  // Get status badge class based on event status
-  const getStatusBadgeClass = (status) => {
-    switch(status) {
-      case 'upcoming':
-        return 'event-status-upcoming';
-      case 'ongoing': // Changed from 'planning'
-        return 'event-status-ongoing'; // You might want to update this class name too
-      case 'completed':
-        return 'event-status-completed';
-      default:
-        return '';
-    }
-  };
 
   return (
     <div className="events-page-background">
