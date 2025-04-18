@@ -1,68 +1,67 @@
-import React, { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faEdit, 
-  faLink, 
-  faCopy, 
-  faSave, 
-  faTimes, 
+"use client"
+
+import { useState, useEffect } from "react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {
+  faEdit,
+  faLink,
+  faCopy,
+  faSave,
+  faTimes,
   faCalendarAlt,
   faMapMarkerAlt,
   faFlag,
-  faLaptop, // For Event Type icon
+  faLaptop,
   faBuilding,
   faInfoCircle,
-  faListAlt
-} from '@fortawesome/free-solid-svg-icons';
+  faListAlt,
+} from "@fortawesome/free-solid-svg-icons"
 
-const EventDetailsSection = ({ 
-  event, 
-  eventUrl, 
-  copyEventUrl, 
-  isEditMode, 
-  toggleEditMode, 
-  updateEventData 
-}) => {
+const EventDetailsSection = ({ event, eventUrl, copyEventUrl, isEditMode, toggleEditMode, updateEventData }) => {
   const [editFormData, setEditFormData] = useState({
-    name: event.name,
-    startDate: event.startDate,
-    endDate: event.endDate,
-    registrationDeadline: event.registrationDeadline,
-    location: event.location,
-    status: event.status,
-    isOnsite: event.isOnsite,
-    isOffline: event.isOffline,
-    description: event.description
-  });
-  
+    name: "",
+    startDate: "",
+    endDate: "",
+    registrationDeadline: "",
+    location: "",
+    status: "",
+    isOnsite: false,
+    isOffline: false,
+    description: "",
+  })
+
   // Update form data when event changes
   useEffect(() => {
-    setEditFormData({
-      name: event.name,
-      startDate: event.startDate,
-      endDate: event.endDate,
-      registrationDeadline: event.registrationDeadline,
-      location: event.location,
-      status: event.status,
-      isOnsite: event.isOnsite,
-      isOffline: event.isOffline,
-      description: event.description
-    });
-  }, [event]);
-  
+    if (event) {
+      setEditFormData({
+        name: event.name || "",
+        startDate: event.startDate || "",
+        endDate: event.endDate || "",
+        registrationDeadline: event.registrationDeadline || "",
+        location: event.location || "",
+        status: event.status || "upcoming",
+        isOnsite: event.isOnsite || false,
+        isOffline: event.isOffline || false,
+        description: event.description || "",
+      })
+    }
+  }, [event])
+
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked } = e.target
     setEditFormData({
       ...editFormData,
-      [name]: type === 'checkbox' ? checked : value
-    });
-  };
-  
+      [name]: type === "checkbox" ? checked : value,
+    })
+  }
+
   const handleSubmit = (e) => {
-    e.preventDefault();
-    updateEventData(editFormData);
-  };
-  
+    e.preventDefault()
+    updateEventData(editFormData)
+  }
+
+  if (!event) return null
+
   return (
     <section className="event-details-section">
       <div className="section-header">
@@ -70,16 +69,12 @@ const EventDetailsSection = ({
           <FontAwesomeIcon icon={faInfoCircle} /> Event Details
         </h2>
         {!isEditMode && (
-          <button 
-            className="edit-button"
-            onClick={toggleEditMode}
-            aria-label="Edit event details"
-          >
+          <button className="edit-button" onClick={toggleEditMode} aria-label="Edit event details">
             <FontAwesomeIcon icon={faEdit} /> Edit Details
           </button>
         )}
       </div>
-      
+
       {isEditMode ? (
         <form className="event-edit-form" onSubmit={handleSubmit}>
           <div className="edit-grid">
@@ -87,16 +82,9 @@ const EventDetailsSection = ({
               <label htmlFor="name">
                 <FontAwesomeIcon icon={faListAlt} className="field-icon" /> Event Name
               </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={editFormData.name}
-                onChange={handleChange}
-                required
-              />
+              <input type="text" id="name" name="name" value={editFormData.name} onChange={handleChange} required />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="startDate">
                 <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> Start Date
@@ -110,7 +98,7 @@ const EventDetailsSection = ({
                 required
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="endDate">
                 <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> End Date
@@ -124,7 +112,7 @@ const EventDetailsSection = ({
                 min={editFormData.startDate}
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="registrationDeadline">
                 <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> Registration Deadline
@@ -138,7 +126,7 @@ const EventDetailsSection = ({
                 max={editFormData.startDate}
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="location">
                 <FontAwesomeIcon icon={faMapMarkerAlt} className="field-icon" /> Location
@@ -152,23 +140,18 @@ const EventDetailsSection = ({
                 required
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="status">
                 <FontAwesomeIcon icon={faFlag} className="field-icon" /> Status
               </label>
-              <select
-                id="status"
-                name="status"
-                value={editFormData.status}
-                onChange={handleChange}
-              >
+              <select id="status" name="status" value={editFormData.status} onChange={handleChange}>
                 <option value="upcoming">Upcoming</option>
                 <option value="ongoing">Ongoing</option>
                 <option value="completed">Completed</option>
               </select>
             </div>
-            
+
             <div className="form-group event-type-group">
               <label className="event-type-label">
                 <FontAwesomeIcon icon={faLaptop} className="field-icon" /> Event Type
@@ -200,11 +183,11 @@ const EventDetailsSection = ({
                 </div>
               </div>
               <small className="event-type-hint">
-                <FontAwesomeIcon icon={faInfoCircle} style={{marginRight: '5px'}} /> 
+                <FontAwesomeIcon icon={faInfoCircle} style={{ marginRight: "5px" }} />
                 Select both for a hybrid event.
               </small>
             </div>
-            
+
             <div className="form-group full-width">
               <label htmlFor="description">
                 <FontAwesomeIcon icon={faInfoCircle} className="field-icon" /> Description
@@ -217,31 +200,23 @@ const EventDetailsSection = ({
                 rows="4"
               ></textarea>
             </div>
-            
+
             <div className="form-group full-width">
               <label>
                 <FontAwesomeIcon icon={faLink} className="field-icon" /> Event URL
               </label>
               <div className="url-container">
                 <span className="event-url">{eventUrl}</span>
-                <button 
-                  type="button" 
-                  className="copy-button" 
-                  onClick={copyEventUrl}
-                >
+                <button type="button" className="copy-button" onClick={copyEventUrl}>
                   <FontAwesomeIcon icon={faCopy} />
                 </button>
               </div>
               <small>This URL will be used to share the event with attendees.</small>
             </div>
           </div>
-          
+
           <div className="edit-actions">
-            <button 
-              type="button" 
-              className="cancel-button" 
-              onClick={toggleEditMode}
-            >
+            <button type="button" className="cancel-button" onClick={toggleEditMode}>
               <FontAwesomeIcon icon={faTimes} /> Cancel
             </button>
             <button type="submit" className="primary-button">
@@ -257,35 +232,35 @@ const EventDetailsSection = ({
             </div>
             <div className="detail-value">{event.name}</div>
           </div>
-          
+
           <div className="detail-item">
             <div className="detail-label">
               <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> Start Date
             </div>
             <div className="detail-value">{event.startDate}</div>
           </div>
-          
+
           <div className="detail-item">
             <div className="detail-label">
               <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> End Date
             </div>
-            <div className="detail-value">{event.endDate || 'Not specified'}</div>
+            <div className="detail-value">{event.endDate || "Not specified"}</div>
           </div>
-          
+
           <div className="detail-item">
             <div className="detail-label">
               <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> Registration Deadline
             </div>
-            <div className="detail-value">{event.registrationDeadline || 'Not specified'}</div>
+            <div className="detail-value">{event.registrationDeadline || "Not specified"}</div>
           </div>
-          
+
           <div className="detail-item">
             <div className="detail-label">
               <FontAwesomeIcon icon={faMapMarkerAlt} className="field-icon" /> Location
             </div>
             <div className="detail-value">{event.location}</div>
           </div>
-          
+
           <div className="detail-item">
             <div className="detail-label">
               <FontAwesomeIcon icon={faFlag} className="field-icon" /> Status
@@ -296,7 +271,7 @@ const EventDetailsSection = ({
               </span>
             </div>
           </div>
-          
+
           <div className="detail-item">
             <div className="detail-label">
               <FontAwesomeIcon icon={faLaptop} className="field-icon" /> Event Type
@@ -304,26 +279,31 @@ const EventDetailsSection = ({
             <div className="detail-value">
               {event.isOnsite && event.isOffline ? (
                 <span>
-                  <FontAwesomeIcon icon={faBuilding} className="checkbox-icon" /> Onsite & 
-                  <FontAwesomeIcon icon={faLaptop} className="checkbox-icon" style={{marginLeft: '10px'}} /> Online (Hybrid)
+                  <FontAwesomeIcon icon={faBuilding} className="checkbox-icon" /> Onsite &
+                  <FontAwesomeIcon icon={faLaptop} className="checkbox-icon" style={{ marginLeft: "10px" }} /> Online
+                  (Hybrid)
                 </span>
               ) : event.isOnsite ? (
-                <span><FontAwesomeIcon icon={faBuilding} className="checkbox-icon" /> Onsite</span>
+                <span>
+                  <FontAwesomeIcon icon={faBuilding} className="checkbox-icon" /> Onsite
+                </span>
               ) : event.isOffline ? (
-                <span><FontAwesomeIcon icon={faLaptop} className="checkbox-icon" /> Online</span>
+                <span>
+                  <FontAwesomeIcon icon={faLaptop} className="checkbox-icon" /> Online
+                </span>
               ) : (
-                'Not specified'
+                "Not specified"
               )}
             </div>
           </div>
-          
+
           <div className="detail-item full-width">
             <div className="detail-label">
               <FontAwesomeIcon icon={faInfoCircle} className="field-icon" /> Description
             </div>
             <div className="detail-value description">{event.description}</div>
           </div>
-          
+
           <div className="detail-item full-width">
             <div className="detail-label">
               <FontAwesomeIcon icon={faLink} className="field-icon" /> Event URL
@@ -338,7 +318,7 @@ const EventDetailsSection = ({
         </div>
       )}
     </section>
-  );
-};
+  )
+}
 
-export default EventDetailsSection;
+export default EventDetailsSection
