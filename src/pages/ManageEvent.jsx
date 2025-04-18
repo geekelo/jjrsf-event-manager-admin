@@ -1,27 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import '../stylesheets/manageEvent.css';
+"use client"
+
+import { useState, useEffect } from "react"
+import { useParams, useNavigate } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux"
+import {
+  fetchEventDetails,
+  updateEventDetails,
+  updateEventEvaluation,
+  setEditMode,
+  resetEventDetails,
+} from "../redux/eventDetailsSlice"
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import "../stylesheets/manageEvent.css"
+import { isAuthenticated } from "../lib/auth/token"
 
 // Import components
-import EventHeader from '../components/event/EventHeader';
-import EventDetailsSection from '../components/event/EventDetailsSection';
-import EventMetricsSection from '../components/event/EventMetricsSection';
-import EventEvaluationSection from '../components/event/EventEvaluationSection';
-import StreamsSection from '../components/event/StreamsSection';
-import PasscodeModal from '../components/PasscodeModal';
+import EventHeader from "../components/event/EventHeader"
+import EventDetailsSection from "../components/event/EventDetailsSection"
+import EventMetricsSection from "../components/event/EventMetricsSection"
+import EventEvaluationSection from "../components/event/EventEvaluationSection"
+import StreamsSection from "../components/event/StreamsSection"
+import PasscodeModal from "../components/PasscodeModal"
 
 function ManageEvent() {
-  const { eventId } = useParams();
-  const navigate = useNavigate();
-  const [event, setEvent] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [showPasscodeModal, setShowPasscodeModal] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
-  
+  const { eventId } = useParams()
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+
+  // Get event details from Redux store
+  const { event, loading, error, isEditMode } = useSelector((state) => state.eventDetails)
+
+  const [showPasscodeModal, setShowPasscodeModal] = useState(false)
+
+  // Check authentication on component mount
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      toast.error("You must be logged in to access this page")
+      navigate("/admin/login")
+    }
+  }, [navigate])
+
   // Use direct localhost URL
-  const eventUrl = `http://localhost:3000/event/${eventId}`;
+  const eventUrl = `http://localhost:3000/event/${eventId}`
 
   // Dummy metrics data
   const metrics = {
@@ -29,90 +50,58 @@ function ManageEvent() {
     totalAttendedOnline: 89,
     totalAttendedOffline: 45,
     totalAttendedBoth: 12,
-    totalDidNotAttend: 36
-  };
+    totalDidNotAttend: 36,
+  }
 
+  // Fetch event details on component mount
   useEffect(() => {
-    // Simulate API call to fetch event details
-    const fetchEvent = async () => {
-      try {
-        setTimeout(() => {
-          // Dummy data
-          const eventData = {
-            id: eventId,
-            name: 'Annual Charity Gala 2025',
-            startDate: '2025-05-15',
-            endDate: '2025-05-15',
-            registrationDeadline: '2025-05-01',
-            description: 'A prestigious event raising funds for education initiatives with notable speakers and entertainment.',
-            location: 'Grand Hotel, Downtown',
-            status: 'upcoming',
-            isOnsite: true,
-            isOffline: true,
-            evaluation: '', // Empty evaluation initially
-            streams: [
-              { 
-                id: 1, 
-                platform: 'YouTube', 
-                embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                views: 2345
-              },
-              { 
-                id: 2, 
-                platform: 'Mixlr', 
-                embedUrl: 'https://mixlr.com/users/7520755/embed',
-                views: 872
-              }
-            ]
-          };
-          
-          setEvent(eventData);
-          setLoading(false);
-        }, 800);
-      } catch (error) {
-        toast.error('Failed to load event data', error);
-        setLoading(false);
-      }
-    };
-    
-    fetchEvent();
-  }, [eventId]);
-  
-  const handleBack = () => {
-    navigate('/events');
-  };
-  
-  const toggleEditMode = () => {
-    setIsEditMode(prev => !prev);
-    if (isEditMode) {
-      toast.success('Event details updated successfully');
+    if (isAuthenticated()) {
+      dispatch(fetchEventDetails(eventId))
     }
-  };
-  
+
+    // Cleanup on unmount
+    return () => {
+      dispatch(resetEventDetails())
+    }
+  }, [dispatch, eventId])
+
+  // Show error toast if there's an error
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
+
+  const handleBack = () => {
+    navigate("/events")
+  }
+
+  const toggleEditMode = () => {
+    dispatch(setEditMode(!isEditMode))
+    if (isEditMode) {
+      toast.success("Event details updated successfully")
+    }
+  }
+
   const updateEventData = (updatedData) => {
-    setEvent(prevEvent => ({
-      ...prevEvent,
-      ...updatedData
-    }));
-  };
-  
+    dispatch(updateEventDetails({ eventId, eventData: updatedData }))
+  }
+
   const copyEventUrl = () => {
-    navigator.clipboard.writeText(eventUrl);
-    toast.success('Event URL copied to clipboard!');
-  };
-  
-  const updateEventEvaluation = (evaluationText) => {
-    setEvent(prev => ({ ...prev, evaluation: evaluationText }));
-    toast.success('Evaluation saved successfully!');
-  };
-  
+    navigator.clipboard.writeText(eventUrl)
+    toast.success("Event URL copied to clipboard!")
+  }
 
-  
+  const updateEventEvaluationHandler = (evaluationText) => {
+    dispatch(updateEventEvaluation({ eventId, evaluation: evaluationText }))
+    toast.success("Evaluation saved successfully!")
+  }
+
   const closePasscodeModal = () => {
-    setShowPasscodeModal(false);
-  };
+    setShowPasscodeModal(false)
+  }
 
-  if (loading) {
+  if (loading && !event) {
     return (
       <div className="manage-event-page-background">
         <div className="loading-container">
@@ -120,7 +109,20 @@ function ManageEvent() {
           <p>Loading event details...</p>
         </div>
       </div>
-    );
+    )
+  }
+
+  if (!event && !loading) {
+    return (
+      <div className="manage-event-page-background">
+        <div className="loading-container">
+          <p>Event not found or error loading event details.</p>
+          <button className="primary-button" onClick={handleBack}>
+            Back to Events
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -137,13 +139,10 @@ function ManageEvent() {
         pauseOnHover
         theme="colored"
       />
-      
+
       <div className="manage-event-container">
-        <EventHeader 
-          event={event} 
-          handleBack={handleBack} 
-        />
-        
+        <EventHeader event={event} handleBack={handleBack} />
+
         <EventDetailsSection
           event={event}
           eventUrl={eventUrl}
@@ -152,29 +151,17 @@ function ManageEvent() {
           toggleEditMode={toggleEditMode}
           updateEventData={updateEventData}
         />
-        
-        <EventMetricsSection
-          metrics={metrics}
-          eventId={eventId}
-        />
-        
-        <EventEvaluationSection
-          event={event}
-          eventId={eventId}
-          updateEventEvaluation={updateEventEvaluation}
-        />
-        
+
+        <EventMetricsSection metrics={metrics} eventId={eventId} />
+
+        <EventEvaluationSection event={event} eventId={eventId} updateEventEvaluation={updateEventEvaluationHandler} />
+
         <StreamsSection event={event} />
       </div>
-      
-      {showPasscodeModal && (
-        <PasscodeModal 
-          eventId={eventId} 
-          onClose={closePasscodeModal}
-        />
-      )}
+
+      {showPasscodeModal && <PasscodeModal eventId={eventId} onClose={closePasscodeModal} />}
     </div>
-  );
+  )
 }
 
-export default ManageEvent;
+export default ManageEvent

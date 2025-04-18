@@ -1,231 +1,184 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import EventsHeader from '../components/EventsHeader';
-import EventCard from '../components/EventCard';
-import CreateEventModal from '../components/CreateEventModal';
-import FilterPanel from '../components/FilterPanel';
-import NoEventsMessage from '../components/NoEventsMessage';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import '../stylesheets/events.css';
-import { createAxiosInstance } from '../config/axios';
-import { formatDate } from '../components/utils/date';
-import { getStatusBadgeClass } from '../components/utils/status';
+"use client"
+
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux"
+import { fetchEvents, setSearchTerm, setFilters, addLocalEvent, createEvent } from "../redux/eventsSlice"
+import EventsHeader from "../components/EventsHeader"
+import EventCard from "../components/EventCard"
+import CreateEventModal from "../components/CreateEventModal"
+import FilterPanel from "../components/FilterPanel"
+import NoEventsMessage from "../components/NoEventsMessage"
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import "../stylesheets/events.css"
+import { isAuthenticated } from "../lib/auth/token"
 
 function EventsPage() {
-  const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
-  
-  // Event and API states
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+
+  // Get data from Redux store
+  const { filteredEvents, loading, error, searchTerm, filters } = useSelector((state) => state.events)
+
+  const [showCreateForm, setShowCreateForm] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
 
   // Form data for creating a new event
   const [newEventData, setNewEventData] = useState({
-    name: '',
-    start_date: '',
-    end_date: '',
-    description: '',
-    location: '',
-    status: '',
-    registration_deadline: '',
-    online: '',
-    onsite: '',
-  });
-console.log(newEventData)
-  // Filter states
-  const [filters, setFilters] = useState({
-    status: 'all',
-    dateRange: 'all',
-    sortBy: 'date'
-  });
+    name: "",
+    startDate: "",
+    endDate: "",
+    description: "",
+    location: "",
+    status: "ongoing",
+    registrationDeadline: "",
+    isOnsite: false,
+    isOffline: false,
+  })
 
-  // Fetch foundation events data
-  const getfetchFoundationEvents = async () => {
-    try {
-      const axiosInstance = createAxiosInstance();  
-      const response = await axiosInstance.get('/api/v1/foundation_events'); 
-      return response.data;  // Return the data
-    } catch (error) {
-      toast.error('Failed to fetch events');
-      console.error(error);
-      return []; 
-    }
-  };
-  
-
-  // Fetch events on page load
+  // Check authentication on component mount
   useEffect(() => {
-    const loadEvents = async () => {
-      const fetchedEvents = await getfetchFoundationEvents(); 
-      setEvents(fetchedEvents);  
-      setLoading(false);
-    };
-    loadEvents();
-  }, []);
+    if (!isAuthenticated()) {
+      toast.error("You must be logged in to access this page")
+      navigate("/admin/login")
+    }
+  }, [navigate])
+
+  // Fetch events on component mount
+  useEffect(() => {
+    if (isAuthenticated()) {
+      dispatch(fetchEvents())
+    }
+  }, [dispatch])
+
+  // Show error toast if there's an error
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
 
   // Handle search input change
   const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
+    dispatch(setSearchTerm(e.target.value))
+  }
 
   // Handle clicking the manage button
   const handleManageEvent = (eventId) => {
-    toast.info(`Opening management page for event #${eventId}`);
-    navigate(`/events/${eventId}`);
-  };
+    navigate(`/events/${eventId}`)
+  }
 
   // Handle creating a new event
   const handleCreateEvent = () => {
-    setShowCreateForm(true);
-  };
+    setShowCreateForm(true)
+  }
 
   // Handle closing the create form modal
   const handleCloseForm = () => {
-    setShowCreateForm(false);
+    setShowCreateForm(false)
     // Reset form data
     setNewEventData({
-      name: '',
-      start_date: '',
-      end_date: '',
-      description: '',
-      location: '',
-      status: 'ongoing',
-      registration_deadline: '',
-      online: false,
-      onsite: false
-    });
-  };
+      name: "",
+      startDate: "",
+      endDate: "",
+      description: "",
+      location: "",
+      status: "ongoing",
+      registrationDeadline: "",
+      isOnsite: false,
+      isOffline: false,
+    })
+  }
 
   // Handle form input changes
   const handleFormChange = (e) => {
-    const { name, value } = e.target;
-    setNewEventData(prev => ({
+    const { name, value } = e.target
+    setNewEventData((prev) => ({
       ...prev,
-      [name]: value
-    }));
-  };
+      [name]: value,
+    }))
+  }
 
   // Handle form submission
-  const handleSubmitEvent = async (e) => {
-    e.preventDefault();
-  
+  const handleSubmitEvent = (e) => {
+    e.preventDefault()
+
     // Validation
-    if (!newEventData.name || !newEventData.start_date || !newEventData.location) {
-      toast.error('Please fill in all required fields');
-      return;
+    if (!newEventData.name || !newEventData.startDate || !newEventData.location) {
+      toast.error("Please fill in all required fields")
+      return
     }
-  
-    // Show loading state
-    setLoading(true);
-  
-    // Map the form data to the API format
-    const apiEventData = {
-      name: newEventData.name,
-      description: newEventData.description,
-      location: newEventData.location,
-      status: newEventData.status,
-      registration_deadline: newEventData.registration_deadline,
-      start_date: newEventData.start_date,  // Align with API field
-      end_date: newEventData.end_date,      // Align with API field
-      onsite: newEventData.onsite === 'true', // Convert 'onsite' to 'isOffline' (boolean)
-      online: newEventData.online === 'true'
-    };
-    try {
-      const axiosInstance = createAxiosInstance();
-      const response = await axiosInstance.post('/api/v1/foundation_events', { event: apiEventData });
-      const newEvent = response.data.event;
-      setEvents((prevEvents) => [newEvent, ...prevEvents].sort((a, b) => new Date(b.start_date) - new Date(a.start_date)));
-  
-      // Close form and show success message
-      setShowCreateForm(false);
-      toast.success(`Event "${newEvent.name}" created successfully!`);
-  
-      // Reset form data
-      setNewEventData({
-        name: '',
-        start_date: '',
-        end_date: '',
-        description: '',
-        location: '',
-        status: 'upcoming',
-        registration_deadline: '',
-        online: false,
-        onsite: false,
-      });
-    } catch (error) {
-      toast.error('Failed to create event');
-      console.error(error);
-    } finally {
-      setLoading(false); // Hide loading state
+
+    // In a real app, we would dispatch the createEvent thunk here
+    // For now, we'll simulate it with a local update
+    const newEvent = {
+      ...newEventData,
+      id: Math.floor(Math.random() * 1000), // Generate a random ID for demo purposes
     }
-  };
-  
+
+    // Add to Redux store
+    dispatch(addLocalEvent(newEvent))
+    dispatch(createEvent(newEvent))
+
+    // Close form and show success message
+    setShowCreateForm(false)
+    toast.success(`Event "${newEventData.name}" created successfully!`)
+
+    // Reset form data
+    setNewEventData({
+      name: "",
+      startDate: "",
+      endDate: "",
+      description: "",
+      location: "",
+      status: "ongoing",
+      registrationDeadline: "",
+      isOnsite: false,
+      isOffline: false,
+    })
+  }
 
   // Toggle filter panel
   const handleToggleFilters = () => {
-    setShowFilters(!showFilters);
-  };
+    setShowFilters(!showFilters)
+  }
 
   // Update filters
   const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+    const { name, value } = e.target
+    dispatch(setFilters({ [name]: value }))
+  }
+
+  // Apply filters
+  const handleApplyFilters = () => {
+    setShowFilters(false)
+  }
 
   // Handle view event details
   const handleViewDetails = (event) => {
-    toast.info(`Viewing details for: ${event.name}`);
-    navigate(`/events/${event.id}`);
-  };
+    navigate(`/events/${event.id}`)
+  }
 
-  // Apply filters and search to events
-  const filteredEvents = events.filter(event => {
-    // Text search
-    const matchesSearch = 
-      event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.location.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    // Status filter
-    const matchesStatus = filters.status === 'all' || event.status === filters.status;
-    
-    // Date range filter
-    let matchesDate = true;
-    const today = new Date();
-    const eventStartDate = new Date(event.start_date);
-    
-    if (filters.dateRange === 'upcoming30') {
-      const thirtyDaysFromNow = new Date();
-      thirtyDaysFromNow.setDate(today.getDate() + 30);
-      matchesDate = eventStartDate >= today && eventStartDate <= thirtyDaysFromNow;
-    } else if (filters.dateRange === 'upcoming90') {
-      const ninetyDaysFromNow = new Date();
-      ninetyDaysFromNow.setDate(today.getDate() + 90);
-      matchesDate = eventStartDate >= today && eventStartDate <= ninetyDaysFromNow;
-    } else if (filters.dateRange === 'past') {
-      matchesDate = eventStartDate < today;
-    }
-    
-    return matchesSearch && matchesStatus && matchesDate;
-  });
+  // Format date to display in a more readable format
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" }
+    return new Date(dateString).toLocaleDateString("en-US", options)
+  }
 
-  // Sort filtered events
-  const sortedEvents = [...filteredEvents].sort((a, b) => {
-    if (filters.sortBy === 'date') {
-      return new Date(a.start_date) - new Date(b.start_date);
-    } else if (filters.sortBy === 'name') {
-      return a.name.localeCompare(b.name);
-    } else if (filters.sortBy === 'status') {
-      return a.status.localeCompare(b.status);
+  // Get status badge class based on event status
+  const getStatusBadgeClass = (status) => {
+    switch (status) {
+      case "upcoming":
+        return "event-status-upcoming"
+      case "ongoing":
+        return "event-status-ongoing"
+      case "completed":
+        return "event-status-completed"
+      default:
+        return ""
     }
-    return 0;
-  });
+  }
 
   return (
     <div className="events-page-background">
@@ -243,7 +196,7 @@ console.log(newEventData)
       />
       <div className="events-container">
         {/* Header with Title, Create Button, and Search/Filter Controls */}
-        <EventsHeader 
+        <EventsHeader
           onCreateEvent={handleCreateEvent}
           onToggleFilters={handleToggleFilters}
           searchTerm={searchTerm}
@@ -256,14 +209,19 @@ console.log(newEventData)
             filters={filters}
             onClose={handleToggleFilters}
             onChange={handleFilterChange}
-            onApply={handleToggleFilters}
+            onApply={handleApplyFilters}
           />
         )}
 
         {/* Events List */}
         <div className="events-list">
-          {sortedEvents.length > 0 ? (
-            sortedEvents.map((event) => (
+          {loading ? (
+            <div className="loading-container">
+              <div className="spinner"></div>
+              <p>Loading events...</p>
+            </div>
+          ) : filteredEvents.length > 0 ? (
+            filteredEvents.map((event) => (
               <EventCard
                 key={event.id}
                 event={event}
@@ -289,7 +247,7 @@ console.log(newEventData)
         />
       )}
     </div>
-  );
+  )
 }
 
-export default EventsPage;
+export default EventsPage
