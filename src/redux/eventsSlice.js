@@ -36,8 +36,7 @@ export const updateEvent = createAsyncThunk(
   "events/updateEvent",
   async ({ eventId, eventData }, { rejectWithValue }) => {
     try {
-      // Log the request for debugging
-      console.log("Updating event with data:", eventData)
+  
 
       // Use PATCH and axiosWithAuth with the correct format
       const response = await axiosWithAuth.patch(`/api/v1/foundation_events/${eventId}`, {
@@ -47,7 +46,7 @@ export const updateEvent = createAsyncThunk(
 
       return response.data
     } catch (error) {
-      console.error("Update error:", error.response?.data || error.message)
+     
       // Improved error handling
       const errorMessage =
         error.response?.data?.message || error.response?.data?.error || "Failed to update event. Please try again."
