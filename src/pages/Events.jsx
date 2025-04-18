@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
-import { fetchEvents, setSearchTerm, setFilters, addLocalEvent, createEvent } from "../redux/eventsSlice"
+import { fetchEvents, setSearchTerm, setFilters, createEvent } from "../redux/eventsSlice"
 import EventsHeader from "../components/EventsHeader"
 import EventCard from "../components/EventCard"
 import CreateEventModal from "../components/CreateEventModal"
@@ -27,14 +27,14 @@ function EventsPage() {
   // Form data for creating a new event
   const [newEventData, setNewEventData] = useState({
     name: "",
-    startDate: "",
-    endDate: "",
+    start_date: "",
+    end_date: "",
     description: "",
     location: "",
     status: "ongoing",
-    registrationDeadline: "",
-    isOnsite: false,
-    isOffline: false,
+    registration_deadline: "",
+    onsite: false,
+    online: false,
   })
 
   // Check authentication on component mount
@@ -80,14 +80,14 @@ function EventsPage() {
     // Reset form data
     setNewEventData({
       name: "",
-      startDate: "",
-      endDate: "",
+      start_date: "",
+      end_date: "",
       description: "",
       location: "",
       status: "ongoing",
-      registrationDeadline: "",
-      isOnsite: false,
-      isOffline: false,
+      registration_deadline: "",
+      onsite: false,
+      online: false,
     })
   }
 
@@ -105,38 +105,35 @@ function EventsPage() {
     e.preventDefault()
 
     // Validation
-    if (!newEventData.name || !newEventData.startDate || !newEventData.location) {
+    if (!newEventData.name || !newEventData.start_date || !newEventData.location) {
       toast.error("Please fill in all required fields")
       return
     }
 
-    // In a real app, we would dispatch the createEvent thunk here
-    // For now, we'll simulate it with a local update
-    const newEvent = {
-      ...newEventData,
-      id: Math.floor(Math.random() * 1000), // Generate a random ID for demo purposes
-    }
+    // Dispatch the createEvent thunk
+    dispatch(createEvent(newEventData))
+      .unwrap()
+      .then(() => {
+        // Close form and show success message
+        setShowCreateForm(false)
+        toast.success(`Event "${newEventData.name}" created successfully!`)
 
-    // Add to Redux store
-    dispatch(addLocalEvent(newEvent))
-    dispatch(createEvent(newEvent))
-
-    // Close form and show success message
-    setShowCreateForm(false)
-    toast.success(`Event "${newEventData.name}" created successfully!`)
-
-    // Reset form data
-    setNewEventData({
-      name: "",
-      startDate: "",
-      endDate: "",
-      description: "",
-      location: "",
-      status: "ongoing",
-      registrationDeadline: "",
-      isOnsite: false,
-      isOffline: false,
-    })
+        // Reset form data
+        setNewEventData({
+          name: "",
+          start_date: "",
+          end_date: "",
+          description: "",
+          location: "",
+          status: "ongoing",
+          registration_deadline: "",
+          onsite: false,
+          online: false,
+        })
+      })
+      .catch((error) => {
+        toast.error(error || "Failed to create event")
+      })
   }
 
   // Toggle filter panel
@@ -224,9 +221,17 @@ function EventsPage() {
             filteredEvents.map((event) => (
               <EventCard
                 key={event.id}
-                event={event}
+                event={{
+                  id: event.id,
+                  name: event.name,
+                  startDate: event.start_date,
+                  endDate: event.end_date,
+                  location: event.location,
+                  description: event.description,
+                  status: event.status,
+                }}
                 onManage={handleManageEvent}
-                onViewDetails={handleViewDetails}
+                onViewDetails={() => handleViewDetails(event)}
                 getStatusBadgeClass={getStatusBadgeClass}
                 formatDate={formatDate}
               />

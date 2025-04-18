@@ -31,10 +31,55 @@ export const createEvent = createAsyncThunk("events/createEvent", async (eventDa
   }
 })
 
+// Async thunk for updating an event
+export const updateEvent = createAsyncThunk(
+  "events/updateEvent",
+  async ({ eventId, eventData }, { rejectWithValue }) => {
+    try {
+  
+
+      // Use PATCH and axiosWithAuth with the correct format
+      const response = await axiosWithAuth.patch(`/api/v1/foundation_events/${eventId}`, {
+        id: eventId,
+        event_updates: eventData,
+      })
+
+      return response.data
+    } catch (error) {
+     
+      // Improved error handling
+      const errorMessage =
+        error.response?.data?.message || error.response?.data?.error || "Failed to update event. Please try again."
+      return rejectWithValue(errorMessage)
+    }
+  },
+)
+
+// Async thunk for updating event evaluation
+export const updateEventEvaluation = createAsyncThunk(
+  "events/updateEventEvaluation",
+  async ({ eventId, evaluation }, { rejectWithValue }) => {
+    try {
+      // Use PATCH for evaluation update with the correct format
+      const response = await axiosWithAuth.patch(`/api/v1/foundation_events/${eventId}`, {
+        id: eventId,
+        event_updates: { evaluation },
+      })
+      return response.data
+    } catch (error) {
+      // Improved error handling
+      const errorMessage =
+        error.response?.data?.message || error.response?.data?.error || "Failed to update evaluation. Please try again."
+      return rejectWithValue(errorMessage)
+    }
+  },
+)
+
 // Initial state
 const initialState = {
   events: [],
   filteredEvents: [],
+  currentEvent: null,
   loading: false,
   error: null,
   filters: {
@@ -43,6 +88,7 @@ const initialState = {
     sortBy: "date",
   },
   searchTerm: "",
+  isEditMode: false,
 }
 
 const eventsSlice = createSlice({
@@ -76,7 +122,27 @@ const eventsSlice = createSlice({
       if (index !== -1) {
         state.events[index] = { ...state.events[index], ...action.payload }
         state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
+
+        // Also update currentEvent if it matches the updated event
+        if (state.currentEvent && state.currentEvent.id === action.payload.id) {
+          state.currentEvent = { ...state.currentEvent, ...action.payload }
+        }
       }
+    },
+    // Set current event by ID
+    setCurrentEvent: (state, action) => {
+      const eventId = action.payload
+      state.currentEvent = state.events.find((event) => event.id === eventId) || null
+      state.error = state.currentEvent ? null : "Event not found"
+    },
+    // Set edit mode
+    setEditMode: (state, action) => {
+      state.isEditMode = action.payload
+    },
+    // Reset current event
+    resetCurrentEvent: (state) => {
+      state.currentEvent = null
+      state.isEditMode = false
     },
   },
   extraReducers: (builder) => {
@@ -109,6 +175,51 @@ const eventsSlice = createSlice({
         state.loading = false
         state.error = action.payload
       })
+      // Update event
+      .addCase(updateEvent.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(updateEvent.fulfilled, (state, action) => {
+        state.loading = false
+        // Update in events array
+        const index = state.events.findIndex((event) => event.id === action.payload.id)
+        if (index !== -1) {
+          state.events[index] = action.payload
+          state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
+        }
+        // Update current event
+        if (state.currentEvent && state.currentEvent.id === action.payload.id) {
+          state.currentEvent = action.payload
+        }
+        state.isEditMode = false
+      })
+      .addCase(updateEvent.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload
+      })
+      // Update event evaluation
+      .addCase(updateEventEvaluation.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(updateEventEvaluation.fulfilled, (state, action) => {
+        state.loading = false
+        // Update in events array
+        const index = state.events.findIndex((event) => event.id === action.payload.id)
+        if (index !== -1) {
+          state.events[index] = action.payload
+          state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
+        }
+        // Update current event
+        if (state.currentEvent && state.currentEvent.id === action.payload.id) {
+          state.currentEvent = action.payload
+        }
+      })
+      .addCase(updateEventEvaluation.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload
+      })
   },
 })
 
@@ -129,7 +240,7 @@ const filterEvents = (events, searchTerm, filters) => {
       // Date range filter
       let matchesDate = true
       const today = new Date()
-      const eventStartDate = new Date(event.startDate)
+      const eventStartDate = new Date(event.start_date)
 
       if (filters.dateRange === "upcoming30") {
         const thirtyDaysFromNow = new Date()
@@ -147,7 +258,7 @@ const filterEvents = (events, searchTerm, filters) => {
     })
     .sort((a, b) => {
       if (filters.sortBy === "date") {
-        return new Date(a.startDate) - new Date(b.startDate)
+        return new Date(a.start_date) - new Date(b.start_date)
       } else if (filters.sortBy === "name") {
         return a.name.localeCompare(b.name)
       } else if (filters.sortBy === "status") {
@@ -157,6 +268,15 @@ const filterEvents = (events, searchTerm, filters) => {
     })
 }
 
-export const { setSearchTerm, setFilters, resetFilters, addLocalEvent, updateLocalEvent } = eventsSlice.actions
+export const {
+  setSearchTerm,
+  setFilters,
+  resetFilters,
+  addLocalEvent,
+  updateLocalEvent,
+  setCurrentEvent,
+  setEditMode,
+  resetCurrentEvent,
+} = eventsSlice.actions
 
 export default eventsSlice.reducer
