@@ -96,7 +96,7 @@ const eventsSlice = createSlice({
         state.error = action.payload
       })
       // Create event
-      .addCase(createEvent.pending, (state) => {e
+      .addCase(createEvent.pending, (state) => {
         state.loading = true
         state.error = null
       })
