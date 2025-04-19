@@ -19,7 +19,7 @@ const AttendeeCard = ({ attendee }) => {
       <div className="attendee-card-header">
         <h3 className="attendee-name">
           <FontAwesomeIcon icon={faUser} className="icon-primary" />
-          {attendee.title} {attendee.firstName} {attendee.middleName || ""} {attendee.lastName}
+          {attendee.title ? `${attendee.title} ` : ""}{attendee.name}
         </h3>
       </div>
 

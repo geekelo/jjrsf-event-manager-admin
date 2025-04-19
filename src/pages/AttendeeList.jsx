@@ -52,7 +52,7 @@ const AttendeeList = () => {
         // Search filter
         const searchMatch =
           searchTerm === "" ||
-          `${attendee.title} ${attendee.firstName} ${attendee.middleName || ""} ${attendee.lastName}`
+          `${attendee.title && `${attendee.title} `}${attendee.name}`
             .toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
           (attendee.email && attendee.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -253,21 +253,12 @@ function generateDummyAttendees(count) {
   for (let i = 1; i <= count; i++) {
     const gender = genders[Math.floor(Math.random() * genders.length)]
     const title = titles[Math.floor(Math.random() * titles.length)]
-    const firstName = `First${i}`
-    const middleName = Math.random() > 0.3 ? `Middle${i}` : ""
-    const lastName = `Last${i}`
-    const isMember = Math.random() > 0.5
-    const preferredAttendance = preferredOptions[Math.floor(Math.random() * preferredOptions.length)]
-    const attendedOnline = Math.random() > 0.5
-    const attendedOffline = Math.random() > 0.5
-    const otp = Math.floor(100000 + Math.random() * 900000).toString() // 6-digit OTP
+    const name = `Full Name ${i}` // Single name field
 
     attendees.push({
       id: i,
       title,
-      firstName,
-      middleName,
-      lastName,
+      name, // Use single name field
       email: `attendee${i}@example.com`,
       phone: `+1 555-${String(i).padStart(3, "0")}-${Math.floor(1000 + Math.random() * 9000)}`,
       whatsapp: `+1 777-${String(i).padStart(3, "0")}-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -275,11 +266,11 @@ function generateDummyAttendees(count) {
       state: `State ${i % 5}`,
       country: `Country`,
       gender,
-      isMember,
-      preferredAttendance,
-      attendedOnline,
-      attendedOffline,
-      otp,
+      isMember: Math.random() > 0.5,
+      preferredAttendance: preferredOptions[Math.floor(Math.random() * preferredOptions.length)],
+      attendedOnline: Math.random() > 0.5,
+      attendedOffline: Math.random() > 0.5,
+      otp: Math.floor(100000 + Math.random() * 900000).toString(), // 6-digit OTP
     })
   }
 
