@@ -353,39 +353,4 @@ const AttendeeList = () => {
   )
 }
 
-// Helper function to generate dummy attendees
-function generateDummyAttendees(count) {
-  const titles = ["Mr.", "Mrs.", "Ms.", "Dr."]
-  const genders = ["Male", "Female"]
-  const preferredOptions = ["Online", "Offline"]
-
-  const attendees = []
-
-  for (let i = 1; i <= count; i++) {
-    const gender = genders[Math.floor(Math.random() * genders.length)]
-    const title = titles[Math.floor(Math.random() * titles.length)]
-    const name = `Full Name ${i}` // Single name field
-
-    attendees.push({
-      id: i,
-      title,
-      name, // Use single name field
-      email: `attendee${i}@example.com`,
-      phone: `+1 555-${String(i).padStart(3, "0")}-${Math.floor(1000 + Math.random() * 9000)}`,
-      whatsapp: `+1 777-${String(i).padStart(3, "0")}-${Math.floor(1000 + Math.random() * 9000)}`,
-      street: `${i} Main St`,
-      state: `State ${i % 5}`,
-      country: `Country`,
-      gender,
-      isMember: Math.random() > 0.5,
-      preferredAttendance: preferredOptions[Math.floor(Math.random() * preferredOptions.length)],
-      attendedOnline: Math.random() > 0.5,
-      attendedOffline: Math.random() > 0.5,
-      otp: Math.floor(100000 + Math.random() * 900000).toString(), // 6-digit OTP
-    })
-  }
-
-  return attendees
-}
-
 export default AttendeeList
