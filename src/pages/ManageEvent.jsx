@@ -3,14 +3,8 @@
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
-import {
-  fetchEvents,
-  updateEvent,
-  updateEventEvaluation,
-  setCurrentEvent,
-  setEditMode,
-  resetCurrentEvent,
-} from "../redux/eventsSlice"
+import { fetchEvents, updateEvent, updateEventEvaluation, setCurrentEvent, setEditMode } from "../redux/eventsSlice"
+import { fetchEventAttendees } from "../redux/attendeesSlice"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import "../stylesheets/manageEvent.css"
@@ -30,7 +24,21 @@ function ManageEvent() {
   const dispatch = useDispatch()
 
   // Get event details from Redux store
-  const { currentEvent: event, loading, error, isEditMode, events } = useSelector((state) => state.events)
+  const {
+    currentEvent: event,
+    loading: eventLoading,
+    error: eventError,
+    isEditMode,
+    events,
+  } = useSelector((state) => state.events)
+
+  // Get attendees data from Redux store
+  const {
+    metrics,
+    loading: attendeesLoading,
+    error: attendeesError,
+    currentEventId,
+  } = useSelector((state) => state.attendees)
 
   const [showPasscodeModal, setShowPasscodeModal] = useState(false)
 
@@ -50,37 +58,40 @@ function ManageEvent() {
       dispatch(setCurrentEvent(eventId))
     }
 
+    // Only fetch attendees if we don't already have them for this event
+    if (!currentEventId || currentEventId !== eventId) {
+      dispatch(fetchEventAttendees(eventId))
+    }
+
     // Cleanup on unmount
     return () => {
-      dispatch(resetCurrentEvent())
+      // Don't reset current event when navigating to attendee list
+      // We'll let the component decide when to reset
     }
-  }, [dispatch, eventId, navigate, events.length])
-
-  // When events are loaded, set the current event
-  useEffect(() => {
-    if (events.length > 0 && eventId) {
-      dispatch(setCurrentEvent(eventId))
-    }
-  }, [dispatch, events, eventId])
+  }, [dispatch, eventId, navigate, events.length, currentEventId])
 
   // Show error toast if there's an error
   useEffect(() => {
-    if (error) {
-      toast.error(error)
+    if (eventError) {
+      toast.error(eventError)
     }
-  }, [error])
+    if (attendeesError) {
+      toast.error(attendeesError)
+    }
+  }, [eventError, attendeesError])
 
   // Use direct localhost URL
   const eventUrl = `http://localhost:3000/event/${eventId}`
 
-  // Dummy metrics data
-  const metrics = {
-    totalRegistered: 158,
-    totalAttendedOnline: 89,
-    totalAttendedOffline: 45,
-    totalAttendedBoth: 12,
-    totalDidNotAttend: 36,
-  }
+  // Replace the dummy metrics with the metrics from Redux
+  // Remove this line:
+  // const metrics = {
+  //   totalRegistered: 158,
+  //   totalAttendedOnline: 89,
+  //   totalAttendedOffline: 45,
+  //   totalAttendedBoth: 12,
+  //   totalDidNotAttend: 36,
+  // }
 
   const handleBack = () => {
     navigate("/events")
@@ -138,6 +149,9 @@ function ManageEvent() {
   const closePasscodeModal = () => {
     setShowPasscodeModal(false)
   }
+
+  // Update loading state to consider both event and attendees loading
+  const loading = eventLoading || attendeesLoading
 
   if (loading && !event) {
     return (
