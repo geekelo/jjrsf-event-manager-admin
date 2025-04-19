@@ -146,7 +146,8 @@ const NotesModal = ({ attendee, isOpen, onClose }) => {
       <div className="notes-modal" ref={modalRef} onClick={handleModalClick}>
         <div className="notes-modal-header">
           <h2>
-            <FontAwesomeIcon icon={faStickyNote} /> Notes for {attendee?.name}
+            <FontAwesomeIcon icon={faStickyNote} /> Notes 
+            <span className="attendee-name-display">{attendee?.name}</span>
           </h2>
           <button className="notes-close-button" onClick={onClose}>
             <FontAwesomeIcon icon={faTimes} />

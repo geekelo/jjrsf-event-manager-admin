@@ -858,8 +858,8 @@
 }
 
 .otp-value {
-  font-family: monospace;
   font-size: 18px;
+  font-family: monospace;
   font-weight: 600;
   color: #f57c00;
   letter-spacing: 1px;
@@ -952,16 +952,28 @@
 
 .notes-modal-header h2 {
   margin: 0;
-  font-size: 18px; /* Reduced from 20px */
+  font-size: 18px; /* Keep this size for "Notes for" text */
   color: #442777;
   display: flex;
   align-items: center;
+  flex-wrap: wrap; /* Allow wrapping */
   gap: 8px; /* Reduced from 10px for tighter alignment */
 }
 
 .notes-modal-header h2 svg {
   font-size: 16px; /* Ensure icon size is appropriate */
   margin-top: 1px; /* Fine-tune vertical alignment */
+}
+
+/* New style for the attendee name */
+.attendee-name-display {
+  font-size: 13px; /* Smaller font size for the name */
+  display: block; /* Force to new line */
+  width: 100%; /* Full width to ensure it's on a new line */
+  margin-top: 4px; /* Space between "Notes for" and the name */
+  color: #666; /* Slightly lighter color to differentiate */
+  font-weight: normal; /* Less bold than the header */
+  padding-left: 24px; /* Indent under the "Notes for" text */
 }
 
 .notes-close-button {
