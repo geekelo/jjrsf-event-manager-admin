@@ -1278,3 +1278,30 @@
   display: flex;
   flex-direction: column;
 }
+
+/* Add error message styling */
+.error-message {
+  color: #e53935;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.primary-button {
+  background-color: #442777;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.primary-button:hover {
+  background-color: #3a2065;
+}

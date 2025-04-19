@@ -2,17 +2,26 @@
 
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faArrowLeft, faUsers } from "@fortawesome/free-solid-svg-icons"
 import AttendeeCard from "../components/AttendeeCard"
 import SearchAndFilterBar from "../components/SearchAndFilterBar"
 import Pagination from "../components/Pagination"
 import "../stylesheets/attendeeList.css"
+import { fetchEventAttendees } from "../redux/attendeesSlice"
 
 const AttendeeList = () => {
   const { eventId, type } = useParams()
   const navigate = useNavigate()
-  const [attendees, setAttendees] = useState([])
+  const dispatch = useDispatch()
+
+  // Get attendees from Redux store
+  const { attendees, loading: reduxLoading, error } = useSelector((state) => state.attendees)
+  const { events } = useSelector((state) => state.events)
+  const { currentEventId } = useSelector((state) => state.events)
+
+  // Local state for filtered and displayed attendees
   const [filteredAttendees, setFilteredAttendees] = useState([])
   const [displayedAttendees, setDisplayedAttendees] = useState([])
   const [loading, setLoading] = useState(true)
@@ -33,22 +42,105 @@ const AttendeeList = () => {
     attendance: "all",
   })
 
+  // Fetch attendees when component mounts
+  // Replace the useEffect that's causing the redirect with this one that fetches data if needed
   useEffect(() => {
-    // Simpler fetch for testing
-    setTimeout(() => {
-      setEventName("Annual Conference 2023")
-      const generatedAttendees = generateDummyAttendees(45) // Generate more attendees to test pagination
-      setAttendees(generatedAttendees)
-      setFilteredAttendees(generatedAttendees)
-      setTotalPages(Math.ceil(generatedAttendees.length / itemsPerPage))
+    // Find event name from events array
+    const currentEvent = events.find((event) => event.id === eventId)
+    if (currentEvent) {
+      setEventName(currentEvent.name)
+    }
+
+    // Check if we already have attendees for this event
+    if (!(attendees.length > 0 && currentEventId === eventId)) {
+      // If we don't have attendees data, fetch it
+      dispatch(fetchEventAttendees(eventId))
+    } else {
       setLoading(false)
-    }, 500)
-  }, [])
+    }
+  }, [dispatch, eventId, events, attendees, currentEventId])
+
+  // Remove this useEffect that was updating loading state based on reduxLoading:
+  // useEffect(() => {
+  //   if (!reduxLoading) {
+  //     setLoading(false)
+  //   }
+  // }, [reduxLoading])
+
+  // Add this useEffect to update loading state when Redux loading changes
+  useEffect(() => {
+    if (!reduxLoading) {
+      setLoading(false)
+    }
+  }, [reduxLoading])
+
+  // Add a useEffect to handle empty attendees array
+  useEffect(() => {
+    // If attendees array is defined (API call completed) but empty
+    if (Array.isArray(attendees) && !reduxLoading) {
+      setLoading(false)
+      setFilteredAttendees([])
+      setDisplayedAttendees([])
+    }
+  }, [attendees, reduxLoading])
+
+  // Filter attendees based on type parameter
+  useEffect(() => {
+    if (Array.isArray(attendees) && attendees.length) {
+      let typeFilteredAttendees = [...attendees]
+
+      // Apply type filter based on route parameter
+      switch (type) {
+        case "online":
+          typeFilteredAttendees = attendees.filter((a) => a.attendedOnline && !a.attendedOffline)
+          break
+        case "offline":
+          typeFilteredAttendees = attendees.filter((a) => a.attendedOffline && !a.attendedOnline)
+          break
+        case "both":
+          typeFilteredAttendees = attendees.filter((a) => a.attendedOnline && a.attendedOffline)
+          break
+        case "absent":
+          typeFilteredAttendees = attendees.filter((a) => !a.attendedOnline && !a.attendedOffline)
+          break
+        // "registered" shows all attendees, so no filtering needed
+      }
+
+      setFilteredAttendees(typeFilteredAttendees)
+      setTotalPages(Math.ceil(typeFilteredAttendees.length / itemsPerPage))
+    } else {
+      // Handle empty attendees array
+      setFilteredAttendees([])
+      setTotalPages(0)
+    }
+
+    // Always set loading to false after processing
+    setLoading(false)
+  }, [attendees, type, itemsPerPage])
 
   // Filter attendees whenever search or filters change
   useEffect(() => {
-    if (attendees.length) {
+    if (Array.isArray(attendees) && attendees.length) {
       const filtered = attendees.filter((attendee) => {
+        // First apply type filter
+        let typeMatch = true
+        switch (type) {
+          case "online":
+            typeMatch = attendee.attendedOnline && !attendee.attendedOffline
+            break
+          case "offline":
+            typeMatch = attendee.attendedOffline && !attendee.attendedOnline
+            break
+          case "both":
+            typeMatch = attendee.attendedOnline && attendee.attendedOffline
+            break
+          case "absent":
+            typeMatch = !attendee.attendedOnline && !attendee.attendedOffline
+            break
+        }
+
+        if (!typeMatch) return false
+
         // Search filter
         const searchMatch =
           searchTerm === "" ||
@@ -89,8 +181,13 @@ const AttendeeList = () => {
       setFilteredAttendees(filtered)
       setTotalPages(Math.ceil(filtered.length / itemsPerPage))
       setCurrentPage(1) // Reset to first page when filters change
+    } else {
+      // Handle empty attendees array
+      setFilteredAttendees([])
+      setTotalPages(0)
+      setCurrentPage(1)
     }
-  }, [searchTerm, filters, attendees])
+  }, [searchTerm, filters, attendees, type, itemsPerPage])
 
   // Update displayed attendees when page changes or filtered results change
   useEffect(() => {
@@ -161,12 +258,26 @@ const AttendeeList = () => {
     }
   }
 
-  if (loading) {
+  if (loading && !error) {
     return (
       <div className="attendee-list-page">
         <div className="loading-container">
           <div className="spinner"></div>
           <p>Loading attendees...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Add error handling to the component
+  if (error) {
+    return (
+      <div className="attendee-list-page">
+        <div className="loading-container">
+          <p className="error-message">Error loading attendees: {error}</p>
+          <button className="primary-button" onClick={() => navigate(`/events/${eventId}`)}>
+            Back to Event
+          </button>
         </div>
       </div>
     )
@@ -240,41 +351,6 @@ const AttendeeList = () => {
       </div>
     </div>
   )
-}
-
-// Helper function to generate dummy attendees
-function generateDummyAttendees(count) {
-  const titles = ["Mr.", "Mrs.", "Ms.", "Dr."]
-  const genders = ["Male", "Female"]
-  const preferredOptions = ["Online", "Offline"]
-
-  const attendees = []
-
-  for (let i = 1; i <= count; i++) {
-    const gender = genders[Math.floor(Math.random() * genders.length)]
-    const title = titles[Math.floor(Math.random() * titles.length)]
-    const name = `Full Name ${i}` // Single name field
-
-    attendees.push({
-      id: i,
-      title,
-      name, // Use single name field
-      email: `attendee${i}@example.com`,
-      phone: `+1 555-${String(i).padStart(3, "0")}-${Math.floor(1000 + Math.random() * 9000)}`,
-      whatsapp: `+1 777-${String(i).padStart(3, "0")}-${Math.floor(1000 + Math.random() * 9000)}`,
-      street: `${i} Main St`,
-      state: `State ${i % 5}`,
-      country: `Country`,
-      gender,
-      isMember: Math.random() > 0.5,
-      preferredAttendance: preferredOptions[Math.floor(Math.random() * preferredOptions.length)],
-      attendedOnline: Math.random() > 0.5,
-      attendedOffline: Math.random() > 0.5,
-      otp: Math.floor(100000 + Math.random() * 900000).toString(), // 6-digit OTP
-    })
-  }
-
-  return attendees
 }
 
 export default AttendeeList

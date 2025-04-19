@@ -21,13 +21,31 @@ import NotesModal from "./NotesModal"
 const AttendeeCard = ({ attendee }) => {
   const [showNotesModal, setShowNotesModal] = useState(false)
 
+  // Handle missing properties gracefully
+  const {
+    title = "",
+    name = "Unknown",
+    email = "",
+    whatsapp = "",
+    phone = "",
+    street = "",
+    state = "",
+    country = "",
+    gender = "",
+    isMember = false,
+    preferredAttendance = "",
+    attendedOnline = false,
+    attendedOffline = false,
+    otp = "",
+  } = attendee || {}
+
   return (
     <div className="attendee-card">
       <div className="attendee-card-header">
         <h3 className="attendee-name">
           <FontAwesomeIcon icon={faUser} className="icon-primary" />
-          {attendee.title ? `${attendee.title} ` : ""}
-          {attendee.name}
+          {title ? `${title} ` : ""}
+          {name}
         </h3>
       </div>
 
@@ -39,9 +57,9 @@ const AttendeeCard = ({ attendee }) => {
             <span>Address</span>
           </div>
           <div className="info-value">
-            {attendee.street ? `${attendee.street}, ` : ""}
-            {attendee.state ? `${attendee.state}, ` : ""}
-            {attendee.country || ""}
+            {street ? `${street}, ` : ""}
+            {state ? `${state}, ` : ""}
+            {country || "N/A"}
           </div>
         </div>
 
@@ -51,7 +69,7 @@ const AttendeeCard = ({ attendee }) => {
             <FontAwesomeIcon icon={faEnvelope} />
             <span>Email</span>
           </div>
-          <div className="info-value">{attendee.email}</div>
+          <div className="info-value">{email || "N/A"}</div>
         </div>
 
         <div className="attendee-info-group">
@@ -59,7 +77,7 @@ const AttendeeCard = ({ attendee }) => {
             <FontAwesomeIcon icon={faCommentDots} />
             <span>WhatsApp</span>
           </div>
-          <div className="info-value">{attendee.whatsapp || "N/A"}</div>
+          <div className="info-value">{whatsapp || "N/A"}</div>
         </div>
 
         <div className="attendee-info-group">
@@ -67,29 +85,27 @@ const AttendeeCard = ({ attendee }) => {
             <FontAwesomeIcon icon={faPhone} />
             <span>Phone</span>
           </div>
-          <div className="info-value">{attendee.phone}</div>
+          <div className="info-value">{phone || "N/A"}</div>
         </div>
 
         {/* Personal Details Section */}
         <div className="attendee-tags">
           <div className="attendee-tag">
-            <FontAwesomeIcon icon={attendee.gender === "Male" ? faMars : faVenus} />
+            <FontAwesomeIcon icon={gender === "Male" ? faMars : faVenus} />
             <span>Gender:</span>
-            <span className="tag-value">{attendee.gender}</span>
+            <span className="tag-value">{gender || "N/A"}</span>
           </div>
 
           <div className="attendee-tag">
             <FontAwesomeIcon icon={faUsers} />
             <span>Member:</span>
-            <span className={`tag-value ${attendee.isMember ? "positive" : "negative"}`}>
-              {attendee.isMember ? "Yes" : "No"}
-            </span>
+            <span className={`tag-value ${isMember ? "positive" : "negative"}`}>{isMember ? "Yes" : "No"}</span>
           </div>
 
           <div className="attendee-tag">
             <FontAwesomeIcon icon={faGlobe} />
             <span>Preferred:</span>
-            <span className="tag-value">{attendee.preferredAttendance || "N/A"}</span>
+            <span className="tag-value">{preferredAttendance || "N/A"}</span>
           </div>
         </div>
 
@@ -97,8 +113,8 @@ const AttendeeCard = ({ attendee }) => {
         <div className="attendance-status">
           <h4>Attendance Status</h4>
           <div className="attendance-badges">
-            <div className={`attendance-badge ${attendee.attendedOnline ? "attended" : "not-attended"}`}>
-              {attendee.attendedOnline ? (
+            <div className={`attendance-badge ${attendedOnline ? "attended" : "not-attended"}`}>
+              {attendedOnline ? (
                 <>
                   <FontAwesomeIcon icon={faCheck} />
                   <span>Online</span>
@@ -107,8 +123,8 @@ const AttendeeCard = ({ attendee }) => {
                 <span>Online</span>
               )}
             </div>
-            <div className={`attendance-badge ${attendee.attendedOffline ? "attended" : "not-attended"}`}>
-              {attendee.attendedOffline ? (
+            <div className={`attendance-badge ${attendedOffline ? "attended" : "not-attended"}`}>
+              {attendedOffline ? (
                 <>
                   <FontAwesomeIcon icon={faCheck} />
                   <span>Offline</span>
@@ -126,7 +142,7 @@ const AttendeeCard = ({ attendee }) => {
             <FontAwesomeIcon icon={faLock} />
             <span>OTP</span>
           </div>
-          <div className="otp-value">{attendee.otp || "N/A"}</div>
+          <div className="otp-value">{otp || "N/A"}</div>
         </div>
 
         {/* Notes Button */}
