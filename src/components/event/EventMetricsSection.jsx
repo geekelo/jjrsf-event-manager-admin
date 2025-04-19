@@ -1,22 +1,37 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faChartLine, 
-  faUsers, 
-  faUserCheck, 
+"use client"
+import { useNavigate } from "react-router-dom"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {
+  faChartLine,
+  faUsers,
+  faUserCheck,
   faUserClock,
   faEye,
-  faArrowRight
-} from '@fortawesome/free-solid-svg-icons';
+  faArrowRight,
+  faUserPlus,
+} from "@fortawesome/free-solid-svg-icons"
+import { useState, useEffect } from "react"
 
 const EventMetricsSection = ({ metrics, eventId }) => {
-  const navigate = useNavigate();
-  
+  const navigate = useNavigate()
+  // State to store the dummy quick registrations count
+  const [quickRegCount, setQuickRegCount] = useState(0)
+
+  // Generate a random number of quick registrations on component mount
+  useEffect(() => {
+    // Generate a random number between 25-50
+    const randomCount = Math.floor(25 + Math.random() * 25)
+    setQuickRegCount(randomCount)
+  }, [])
+
   const navigateToAttendees = (type) => {
-    navigate(`/events/${eventId}/attendees/${type}`);
-  };
-  
+    navigate(`/events/${eventId}/attendees/${type}`)
+  }
+
+  const navigateToQuickRegistrations = () => {
+    navigate(`/events/${eventId}/quick-registrations`)
+  }
+
   return (
     <section className="metrics-section">
       <div className="section-header">
@@ -24,7 +39,7 @@ const EventMetricsSection = ({ metrics, eventId }) => {
           <FontAwesomeIcon icon={faChartLine} /> Metrics & Analytics
         </h2>
       </div>
-      
+
       <div className="metrics-grid">
         <div className="metric-card">
           <div className="metric-icon">
@@ -35,9 +50,9 @@ const EventMetricsSection = ({ metrics, eventId }) => {
             <p className="metric-description">Total number of users who registered for this event</p>
             <div className="metric-value">{metrics.totalRegistered}</div>
           </div>
-          <button 
+          <button
             className="metrics-view-button"
-            onClick={() => navigateToAttendees('registered')}
+            onClick={() => navigateToAttendees("registered")}
             aria-label="View registered attendees"
           >
             <span className="view-text">
@@ -48,7 +63,7 @@ const EventMetricsSection = ({ metrics, eventId }) => {
             </span>
           </button>
         </div>
-        
+
         <div className="metric-card">
           <div className="metric-icon online">
             <FontAwesomeIcon icon={faUserCheck} />
@@ -58,9 +73,9 @@ const EventMetricsSection = ({ metrics, eventId }) => {
             <p className="metric-description">Attendees who participated remotely via stream</p>
             <div className="metric-value">{metrics.totalAttendedOnline}</div>
           </div>
-          <button 
+          <button
             className="metrics-view-button"
-            onClick={() => navigateToAttendees('online')}
+            onClick={() => navigateToAttendees("online")}
             aria-label="View online attendees"
           >
             <span className="view-text">
@@ -71,7 +86,7 @@ const EventMetricsSection = ({ metrics, eventId }) => {
             </span>
           </button>
         </div>
-        
+
         <div className="metric-card">
           <div className="metric-icon offline">
             <FontAwesomeIcon icon={faUserCheck} />
@@ -81,9 +96,9 @@ const EventMetricsSection = ({ metrics, eventId }) => {
             <p className="metric-description">Attendees who participated at the physical venue</p>
             <div className="metric-value">{metrics.totalAttendedOffline}</div>
           </div>
-          <button 
+          <button
             className="metrics-view-button"
-            onClick={() => navigateToAttendees('offline')}
+            onClick={() => navigateToAttendees("offline")}
             aria-label="View onsite attendees"
           >
             <span className="view-text">
@@ -94,7 +109,7 @@ const EventMetricsSection = ({ metrics, eventId }) => {
             </span>
           </button>
         </div>
-        
+
         <div className="metric-card">
           <div className="metric-icon both">
             <FontAwesomeIcon icon={faUserCheck} />
@@ -104,9 +119,9 @@ const EventMetricsSection = ({ metrics, eventId }) => {
             <p className="metric-description">Attendees who participated both online and onsite</p>
             <div className="metric-value">{metrics.totalAttendedBoth}</div>
           </div>
-          <button 
+          <button
             className="metrics-view-button"
-            onClick={() => navigateToAttendees('both')}
+            onClick={() => navigateToAttendees("both")}
             aria-label="View hybrid attendees"
           >
             <span className="view-text">
@@ -117,7 +132,7 @@ const EventMetricsSection = ({ metrics, eventId }) => {
             </span>
           </button>
         </div>
-        
+
         <div className="metric-card">
           <div className="metric-icon absent">
             <FontAwesomeIcon icon={faUserClock} />
@@ -127,9 +142,9 @@ const EventMetricsSection = ({ metrics, eventId }) => {
             <p className="metric-description">Registered users who did not attend the event</p>
             <div className="metric-value">{metrics.totalDidNotAttend}</div>
           </div>
-          <button 
+          <button
             className="metrics-view-button"
-            onClick={() => navigateToAttendees('absent')}
+            onClick={() => navigateToAttendees("absent")}
             aria-label="View absent registrants"
           >
             <span className="view-text">
@@ -140,9 +155,33 @@ const EventMetricsSection = ({ metrics, eventId }) => {
             </span>
           </button>
         </div>
+
+        {/* New Quick Registrations Card with dummy data */}
+        <div className="metric-card">
+          <div className="metric-icon quick-reg">
+            <FontAwesomeIcon icon={faUserPlus} />
+          </div>
+          <div className="metric-content">
+            <h3>Quick Registrations</h3>
+            <p className="metric-description">Users who registered with minimal information</p>
+            <div className="metric-value">{quickRegCount}</div>
+          </div>
+          <button
+            className="metrics-view-button"
+            onClick={navigateToQuickRegistrations}
+            aria-label="View quick registrations"
+          >
+            <span className="view-text">
+              <FontAwesomeIcon icon={faEye} /> View Registrations
+            </span>
+            <span className="view-arrow">
+              <FontAwesomeIcon icon={faArrowRight} />
+            </span>
+          </button>
+        </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default EventMetricsSection;
+export default EventMetricsSection
