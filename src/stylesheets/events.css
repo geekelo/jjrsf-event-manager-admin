@@ -1,8 +1,8 @@
 /* Events Page Styles */
 .events-page-background {
-  background: url('/assets/css-pattern.png') repeat;
+  background: url("/assets/css-pattern.png") repeat;
   min-height: 100vh;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   padding: 30px;
 }
 
@@ -90,6 +90,7 @@
   justify-content: space-between;
   margin-bottom: 24px;
   gap: 16px;
+  align-items: center;
 }
 
 .search-container {
@@ -98,12 +99,21 @@
   max-width: 500px;
 }
 
+.search-input-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
 .search-icon {
   position: absolute;
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: #6a5f8a;
+  font-size: 14px;
+  z-index: 1;
 }
 
 .search-input {
@@ -126,16 +136,21 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 18px;
+  padding: 10px 16px;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   background-color: white;
   color: #444;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   transition: all 0.2s ease;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  height: 42px;
+}
+
+.filter-icon {
+  font-size: 14px;
 }
 
 .filter-button:hover {
@@ -155,8 +170,14 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .filter-panel-header {
@@ -288,7 +309,8 @@
   font-size: 20px;
   font-weight: 600;
   color: #333;
-  margin-right: 8px;
+  margin: 0;
+  padding: 0;
   flex-grow: 1;
 }
 
@@ -299,6 +321,7 @@
   border-radius: 16px;
   text-transform: capitalize;
   white-space: nowrap;
+  margin-left: 8px;
 }
 
 .event-status-upcoming {
@@ -306,7 +329,7 @@
   color: #0072c6;
 }
 
-.event-status-ongoing { /* Changed from .event-status-planning */
+.event-status-ongoing {
   background-color: #fff7e6;
   color: #d46b08;
 }
@@ -326,10 +349,16 @@
   gap: 8px;
 }
 
+.event-dates p {
+  margin: 0;
+  padding: 0;
+}
+
 .event-location {
   font-size: 14px;
   color: #666;
-  margin-bottom: 16px;
+  margin: 0 0 16px 0;
+  padding: 0;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -338,6 +367,7 @@
 .event-icon {
   opacity: 0.7;
   font-size: 14px;
+  flex-shrink: 0;
 }
 
 .event-description {
@@ -349,6 +379,8 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin: 0;
+  padding: 0;
 }
 
 .event-actions {
@@ -488,8 +520,14 @@
 }
 
 @keyframes modalFadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modal-header {
@@ -558,8 +596,8 @@
   margin-left: 4px;
 }
 
-.form-group input, 
-.form-group select, 
+.form-group input,
+.form-group select,
 .form-group textarea {
   padding: 12px;
   border: 1px solid #e0e0e0;
@@ -569,8 +607,8 @@
   transition: all 0.2s;
 }
 
-.form-group input:focus, 
-.form-group select:focus, 
+.form-group input:focus,
+.form-group select:focus,
 .form-group textarea:focus {
   outline: none;
   border-color: #442777;
@@ -685,10 +723,18 @@
 
   .events-filters {
     flex-direction: column;
+    width: 100%;
+    gap: 12px;
   }
 
   .search-container {
     max-width: 100%;
+    width: 100%;
+  }
+
+  .filter-button {
+    width: 100%;
+    justify-content: center;
   }
 
   .events-list {
@@ -707,7 +753,8 @@
     flex-direction: column;
   }
 
-  .save-button, .cancel-button {
+  .save-button,
+  .cancel-button {
     width: 100%;
   }
 }

@@ -1,13 +1,13 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarDays, faLocationDot, faEllipsisVertical, faEye } from '@fortawesome/free-solid-svg-icons';
+"use client"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faCalendarDays, faLocationDot, faEllipsisVertical, faEye } from "@fortawesome/free-solid-svg-icons"
 
 const EventCard = ({ event, onManage, onViewDetails, getStatusBadgeClass, formatDate }) => {
   return (
     <div className="event-card">
       <div className="event-card-content">
         <div className="event-header">
-          <h3 className="event-name">{event.name}</h3>
+          <h3 className="event-dates">{event.name}</h3>
           <span className={`event-status ${getStatusBadgeClass(event.status)}`}>
             {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
           </span>
@@ -18,7 +18,9 @@ const EventCard = ({ event, onManage, onViewDetails, getStatusBadgeClass, format
           {event.start_date === event.end_date ? (
             <p>{formatDate(event.start_date)}</p>
           ) : (
-            <p>{formatDate(event.start_date)} - {formatDate(event.end_date)}</p>
+            <p>
+              {formatDate(event.start_date)} - {formatDate(event.end_date)}
+            </p>
           )}
         </div>
 
@@ -45,7 +47,7 @@ const EventCard = ({ event, onManage, onViewDetails, getStatusBadgeClass, format
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default EventCard;
+export default EventCard
