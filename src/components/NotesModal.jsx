@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faTimes, faPlus, faSave, faStickyNote, faUser } from "@fortawesome/free-solid-svg-icons"
+import { faTimes, faPlus, faSave, faStickyNote, faUser, faTrash } from "@fortawesome/free-solid-svg-icons"
 import { toast } from "react-toastify"
 
 const NotesModal = ({ attendee, isOpen, onClose }) => {
@@ -122,6 +122,28 @@ const NotesModal = ({ attendee, isOpen, onClose }) => {
     }
   }
 
+  // Add a deleteNote function after the handleSubmit function
+  const deleteNote = async (noteId) => {
+    if (!window.confirm("Are you sure you want to delete this note?")) {
+      return
+    }
+
+    setLoading(true)
+    try {
+      // This would be replaced with an actual API call
+      setTimeout(() => {
+        // Filter out the deleted note
+        setNotes(notes.filter((note) => note.id !== noteId))
+        toast.success("Note deleted successfully")
+        setLoading(false)
+      }, 500)
+    } catch (error) {
+      console.error("Error deleting note:", error)
+      toast.error("Failed to delete note")
+      setLoading(false)
+    }
+  }
+
   // Format date for display
   const formatDate = (dateString) => {
     const options = {
@@ -227,6 +249,9 @@ const NotesModal = ({ attendee, isOpen, onClose }) => {
                     </span>
                     <span className="note-timestamp">{formatDate(note.timestamp)}</span>
                   </div>
+                  <button className="delete-note-button" onClick={() => deleteNote(note.id)} aria-label="Delete note">
+                    <FontAwesomeIcon icon={faTrash} /> Delete
+                  </button>
                 </div>
               ))}
             </div>

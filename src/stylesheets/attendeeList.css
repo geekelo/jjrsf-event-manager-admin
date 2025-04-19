@@ -1121,6 +1121,9 @@
   border-radius: 8px;
   padding: 16px;
   border-left: 3px solid #442777;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .note-content {
@@ -1241,4 +1244,37 @@
   background-color: #e0e0e0;
   border-color: #442777;
   color: #331c5a;
+}
+
+/* Add styles for the delete note button */
+.delete-note-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ffebee;
+  color: #e53935;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 12px;
+  align-self: flex-end;
+}
+
+.delete-note-button:hover {
+  background-color: #ffcdd2;
+}
+
+/* Update note-item to include positioning for the delete button */
+.note-item {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 16px;
+  border-left: 3px solid #442777;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
