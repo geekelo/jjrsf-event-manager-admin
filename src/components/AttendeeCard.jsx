@@ -1,3 +1,6 @@
+"use client"
+
+import { useState } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faUser,
@@ -11,15 +14,20 @@ import {
   faGlobe,
   faCheck,
   faLock,
+  faStickyNote,
 } from "@fortawesome/free-solid-svg-icons"
+import NotesModal from "./NotesModal"
 
 const AttendeeCard = ({ attendee }) => {
+  const [showNotesModal, setShowNotesModal] = useState(false)
+
   return (
     <div className="attendee-card">
       <div className="attendee-card-header">
         <h3 className="attendee-name">
           <FontAwesomeIcon icon={faUser} className="icon-primary" />
-          {attendee.title ? `${attendee.title} ` : ""}{attendee.name}
+          {attendee.title ? `${attendee.title} ` : ""}
+          {attendee.name}
         </h3>
       </div>
 
@@ -120,7 +128,20 @@ const AttendeeCard = ({ attendee }) => {
           </div>
           <div className="otp-value">{attendee.otp || "N/A"}</div>
         </div>
+
+        {/* Notes Button */}
+        <div className="attendee-notes-section">
+          <button className="notes-button" onClick={() => setShowNotesModal(true)}>
+            <FontAwesomeIcon icon={faStickyNote} />
+            <span>Notes</span>
+          </button>
+        </div>
       </div>
+
+      {/* Notes Modal inside the card */}
+      {showNotesModal && (
+        <NotesModal attendee={attendee} isOpen={showNotesModal} onClose={() => setShowNotesModal(false)} />
+      )}
     </div>
   )
 }

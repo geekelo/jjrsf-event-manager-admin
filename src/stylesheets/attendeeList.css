@@ -3,6 +3,7 @@
   padding: 20px;
   background-color: #f5f5f5;
   min-height: 100vh;
+  position: relative;
 }
 
 .attendee-list-container {
@@ -374,6 +375,7 @@
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative; /* Important for modal positioning */
 }
 
 /* Attendee Card Styles */
@@ -384,6 +386,7 @@
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   border: 1px solid #eaeaea;
+  position: relative; /* Important for modal positioning */
 }
 
 .attendee-card:hover {
@@ -860,4 +863,365 @@
   font-weight: 600;
   color: #f57c00;
   letter-spacing: 1px;
+}
+
+/* Notes Button Styles */
+.attendee-notes-section {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.notes-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #f0f0f0;
+  color: #442777;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.notes-button:hover {
+  background-color: #e0e0e0;
+  border-color: #442777;
+  color: #331c5a;
+}
+
+/* Add these new styles for the Notes Modal */
+.notes-modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  border-radius: 10px; /* Match the card border radius */
+}
+
+/* Create a new class for proper modal positioning */
+.notes-modal {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: modalFadeIn 0.3s;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  z-index: 1001; /* Ensure modal is above overlay */
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.notes-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
+
+.notes-modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #442777;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notes-close-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.notes-close-button:hover {
+  background-color: #f6f4ff;
+  color: #442777;
+}
+
+.notes-actions {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.add-note-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #442777;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-note-button:hover {
+  background-color: #331c5a;
+}
+
+.add-note-form-container {
+  padding: 0 20px 16px;
+  animation: slideDown 0.3s ease;
+}
+
+.add-note-form {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.add-note-form .form-group {
+  margin-bottom: 16px;
+}
+
+.add-note-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #444;
+  font-size: 14px;
+}
+
+.add-note-form textarea,
+.add-note-form input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.add-note-form textarea:focus,
+.add-note-form input:focus {
+  outline: none;
+  border-color: #442777;
+  box-shadow: 0 0 0 2px rgba(68, 39, 119, 0.1);
+}
+
+.add-note-form .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding-top: 0;
+  border-top: none;
+}
+
+.save-note-button {
+  background-color: #442777;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.save-note-button:hover {
+  background-color: #331c5a;
+}
+
+.save-note-button:disabled {
+  background-color: #a99bc1;
+  cursor: not-allowed;
+}
+
+.notes-list-container {
+  padding: 16px 20px 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.notes-list-container h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 16px 0;
+}
+
+/* Make the notes list scrollable with a max height */
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 5px; /* Add some padding for scrollbar */
+}
+
+.note-item {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 16px;
+  border-left: 3px solid #442777;
+}
+
+.note-content {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+}
+
+.note-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #666;
+}
+
+.note-author {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.note-timestamp {
+  font-style: italic;
+}
+
+.no-notes-message {
+  text-align: center;
+  padding: 24px;
+  color: #666;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.notes-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.notes-loading .spinner {
+  border: 3px solid rgba(68, 39, 119, 0.1);
+  border-top: 3px solid #442777;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .notes-modal {
+    max-width: 90%;
+    max-height: 70vh;
+  }
+
+  .note-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .notes-modal {
+    max-width: 95%;
+    max-height: 80vh;
+  }
+
+  .notes-modal-header {
+    padding: 12px 16px;
+  }
+
+  .notes-actions {
+    padding: 12px 16px;
+  }
+
+  .add-note-form {
+    padding: 12px;
+  }
+
+  .notes-list-container {
+    padding: 12px 16px 16px;
+  }
+}
+
+/* Keep the attendee notes button styles */
+.attendee-notes-section {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.notes-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #f0f0f0;
+  color: #442777;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.notes-button:hover {
+  background-color: #e0e0e0;
+  border-color: #442777;
+  color: #331c5a;
 }
