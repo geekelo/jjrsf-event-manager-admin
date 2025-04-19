@@ -952,11 +952,16 @@
 
 .notes-modal-header h2 {
   margin: 0;
-  font-size: 20px;
+  font-size: 18px; /* Reduced from 20px */
   color: #442777;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px; /* Reduced from 10px for tighter alignment */
+}
+
+.notes-modal-header h2 svg {
+  font-size: 16px; /* Ensure icon size is appropriate */
+  margin-top: 1px; /* Fine-tune vertical alignment */
 }
 
 .notes-close-button {
