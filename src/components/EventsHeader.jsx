@@ -1,6 +1,6 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarPlus, faCalendarDays, faMagnifyingGlass, faFilter } from '@fortawesome/free-solid-svg-icons';
+"use client"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faCalendarPlus, faCalendarDays, faMagnifyingGlass, faFilter } from "@fortawesome/free-solid-svg-icons"
 
 const EventsHeader = ({ onCreateEvent, onToggleFilters, searchTerm, onSearch }) => {
   return (
@@ -9,10 +9,7 @@ const EventsHeader = ({ onCreateEvent, onToggleFilters, searchTerm, onSearch }) 
         <h1 className="events-title">
           <FontAwesomeIcon icon={faCalendarDays} className="title-icon" /> Events
         </h1>
-        <button 
-          className="create-event-button" 
-          onClick={onCreateEvent}
-        >
+        <button className="create-event-button" onClick={onCreateEvent}>
           <FontAwesomeIcon icon={faCalendarPlus} className="button-icon" />
           Create Event
         </button>
@@ -20,22 +17,24 @@ const EventsHeader = ({ onCreateEvent, onToggleFilters, searchTerm, onSearch }) 
 
       <div className="events-filters">
         <div className="search-container">
-          <FontAwesomeIcon icon={faMagnifyingGlass} className="search-icon" />
-          <input
-            type="text"
-            placeholder="Search events..."
-            value={searchTerm}
-            onChange={onSearch}
-            className="search-input"
-          />
+          <div className="search-input-wrapper">
+            <FontAwesomeIcon icon={faMagnifyingGlass} className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search events..."
+              value={searchTerm}
+              onChange={onSearch}
+              className="search-input"
+            />
+          </div>
         </div>
         <button className="filter-button" onClick={onToggleFilters}>
-          <FontAwesomeIcon icon={faFilter} />
+          <FontAwesomeIcon icon={faFilter} className="filter-icon" />
           <span>Filter & Sort</span>
         </button>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default EventsHeader;
+export default EventsHeader

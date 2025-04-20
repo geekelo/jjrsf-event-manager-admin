@@ -1,36 +1,39 @@
+/* Attendee List Page Styles */
 .attendee-list-page {
+  padding: 20px;
+  background-color: #f5f5f5;
   min-height: 100vh;
-  padding: 40px 20px;
-  background-color: #f8f9fa;
+  position: relative;
 }
 
 .attendee-list-container {
   max-width: 1200px;
   margin: 0 auto;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
+/* Header styles */
 .attendee-list-header {
-  display: flex;
-  align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #eaeaea;
+  padding: 24px 30px;
   background-color: #f8f9fa;
+  border-bottom: 1px solid #eee;
   position: sticky;
   top: 0;
   z-index: 10;
+  display: flex;
+  align-items: flex-start;
 }
 
 .back-button {
-  background-color: transparent;
+  background: none;
   border: none;
-  color: #442777;
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
-  margin-right: 16px;
+  color: #333;
+  margin-right: 15px;
   width: 40px;
   height: 40px;
   display: flex;
@@ -38,6 +41,7 @@
   justify-content: center;
   border-radius: 50%;
   transition: background-color 0.2s ease;
+  flex-shrink: 0;
 }
 
 .back-button:hover {
@@ -46,16 +50,22 @@
 
 .header-content {
   flex-grow: 1;
-  display: flex;
-  align-items: center;
 }
 
 .header-content h1 {
-  font-size: 24px;
   margin: 0;
+  font-size: 28px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  color: #333;
+}
+
+.event-name {
+  margin: 5px 0 0;
+  color: #666;
+  font-size: 16px;
+  margin-left: 34px; /* Aligns with the main heading text */
 }
 
 .attendee-count {
@@ -68,10 +78,14 @@
   margin-left: 12px;
 }
 
+/* Search and filter styles */
 .search-container {
+  padding: 20px 30px;
   display: flex;
-  align-items: center;
-  gap: 12px;
+  gap: 10px;
+  width: 100%;
+  border-bottom: 1px solid #eee;
+  margin-top: 16px;
 }
 
 .search-input-container {
@@ -81,18 +95,18 @@
 
 .search-icon {
   position: absolute;
-  left: 12px;
+  left: 10px;
   top: 50%;
   transform: translateY(-50%);
   color: #999;
 }
 
 .search-input {
-  padding: 10px 12px 10px 36px;
+  width: 100%;
+  padding: 12px 10px 12px 36px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  width: 240px;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .search-input:focus {
@@ -118,32 +132,31 @@
 }
 
 .filter-button {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px 20px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
   transition: all 0.2s ease;
   position: relative;
 }
 
 .filter-button:hover {
-  background-color: #f5f5f5;
+  background-color: #f0f0f0;
 }
 
 .filter-button.active {
-  background-color: #442777;
-  color: white;
+  background: #f0f0f0;
   border-color: #442777;
 }
 
 .filter-panel {
-  padding: 20px;
+  padding: 20px 30px;
   background-color: #f8f9fa;
   border-bottom: 1px solid #eaeaea;
   animation: slideDown 0.3s ease;
@@ -174,7 +187,7 @@
 
 .select-wrapper select {
   width: 100%;
-  padding: 10px 30px 10px 12px;
+  padding: 12px 30px 12px 12px;
   border-radius: 8px;
   border: 1px solid #ddd;
   background-color: white;
@@ -234,26 +247,33 @@
   right: 0;
 }
 
-.attendee-list {
-  width: 100%;
-  border-collapse: collapse;
+/* Content layout */
+.attendee-content {
+  padding: 20px 30px;
 }
 
-.attendee-list-header-row {
+/* Desktop table styles */
+.attendee-table {
+  display: none !important;
+}
+
+.attendee-table-header {
   display: grid;
-  grid-template-columns: 2fr 3fr 2fr 1fr;
-  padding: 12px 20px;
-  background-color: #f8f9fa;
-  font-weight: 600;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 10px;
+  font-weight: bold;
+  background: #f5f5f5;
+  gap: 16px;
   color: #555;
   border-bottom: 1px solid #eaeaea;
 }
 
 .attendee-row {
   display: grid;
-  grid-template-columns: 2fr 3fr 2fr 1fr;
-  padding: 16px 20px;
-  border-bottom: 1px solid #eaeaea;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  gap: 16px;
   transition: background-color 0.2s ease;
 }
 
@@ -261,90 +281,240 @@
   background-color: #f8f9fa;
 }
 
-.attendee-name-col,
-.attendee-email-col,
-.attendee-timestamp-col,
-.attendee-status-col {
+.column {
   display: flex;
-  align-items: center;
+  flex-direction: column;
 }
 
-.status-badge {
-  padding: 6px 10px;
-  border-radius: 16px;
-  font-size: 12px;
+.name-primary {
+  font-weight: 600;
+  color: #333;
+}
+
+.name-secondary {
+  font-size: 13px;
+  color: #777;
+  margin-top: 4px;
+}
+
+.contact-email,
+.contact-phone,
+.contact-whatsapp {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.detail-item {
+  display: flex;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.detail-label {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.attendance-badges {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.attendance-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.attendance-badge.attended {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.attendance-badge.not-attended {
+  background-color: #f5f5f5;
+  color: #757575;
+}
+
+.otp {
+  font-size: 14px;
+}
+
+.otp-label {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.positive {
+  color: #388e3c;
+}
+
+.negative {
+  color: #777;
+}
+
+/* Mobile card styles */
+.attendee-cards {
+  display: none; /* Hidden by default, shown on mobile */
+}
+
+/* Desktop card grid */
+.attendee-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.attendee-card {
+  margin-bottom: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative; /* Important for modal positioning */
+}
+
+/* Attendee Card Styles */
+.attendee-card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #eaeaea;
+  position: relative; /* Important for modal positioning */
+}
+
+.attendee-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.attendee-card-header {
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #eee;
+}
+
+.attendee-name {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.icon-primary {
+  color: #442777;
+}
+
+.attendee-card-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.attendee-info-group {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  color: #555;
+  font-size: 14px;
+}
+
+.info-value {
+  padding-left: 24px;
+  color: #333;
+  font-size: 15px;
+}
+
+.attendee-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.attendee-tag {
+  background: #f5f5f5;
+  padding: 5px 10px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+}
+
+.tag-value {
   font-weight: 600;
 }
 
-.status-badge.registered {
-  background-color: #e0f7fa;
-  color: #0097a7;
-}
-
-.status-badge.confirmed {
-  background-color: #e8f5e9;
+.tag-value.positive {
   color: #388e3c;
 }
 
-.status-badge.attended {
-  background-color: #e8f5e9;
-  color: #388e3c;
+.tag-value.negative {
+  color: #777;
 }
 
-.status-badge.attended.online {
-  background-color: #e3f2fd;
-  color: #1565c0;
+.attendance-status {
+  margin-top: 15px;
+  background-color: #f8f9fa;
+  padding: 12px;
+  border-radius: 8px;
 }
 
-.status-badge.attended.in-person {
-  background-color: #f3e5f5;
-  color: #7b1fa2;
+.attendance-status h4 {
+  margin: 0 0 8px 0;
+  font-size: 15px;
 }
 
-.status-badge.no-show,
-.status-badge.cancelled {
-  background-color: #ffebee;
-  color: #c62828;
+.otp-section {
+  margin-top: 15px;
+  padding: 12px;
+  background: #fff8e1;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.status-badge.attended-online {
-  background-color: #e3f2fd;
-  color: #1565c0;
-}
-
-.status-badge.late-join {
-  background-color: #fff3e0;
+.otp-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  margin-right: 10px;
   color: #e65100;
 }
 
-.status-badge.early-check-in {
-  background-color: #e8f5e9;
-  color: #388e3c;
+.otp-value {
+  font-size: 18px;
+  font-family: monospace;
+  font-weight: 600;
+  color: #e65100;
+  letter-spacing: 1px;
 }
 
-.status-badge.attended-hybrid {
-  background-color: #e8eaf6;
-  color: #3f51b5;
-}
-
-.status-badge.vip {
-  background-color: #fce4ec;
-  color: #c2185b;
-}
-
-.status-badge.no-show {
-  background-color: #ffebee;
-  color: #c62828;
-}
-
-.status-badge.cancelled {
-  background-color: #ffe0b2;
-  color: #f57c00;
-}
-
+/* No results state */
 .no-results {
-  padding: 40px 20px;
   text-align: center;
+  padding: 30px;
   color: #666;
   display: flex;
   flex-direction: column;
@@ -352,27 +522,137 @@
   gap: 16px;
 }
 
+/* Loading state */
 .loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 400px;
+  height: 300px;
 }
 
 .spinner {
-  border: 4px solid rgba(68, 39, 119, 0.1);
-  border-top: 4px solid #442777;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #442777;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   animation: spin 1s linear infinite;
   margin-bottom: 16px;
 }
 
+/* Pagination styles */
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.pagination-info {
+  color: #666;
+  font-size: 14px;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pagination-button {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ddd;
+  background-color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background-color: #f0f0f0;
+  border-color: #ccc;
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-pages {
+  display: flex;
+  gap: 5px;
+}
+
+.pagination-page-button {
+  min-width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ddd;
+  background-color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  color: #333;
+}
+
+.pagination-page-button.active {
+  background-color: #442777;
+  color: white;
+  border-color: #442777;
+}
+
+.pagination-page-button:hover:not(:disabled):not(.active) {
+  background-color: #f0f0f0;
+  border-color: #ccc;
+}
+
+.pagination-page-button.ellipsis {
+  cursor: default;
+}
+
+.pagination-page-button.ellipsis:hover {
+  background-color: white;
+  border-color: #ddd;
+}
+
+.pagination-per-page {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+.items-per-page-select {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.items-per-page-select:focus {
+  outline: none;
+  border-color: #442777;
+}
+
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes slideDown {
@@ -386,40 +666,56 @@
   }
 }
 
+/* Responsive styles */
 @media (max-width: 768px) {
   .attendee-list-header {
-    flex-wrap: wrap;
-    gap: 16px;
+    padding: 16px 20px;
+    flex-direction: column;
   }
-  
+
   .header-content {
-    flex-basis: 100%;
-    order: -1;
+    margin-top: 10px;
   }
-  
+
+  .header-content h1 {
+    font-size: 22px;
+  }
+
   .search-container {
-    flex-basis: 100%;
-    flex-wrap: wrap;
+    padding: 15px 20px;
+    flex-direction: column;
   }
-  
-  .search-input-container {
-    flex-grow: 1;
-  }
-  
-  .search-input {
+
+  .filter-button {
     width: 100%;
   }
-  
+
+  .attendee-content {
+    padding: 15px 20px;
+  }
+
+  .attendee-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-panel {
+    padding: 15px 20px;
+  }
+
+  .filter-panel-content {
+    flex-direction: column;
+  }
+
   .attendee-list-header-row,
   .attendee-row {
     grid-template-columns: 1fr 1fr;
     row-gap: 8px;
   }
-  
+
   .attendee-timestamp-col {
     order: 3;
   }
-  
+
   .attendee-status-col {
     order: 4;
   }
@@ -428,12 +724,584 @@
     flex-direction: column;
     gap: 16px;
   }
-  
+
   .filter-group {
     width: 100%;
   }
-  
+
   .filter-actions {
     justify-content: center;
   }
+
+  .back-button {
+    margin-bottom: 15px;
+    align-self: flex-start;
+  }
+
+  .header-content h1 {
+    font-size: 22px;
+  }
+
+  .event-name {
+    margin-left: 0;
+    margin-top: 5px;
+  }
+
+  .filter-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .attendee-table {
+    display: none;
+  }
+
+  .attendee-cards {
+    display: block;
+    padding: 0 10px;
+  }
+
+  .pagination-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .pagination-controls {
+    order: 1;
+  }
+
+  .pagination-info {
+    order: 0;
+  }
+
+  .pagination-per-page {
+    order: 2;
+  }
+}
+
+@media (min-width: 769px) {
+  .attendee-cards {
+    display: none;
+  }
+
+  .attendee-table {
+    display: block;
+  }
+}
+
+/* Ensure the card styling is optimized for mobile */
+.attendee-card {
+  margin-bottom: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.attendee-card-header {
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #eee;
+}
+
+.attendee-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-primary {
+  color: #442777;
+}
+
+/* Make badges more visually distinct */
+.attendance-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.attendance-badge.attended {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.attendance-badge.not-attended {
+  background-color: #f5f5f5;
+  color: #757575;
+}
+
+/* Improve the OTP section */
+.otp-section {
+  background-color: #fff8e1;
+  border-radius: 10px;
+  padding: 12px 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.otp-label {
+  font-weight: 600;
+  color: #f57c00;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.otp-value {
+  font-size: 18px;
+  font-family: monospace;
+  font-weight: 600;
+  color: #f57c00;
+  letter-spacing: 1px;
+}
+
+/* Notes Button Styles */
+.attendee-notes-section {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.notes-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #f0f0f0;
+  color: #442777;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.notes-button:hover {
+  background-color: #e0e0e0;
+  border-color: #442777;
+  color: #331c5a;
+}
+
+/* Add these new styles for the Notes Modal */
+.notes-modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  border-radius: 10px; /* Match the card border radius */
+}
+
+/* Create a new class for proper modal positioning */
+.notes-modal {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: modalFadeIn 0.3s;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  z-index: 1001; /* Ensure modal is above overlay */
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.notes-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
+
+.notes-modal-header h2 {
+  margin: 0;
+  font-size: 18px; /* Keep this size for "Notes for" text */
+  color: #442777;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* Allow wrapping */
+  gap: 8px; /* Reduced from 10px for tighter alignment */
+}
+
+.notes-modal-header h2 svg {
+  font-size: 16px; /* Ensure icon size is appropriate */
+  margin-top: 1px; /* Fine-tune vertical alignment */
+}
+
+/* New style for the attendee name */
+.attendee-name-display {
+  font-size: 13px; /* Smaller font size for the name */
+  display: block; /* Force to new line */
+  width: 100%; /* Full width to ensure it's on a new line */
+  margin-top: 4px; /* Space between "Notes for" and the name */
+  color: #666; /* Slightly lighter color to differentiate */
+  font-weight: normal; /* Less bold than the header */
+  padding-left: 24px; /* Indent under the "Notes for" text */
+}
+
+.notes-close-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.notes-close-button:hover {
+  background-color: #f6f4ff;
+  color: #442777;
+}
+
+.notes-actions {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.add-note-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #442777;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-note-button:hover {
+  background-color: #331c5a;
+}
+
+.add-note-form-container {
+  padding: 0 20px 16px;
+  animation: slideDown 0.3s ease;
+}
+
+.add-note-form {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.add-note-form .form-group {
+  margin-bottom: 16px;
+}
+
+.add-note-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #444;
+  font-size: 14px;
+}
+
+.add-note-form textarea,
+.add-note-form input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.add-note-form textarea:focus,
+.add-note-form input:focus {
+  outline: none;
+  border-color: #442777;
+  box-shadow: 0 0 0 2px rgba(68, 39, 119, 0.1);
+}
+
+.add-note-form .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding-top: 0;
+  border-top: none;
+}
+
+.save-note-button {
+  background-color: #442777;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.save-note-button:hover {
+  background-color: #331c5a;
+}
+
+.save-note-button:disabled {
+  background-color: #a99bc1;
+  cursor: not-allowed;
+}
+
+.notes-list-container {
+  padding: 16px 20px 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.notes-list-container h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 16px 0;
+}
+
+/* Make the notes list scrollable with a max height */
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 5px; /* Add some padding for scrollbar */
+}
+
+.note-item {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 16px;
+  border-left: 3px solid #442777;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.note-content {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+}
+
+.note-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #666;
+}
+
+.note-author {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.note-timestamp {
+  font-style: italic;
+}
+
+.no-notes-message {
+  text-align: center;
+  padding: 24px;
+  color: #666;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.notes-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.notes-loading .spinner {
+  border: 3px solid rgba(68, 39, 119, 0.1);
+  border-top: 3px solid #442777;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .notes-modal {
+    max-width: 90%;
+    max-height: 70vh;
+  }
+
+  .note-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .notes-modal {
+    max-width: 95%;
+    max-height: 80vh;
+  }
+
+  .notes-modal-header {
+    padding: 12px 16px;
+  }
+
+  .notes-actions {
+    padding: 12px 16px;
+  }
+
+  .add-note-form {
+    padding: 12px;
+  }
+
+  .notes-list-container {
+    padding: 12px 16px 16px;
+  }
+}
+
+/* Keep the attendee notes button styles */
+.attendee-notes-section {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.notes-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #f0f0f0;
+  color: #442777;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.notes-button:hover {
+  background-color: #e0e0e0;
+  border-color: #442777;
+  color: #331c5a;
+}
+
+/* Add styles for the delete note button */
+.delete-note-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ffebee;
+  color: #e53935;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 12px;
+  align-self: flex-end;
+}
+
+.delete-note-button:hover {
+  background-color: #ffcdd2;
+}
+
+/* Update note-item to include positioning for the delete button */
+.note-item {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 16px;
+  border-left: 3px solid #442777;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Add error message styling */
+.error-message {
+  color: #e53935;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.primary-button {
+  background-color: #442777;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.primary-button:hover {
+  background-color: #3a2065;
 }

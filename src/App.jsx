@@ -1,25 +1,20 @@
-import React from 'react';
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
-import AdminLoginPage from "./pages/AdminLogin";
-import EventsPage from './pages/Events';
-import ManageEvent from './pages/ManageEvent';
-import AttendeeList from './pages/AttendeeList';
-import PasscodeManagement from './pages/PasscodeManagement';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import "./App.css";
-import ProtectedRoute from "./components/auth/protectedRoute";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import AdminLoginPage from "./pages/AdminLogin"
+import EventsPage from "./pages/Events"
+import ManageEvent from "./pages/ManageEvent"
+import AttendeeList from "./pages/AttendeeList"
+import QuickRegistrationsList from "./pages/QuickRegistrationsList"
+import PasscodeManagement from "./pages/PasscodeManagement"
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import "./App.css"
+import ProtectedRoute from "./components/auth/protectedRoute"
 import FrontDesksPage from './pages/frontDesk';
 
 function App() {
   return (
     <Router>
-      <ToastContainer 
+      <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
@@ -30,7 +25,7 @@ function App() {
         draggable
         pauseOnHover
         theme="colored"
-        style={{ top: '60px' }} // Add this to position it below headers
+        style={{ top: "60px" }} // Add this to position it below headers
         className="toastify-container" // Add a custom class for targeting in CSS
       />
       <Routes>
@@ -46,7 +41,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        
+
         <Route
           path="/events/:eventId"
           element={
@@ -55,7 +50,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        
+
         <Route
           path="/events/:eventId/attendees/:type"
           element={
@@ -64,7 +59,16 @@ function App() {
             </ProtectedRoute>
           }
         />
-        
+
+        <Route
+          path="/events/:eventId/quick-registrations"
+          element={
+            <ProtectedRoute>
+              <QuickRegistrationsList />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/events/:eventId/passcodes"
           element={
@@ -88,7 +92,7 @@ function App() {
         <Route path="*" element={<Navigate replace to="/events" />} />
       </Routes>
     </Router>
-  );
+  )
 }
 
-export default App;
+export default App

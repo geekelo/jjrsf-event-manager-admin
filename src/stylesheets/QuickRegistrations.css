@@ -1,0 +1,184 @@
+/* Quick Registrations Styles */
+.quick-reg-content {
+  padding: 20px 30px;
+}
+
+.quick-reg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.quick-reg-card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #eaeaea;
+}
+
+.quick-reg-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.quick-reg-header {
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #eee;
+}
+
+.quick-reg-name {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.quick-reg-details {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quick-reg-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.quick-reg-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #555;
+  font-size: 14px;
+}
+
+.quick-reg-value {
+  padding-left: 24px;
+  color: #333;
+  font-size: 15px;
+  word-break: break-word;
+}
+
+.otp-value {
+  font-family: monospace;
+  letter-spacing: 1px;
+  font-weight: 600;
+  color: #e65100;
+}
+
+/* Add styles for the attendance badges and verification status */
+.attendance-badges {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.attendance-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.attendance-badge.attended {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.attendance-badge.not-attended {
+  background-color: #f5f5f5;
+  color: #757575;
+}
+
+.verification-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.verification-badge.verified {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.verification-badge.unverified {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+/* Metric card styling for quick registrations */
+.metric-icon.quick-reg {
+  background-color: #9c27b0; /* Purple color for quick registrations */
+}
+
+/* Filter badge styling */
+.filter-badge {
+  width: 8px;
+  height: 8px;
+  background-color: #e74c3c;
+  border-radius: 50%;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+/* Filter button active state */
+.filter-button.active {
+  background: #f0f0f0;
+  border-color: #442777;
+}
+
+/* Filter panel animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filter-panel {
+  padding: 20px 30px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #eaeaea;
+  animation: slideDown 0.3s ease;
+}
+
+/* Improve the date display in cards */
+.quick-reg-item.date-item {
+  margin-top: 8px;
+}
+
+.quick-reg-item.date-item .quick-reg-value {
+  font-style: italic;
+  color: #666;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .quick-reg-content {
+    padding: 15px 20px;
+  }
+
+  .quick-reg-grid {
+    grid-template-columns: 1fr;
+  }
+}

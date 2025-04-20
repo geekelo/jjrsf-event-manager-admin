@@ -36,17 +36,14 @@ export const updateEvent = createAsyncThunk(
   "events/updateEvent",
   async ({ eventId, eventData }, { rejectWithValue }) => {
     try {
-  
-
       // Use PATCH and axiosWithAuth with the correct format
       const response = await axiosWithAuth.patch(`/api/v1/foundation_events/${eventId}`, {
         id: eventId,
-        event_updates: eventData,
+        event: eventData,
       })
 
       return response.data
     } catch (error) {
-     
       // Improved error handling
       const errorMessage =
         error.response?.data?.message || error.response?.data?.error || "Failed to update event. Please try again."
@@ -80,6 +77,7 @@ const initialState = {
   events: [],
   filteredEvents: [],
   currentEvent: null,
+  currentEventId: null, // Add this line
   loading: false,
   error: null,
   filters: {
@@ -132,6 +130,7 @@ const eventsSlice = createSlice({
     // Set current event by ID
     setCurrentEvent: (state, action) => {
       const eventId = action.payload
+      state.currentEventId = eventId // Add this line
       state.currentEvent = state.events.find((event) => event.id === eventId) || null
       state.error = state.currentEvent ? null : "Event not found"
     },
@@ -142,6 +141,7 @@ const eventsSlice = createSlice({
     // Reset current event
     resetCurrentEvent: (state) => {
       state.currentEvent = null
+      state.currentEventId = null // Add this line
       state.isEditMode = false
     },
   },
