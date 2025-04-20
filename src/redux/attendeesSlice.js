@@ -7,7 +7,7 @@ export const fetchEventAttendees = createAsyncThunk(
   async (eventId, { rejectWithValue }) => {
     try {
       const response = await axiosWithAuth.get(`/api/v1/event_attendees?event_id=${eventId}`)
-      return response.data
+      return { data: response.data, eventId }
     } catch (error) {
       const errorMessage =
         error.response?.data?.message ||
@@ -59,13 +59,13 @@ const attendeesSlice = createSlice({
         state.loading = false
 
         // Handle case when payload is null or undefined
-        if (action.payload === null || action.payload === undefined) {
+        if (action.payload.data === null || action.payload.data === undefined) {
           state.attendees = []
         } else {
-          state.attendees = action.payload
+          state.attendees = action.payload.data
         }
 
-        state.currentEventId = action.meta.arg // Store the current event ID
+        state.currentEventId = action.payload.eventId // Store the current event ID
 
         // Calculate metrics based on the fetched attendees
         const metrics = {

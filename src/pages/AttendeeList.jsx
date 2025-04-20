@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -19,7 +19,7 @@ const AttendeeList = () => {
   // Get attendees from Redux store
   const { attendees, loading: reduxLoading, error } = useSelector((state) => state.attendees)
   const { events } = useSelector((state) => state.events)
-  const { currentEventId } = useSelector((state) => state.events)
+  const { currentEventId } = useSelector((state) => state.attendees)
 
   // Local state for filtered and displayed attendees
   const [filteredAttendees, setFilteredAttendees] = useState([])
@@ -28,6 +28,7 @@ const AttendeeList = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterActive, setFilterActive] = useState(false)
   const [eventName, setEventName] = useState("Event Name")
+  const [dataFetched, setDataFetched] = useState(false)
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
@@ -42,152 +43,97 @@ const AttendeeList = () => {
     attendance: "all",
   })
 
-  // Fetch attendees when component mounts
-  // Replace the useEffect that's causing the redirect with this one that fetches data if needed
+  // Find event name once
   useEffect(() => {
-    // Find event name from events array
     const currentEvent = events.find((event) => event.id === eventId)
     if (currentEvent) {
       setEventName(currentEvent.name)
     }
+  }, [eventId, events])
 
-    // Check if we already have attendees for this event
-    if (!(attendees.length > 0 && currentEventId === eventId)) {
-      // If we don't have attendees data, fetch it
+  // Fetch attendees only once when component mounts or when eventId changes
+  useEffect(() => {
+    // Only fetch if we don't have data for this event yet
+    if (!dataFetched || currentEventId !== eventId) {
       dispatch(fetchEventAttendees(eventId))
-    } else {
-      setLoading(false)
+      setDataFetched(true)
     }
-  }, [dispatch, eventId, events, attendees, currentEventId])
+  }, [dispatch, eventId, dataFetched, currentEventId])
 
-  // Remove this useEffect that was updating loading state based on reduxLoading:
-  // useEffect(() => {
-  //   if (!reduxLoading) {
-  //     setLoading(false)
-  //   }
-  // }, [reduxLoading])
-
-  // Add this useEffect to update loading state when Redux loading changes
+  // Update loading state based on Redux loading state
   useEffect(() => {
     if (!reduxLoading) {
       setLoading(false)
     }
   }, [reduxLoading])
 
-  // Add a useEffect to handle empty attendees array
-  useEffect(() => {
-    // If attendees array is defined (API call completed) but empty
-    if (Array.isArray(attendees) && !reduxLoading) {
-      setLoading(false)
-      setFilteredAttendees([])
-      setDisplayedAttendees([])
-    }
-  }, [attendees, reduxLoading])
+  // Filter function to apply all filters at once
+  const applyFilters = useCallback(() => {
+    if (!Array.isArray(attendees)) return []
 
-  // Filter attendees based on type parameter
-  useEffect(() => {
-    if (Array.isArray(attendees) && attendees.length) {
-      let typeFilteredAttendees = [...attendees]
-
-      // Apply type filter based on route parameter
+    return attendees.filter((attendee) => {
+      // Type filter
+      let typeMatch = true
       switch (type) {
         case "online":
-          typeFilteredAttendees = attendees.filter((a) => a.attendedOnline && !a.attendedOffline)
+          typeMatch = attendee.attendedOnline && !attendee.attendedOffline
           break
         case "offline":
-          typeFilteredAttendees = attendees.filter((a) => a.attendedOffline && !a.attendedOnline)
+          typeMatch = attendee.attendedOffline && !attendee.attendedOnline
           break
         case "both":
-          typeFilteredAttendees = attendees.filter((a) => a.attendedOnline && a.attendedOffline)
+          typeMatch = attendee.attendedOnline && attendee.attendedOffline
           break
         case "absent":
-          typeFilteredAttendees = attendees.filter((a) => !a.attendedOnline && !a.attendedOffline)
+          typeMatch = !attendee.attendedOnline && !attendee.attendedOffline
           break
-        // "registered" shows all attendees, so no filtering needed
       }
 
-      setFilteredAttendees(typeFilteredAttendees)
-      setTotalPages(Math.ceil(typeFilteredAttendees.length / itemsPerPage))
-    } else {
-      // Handle empty attendees array
-      setFilteredAttendees([])
-      setTotalPages(0)
-    }
+      if (!typeMatch) return false
 
-    // Always set loading to false after processing
-    setLoading(false)
-  }, [attendees, type, itemsPerPage])
+      // Search filter
+      const searchMatch =
+        searchTerm === "" ||
+        `${attendee.title && `${attendee.title} `}${attendee.name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (attendee.email && attendee.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (attendee.phone && attendee.phone.toLowerCase().includes(searchTerm.toLowerCase()))
 
-  // Filter attendees whenever search or filters change
+      // Gender filter
+      const genderMatch = filters.gender === "all" || attendee.gender === filters.gender
+
+      // Member status filter
+      const memberMatch =
+        filters.memberStatus === "all" ||
+        (filters.memberStatus === "yes" && attendee.isMember) ||
+        (filters.memberStatus === "no" && !attendee.isMember)
+
+      // Preferred attendance filter
+      const preferredMatch =
+        filters.preferredAttendance === "all" || attendee.preferredAttendance === filters.preferredAttendance
+
+      // Actual attendance filter
+      let attendanceMatch = true
+      if (filters.attendance === "online") {
+        attendanceMatch = attendee.attendedOnline && !attendee.attendedOffline
+      } else if (filters.attendance === "offline") {
+        attendanceMatch = attendee.attendedOffline && !attendee.attendedOnline
+      } else if (filters.attendance === "both") {
+        attendanceMatch = attendee.attendedOnline && attendee.attendedOffline
+      } else if (filters.attendance === "none") {
+        attendanceMatch = !attendee.attendedOnline && !attendee.attendedOffline
+      }
+
+      return searchMatch && genderMatch && memberMatch && preferredMatch && attendanceMatch
+    })
+  }, [attendees, type, searchTerm, filters])
+
+  // Apply filters and update state when dependencies change
   useEffect(() => {
-    if (Array.isArray(attendees) && attendees.length) {
-      const filtered = attendees.filter((attendee) => {
-        // First apply type filter
-        let typeMatch = true
-        switch (type) {
-          case "online":
-            typeMatch = attendee.attendedOnline && !attendee.attendedOffline
-            break
-          case "offline":
-            typeMatch = attendee.attendedOffline && !attendee.attendedOnline
-            break
-          case "both":
-            typeMatch = attendee.attendedOnline && attendee.attendedOffline
-            break
-          case "absent":
-            typeMatch = !attendee.attendedOnline && !attendee.attendedOffline
-            break
-        }
-
-        if (!typeMatch) return false
-
-        // Search filter
-        const searchMatch =
-          searchTerm === "" ||
-          `${attendee.title && `${attendee.title} `}${attendee.name}`
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          (attendee.email && attendee.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (attendee.phone && attendee.phone.toLowerCase().includes(searchTerm.toLowerCase()))
-
-        // Gender filter
-        const genderMatch = filters.gender === "all" || attendee.gender === filters.gender
-
-        // Member status filter
-        const memberMatch =
-          filters.memberStatus === "all" ||
-          (filters.memberStatus === "yes" && attendee.isMember) ||
-          (filters.memberStatus === "no" && !attendee.isMember)
-
-        // Preferred attendance filter
-        const preferredMatch =
-          filters.preferredAttendance === "all" || attendee.preferredAttendance === filters.preferredAttendance
-
-        // Actual attendance filter
-        let attendanceMatch = true
-        if (filters.attendance === "online") {
-          attendanceMatch = attendee.attendedOnline && !attendee.attendedOffline
-        } else if (filters.attendance === "offline") {
-          attendanceMatch = attendee.attendedOffline && !attendee.attendedOnline
-        } else if (filters.attendance === "both") {
-          attendanceMatch = attendee.attendedOnline && attendee.attendedOffline
-        } else if (filters.attendance === "none") {
-          attendanceMatch = !attendee.attendedOnline && !attendee.attendedOffline
-        }
-
-        return searchMatch && genderMatch && memberMatch && preferredMatch && attendanceMatch
-      })
-
-      setFilteredAttendees(filtered)
-      setTotalPages(Math.ceil(filtered.length / itemsPerPage))
-      setCurrentPage(1) // Reset to first page when filters change
-    } else {
-      // Handle empty attendees array
-      setFilteredAttendees([])
-      setTotalPages(0)
-      setCurrentPage(1)
-    }
-  }, [searchTerm, filters, attendees, type, itemsPerPage])
+    const filtered = applyFilters()
+    setFilteredAttendees(filtered)
+    setTotalPages(Math.ceil(filtered.length / itemsPerPage))
+    setCurrentPage(1) // Reset to first page when filters change
+  }, [applyFilters, itemsPerPage])
 
   // Update displayed attendees when page changes or filtered results change
   useEffect(() => {
@@ -199,12 +145,6 @@ const AttendeeList = () => {
       setDisplayedAttendees([])
     }
   }, [currentPage, filteredAttendees, itemsPerPage])
-
-  // Update total pages when items per page changes
-  useEffect(() => {
-    setTotalPages(Math.ceil(filteredAttendees.length / itemsPerPage))
-    setCurrentPage(1) // Reset to first page when items per page changes
-  }, [itemsPerPage, filteredAttendees.length])
 
   const handleBack = () => {
     navigate(`/events/${eventId}`)
