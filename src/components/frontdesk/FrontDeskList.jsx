@@ -12,11 +12,9 @@ const FrontDeskList = () => {
 
   useEffect(() => {
     if (eventId) {
-    const res =  dispatch(fetchFrontDesks(eventId));
-    console.log(res)
+     dispatch(fetchFrontDesks(eventId));
     }
   }, [dispatch, eventId]);
-  console.log(items)
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-red-500">Error: {error}</p>;

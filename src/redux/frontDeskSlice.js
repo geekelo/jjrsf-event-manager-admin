@@ -25,7 +25,7 @@ export const fetchFrontDesks = createAsyncThunk(
   }
 );
 
-// ➕ Create new front desk
+//  Create new front desk
 export const createFrontDesk = createAsyncThunk(
   "frontDesk/create",
   async ({ name, pin, event_id }, { rejectWithValue }) => {
@@ -41,15 +41,16 @@ export const createFrontDesk = createAsyncThunk(
   }
 );
 
-// ✏️ Update front desk
+// Update front desk
+
 export const updateFrontDesk = createAsyncThunk(
   "frontDesk/update",
   async ({ id, event_id, updates }, { rejectWithValue }) => {
     try {
       const res = await axiosWithAuth.patch(
-        `${API_BASE}/${id}?event_id=${event_id}`, // ✅ Correct path
+        `${API_BASE}/${id}?event_id=${event_id}`,
         {
-          front_desk_updates: updates,
+          event_front_desk: updates, 
         }
       );
       return res.data.front_desk;
@@ -59,12 +60,12 @@ export const updateFrontDesk = createAsyncThunk(
   }
 );
 
-// ❌ Delete front desk
+//  Delete front desk
 export const deleteFrontDesk = createAsyncThunk(
   "frontDesk/delete",
   async ({ id, event_id }, { rejectWithValue }) => {
     try {
-      await axiosWithAuth.delete(`${API_BASE}/${id}?event_id=${event_id}`); // ✅ Use path param for `id`
+      await axiosWithAuth.delete(`${API_BASE}/${id}?event_id=${event_id}`); 
       return id;
     } catch (error) {
       return rejectWithValue(handleError(error));
@@ -72,7 +73,7 @@ export const deleteFrontDesk = createAsyncThunk(
   }
 );
 
-// 🧩 Slice
+//  Slice
 const frontDeskSlice = createSlice({
   name: "frontDesk",
   initialState: {
@@ -83,7 +84,7 @@ const frontDeskSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // 🔁 FETCH
+      //  FETCH
       .addCase(fetchFrontDesks.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -97,12 +98,12 @@ const frontDeskSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ➕ CREATE
+      //  CREATE
       .addCase(createFrontDesk.fulfilled, (state, action) => {
         state.items.push(action.payload);
       })
 
-      // ✏️ UPDATE
+      //  UPDATE
       .addCase(updateFrontDesk.fulfilled, (state, action) => {
         const index = state.items.findIndex((item) => item.id === action.payload.id);
         if (index !== -1) {
@@ -110,7 +111,7 @@ const frontDeskSlice = createSlice({
         }
       })
 
-      // ❌ DELETE
+      //  DELETE
       .addCase(deleteFrontDesk.fulfilled, (state, action) => {
         state.items = state.items.filter((item) => item.id !== action.payload);
       });
