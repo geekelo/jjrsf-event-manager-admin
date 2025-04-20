@@ -9,7 +9,7 @@ if (!API_BASE_URL) {
 export const createAxiosInstance = () => {
   // Get the token from sessionStorage
   const token = sessionStorage.getItem("admin_token")
-
+console.log(token)
   return axios.create({
     baseURL: API_BASE_URL,
     headers: {
@@ -32,6 +32,7 @@ export const axiosWithAuth = axios.create({
 axiosWithAuth.interceptors.request.use(
   (config) => {
     const token = sessionStorage.getItem("admin_token")
+    console.log(token)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
