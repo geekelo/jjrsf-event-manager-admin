@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useSelector } from "react-redux"
@@ -17,12 +15,14 @@ import {
   faLock,
   faFilter,
   faChevronDown,
+  faCheck,
+  faShieldAlt,
 } from "@fortawesome/free-solid-svg-icons"
 import Pagination from "../components/Pagination"
 import "../stylesheets/attendeeList.css"
 import "../stylesheets/QuickRegistrations.css"
 
-// Make sure the generateDummyQuickRegistrations function includes registration dates
+// Update the generateDummyQuickRegistrations function to include attendance and verification status
 const generateDummyQuickRegistrations = (count) => {
   const genders = ["Male", "Female"]
   const registrations = []
@@ -35,6 +35,11 @@ const generateDummyQuickRegistrations = (count) => {
     const registrationDate = new Date()
     registrationDate.setDate(registrationDate.getDate() - randomDaysAgo)
 
+    // Generate random attendance and verification status
+    const attendedOnline = Math.random() > 0.5
+    const attendedOffline = Math.random() > 0.5
+    const verified = Math.random() > 0.3
+
     registrations.push({
       id: i,
       name: `Quick User ${i}`,
@@ -43,6 +48,9 @@ const generateDummyQuickRegistrations = (count) => {
       gender,
       otp: Math.floor(100000 + Math.random() * 900000).toString(), // 6-digit OTP
       registrationDate: registrationDate.toISOString(),
+      attendedOnline,
+      attendedOffline,
+      verified,
     })
   }
 
@@ -65,10 +73,12 @@ const QuickRegistrationsList = () => {
   const [eventName, setEventName] = useState("Event Name")
   const [filterActive, setFilterActive] = useState(false)
 
-  // Filter state
+  // Update the filters state to include attendance and verification status
   const [filters, setFilters] = useState({
     gender: "all",
     dateRange: "all",
+    attendance: "all",
+    verification: "all",
   })
 
   // Pagination state
@@ -91,7 +101,7 @@ const QuickRegistrationsList = () => {
     setLoading(false)
   }, [eventId, events])
 
-  // Filter registrations based on search term and filters
+  // Update the filter function to include the new filters
   useEffect(() => {
     if (quickRegistrations.length) {
       const filtered = quickRegistrations.filter((reg) => {
@@ -133,7 +143,25 @@ const QuickRegistrationsList = () => {
           dateMatch = regDate >= last30Days
         }
 
-        return searchMatch && genderMatch && dateMatch
+        // Attendance filter
+        let attendanceMatch = true
+        if (filters.attendance === "online") {
+          attendanceMatch = reg.attendedOnline && !reg.attendedOffline
+        } else if (filters.attendance === "offline") {
+          attendanceMatch = reg.attendedOffline && !reg.attendedOnline
+        } else if (filters.attendance === "both") {
+          attendanceMatch = reg.attendedOnline && reg.attendedOffline
+        } else if (filters.attendance === "none") {
+          attendanceMatch = !reg.attendedOnline && !reg.attendedOffline
+        }
+
+        // Verification filter
+        const verificationMatch =
+          filters.verification === "all" ||
+          (filters.verification === "verified" && reg.verified) ||
+          (filters.verification === "unverified" && !reg.verified)
+
+        return searchMatch && genderMatch && dateMatch && attendanceMatch && verificationMatch
       })
 
       setFilteredRegistrations(filtered)
@@ -181,10 +209,13 @@ const QuickRegistrationsList = () => {
     }))
   }
 
+  // Update the clearFilters function
   const clearFilters = () => {
     setFilters({
       gender: "all",
       dateRange: "all",
+      attendance: "all",
+      verification: "all",
     })
   }
 
@@ -240,6 +271,7 @@ const QuickRegistrationsList = () => {
           </button>
         </div>
 
+        {/* Update the filter panel to include the new filters */}
         {filterActive && (
           <div className="filter-panel">
             <div className="filter-panel-content">
@@ -268,6 +300,35 @@ const QuickRegistrationsList = () => {
                   <FontAwesomeIcon icon={faChevronDown} className="select-icon" />
                 </div>
               </div>
+
+              <div className="filter-group">
+                <label>Attendance</label>
+                <div className="select-wrapper">
+                  <select value={filters.attendance} onChange={(e) => handleFilterChange("attendance", e.target.value)}>
+                    <option value="all">All</option>
+                    <option value="online">Online Only</option>
+                    <option value="offline">Onsite Only</option>
+                    <option value="both">Both Online & Onsite</option>
+                    <option value="none">No Attendance</option>
+                  </select>
+                  <FontAwesomeIcon icon={faChevronDown} className="select-icon" />
+                </div>
+              </div>
+
+              <div className="filter-group">
+                <label>Verification</label>
+                <div className="select-wrapper">
+                  <select
+                    value={filters.verification}
+                    onChange={(e) => handleFilterChange("verification", e.target.value)}
+                  >
+                    <option value="all">All</option>
+                    <option value="verified">Verified</option>
+                    <option value="unverified">Unverified</option>
+                  </select>
+                  <FontAwesomeIcon icon={faChevronDown} className="select-icon" />
+                </div>
+              </div>
             </div>
 
             <div className="filter-actions">
@@ -283,6 +344,7 @@ const QuickRegistrationsList = () => {
           {filteredRegistrations.length > 0 ? (
             <>
               <div className="quick-reg-grid">
+                {/* Update the card display to include attendance and verification status */}
                 {displayedRegistrations.map((registration) => (
                   <div key={registration.id} className="quick-reg-card">
                     <div className="quick-reg-header">
@@ -323,6 +385,55 @@ const QuickRegistrationsList = () => {
                           <span>OTP:</span>
                         </div>
                         <div className="quick-reg-value otp-value">{registration.otp || "N/A"}</div>
+                      </div>
+
+                      {/* Add attendance status */}
+                      <div className="quick-reg-item">
+                        <div className="quick-reg-label">
+                          <FontAwesomeIcon icon={faCheck} />
+                          <span>Attendance:</span>
+                        </div>
+                        <div className="quick-reg-value">
+                          <div className="attendance-badges">
+                            <div
+                              className={`attendance-badge ${registration.attendedOnline ? "attended" : "not-attended"}`}
+                            >
+                              {registration.attendedOnline ? (
+                                <>
+                                  <FontAwesomeIcon icon={faCheck} />
+                                  <span>Online</span>
+                                </>
+                              ) : (
+                                <span>Online</span>
+                              )}
+                            </div>
+                            <div
+                              className={`attendance-badge ${registration.attendedOffline ? "attended" : "not-attended"}`}
+                            >
+                              {registration.attendedOffline ? (
+                                <>
+                                  <FontAwesomeIcon icon={faCheck} />
+                                  <span>Onsite</span>
+                                </>
+                              ) : (
+                                <span>Onsite</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Add verification status */}
+                      <div className="quick-reg-item">
+                        <div className="quick-reg-label">
+                          <FontAwesomeIcon icon={faShieldAlt} />
+                          <span>Status:</span>
+                        </div>
+                        <div className="quick-reg-value">
+                          <span className={`verification-badge ${registration.verified ? "verified" : "unverified"}`}>
+                            {registration.verified ? "Verified" : "Unverified"}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
