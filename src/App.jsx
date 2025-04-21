@@ -9,7 +9,7 @@ import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import "./App.css"
 import ProtectedRoute from "./components/auth/protectedRoute"
-import FrontDesksPage from './pages/frontDesk';
+import ManageStream from "./pages/manageStream"
 
 function App() {
   return (
@@ -77,14 +77,15 @@ function App() {
             </ProtectedRoute>
           }
         />
-       <Route
-  path="/events/:eventId/frontdesk"
-  element={
-    <ProtectedRoute>
-      <FrontDesksPage />
-    </ProtectedRoute>
-  }
-/>
+         <Route
+          path="/events/:eventId/manage_stream"
+          element={
+            <ProtectedRoute>
+              <ManageStream/>
+            </ProtectedRoute>
+          }
+        />
+       
 
 
         {/* Redirect root and wildcard to login */}
