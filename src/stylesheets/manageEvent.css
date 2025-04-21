@@ -1,8 +1,8 @@
 /* Manage Event Page Styles */
 .manage-event-page-background {
-  background: url('/assets/css-pattern.png') repeat;
+  background: url("/assets/css-pattern.png") repeat;
   min-height: 100vh;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   padding: 30px;
 }
 
@@ -312,6 +312,7 @@ section {
   color: #666;
 }
 
+/* Style for evaluation text with preserved formatting */
 .evaluation-text {
   background-color: #f9f9f9;
   border-radius: 8px;
@@ -320,6 +321,7 @@ section {
   line-height: 1.6;
   color: #444;
   border-left: 4px solid #442777;
+  white-space: pre-line; /* Preserve line breaks */
 }
 
 .evaluation-text.red-text {
@@ -352,6 +354,37 @@ section {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+}
+
+/* Add styles for the delete button and evaluation actions */
+.delete-button {
+  background-color: #ffebee;
+  color: #e53935;
+  border: 1px solid #e53935;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.delete-button:hover {
+  background-color: #ffcdd2;
+}
+
+.delete-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.evaluation-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
 }
 
 /* Buttons */
@@ -455,7 +488,9 @@ section {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-container p {
@@ -469,7 +504,7 @@ section {
   .event-details-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .metrics-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -492,15 +527,15 @@ section {
     grid-template-columns: 1fr;
     gap: 16px;
   }
-  
+
   .metrics-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .metric-card {
     padding: 12px;
   }
-  
+
   .metric-value {
     font-size: 28px;
   }
@@ -511,25 +546,25 @@ section {
     flex-direction: row;
     align-items: center;
   }
-  
+
   .manage-event-header h1 {
     font-size: 22px;
   }
-  
+
   .section-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
-  
+
   .section-header h2 {
     font-size: 18px;
   }
-  
+
   .form-actions {
     flex-direction: column;
   }
-  
+
   .form-actions button {
     width: 100%;
   }
@@ -698,12 +733,12 @@ section {
   color: white;
   font-size: 16px; /* Slightly larger for better visibility */
   font-weight: bold;
-  
+
   /* Center the checkmark properly */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  
+
   /* Ensure proper alignment */
   display: flex;
   align-items: center;
@@ -785,12 +820,12 @@ section {
   color: white;
   font-size: 16px; /* Slightly larger for better visibility */
   font-weight: bold;
-  
+
   /* Center the checkmark properly */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  
+
   /* Ensure proper alignment */
   display: flex;
   align-items: center;
@@ -892,11 +927,11 @@ section {
     grid-template-columns: 1fr; /* Single column on mobile */
     gap: 15px;
   }
-  
+
   .form-group {
     margin-bottom: 15px;
   }
-  
+
   /* Make inputs larger on mobile for easier touch */
   .form-group input[type="text"],
   .form-group input[type="date"],
@@ -905,39 +940,39 @@ section {
     padding: 12px;
     font-size: 16px; /* Prevent iOS zoom on focus */
   }
-  
+
   /* Improve checkbox touch areas on mobile */
   .checkbox-item {
     padding: 5px 0;
   }
-  
+
   .checkbox-item input[type="checkbox"] {
     width: 24px;
     height: 24px;
   }
-  
+
   .checkbox-label {
     font-size: 16px;
   }
-  
+
   /* Ensure buttons are large enough for touch */
   .edit-actions button {
     padding: 12px 16px;
     min-height: 44px;
   }
-  
+
   /* Better URL container for mobile */
   .url-container {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .url-container .event-url {
     width: 100%;
     overflow-wrap: break-word;
     word-break: break-all;
   }
-  
+
   .copy-button {
     align-self: flex-end;
   }
@@ -949,20 +984,20 @@ section {
     flex-direction: column;
     gap: 12px;
   }
-  
+
   .checkbox-item {
     width: 100%;
   }
-  
+
   .section-header {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .section-header h2 {
     margin-bottom: 0;
   }
-  
+
   .edit-actions {
     width: 100%;
   }
