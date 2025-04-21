@@ -38,7 +38,7 @@ export const updateEvent = createAsyncThunk(
     try {
       // Use PATCH and axiosWithAuth with the correct format
       const response = await axiosWithAuth.patch(`/api/v1/foundation_events/${eventId}`, {
-        id: eventId,
+        event_id: eventId,
         event: eventData,
       })
 
