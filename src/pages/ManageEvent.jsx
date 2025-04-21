@@ -3,7 +3,14 @@
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
-import { fetchEvents, updateEvent, updateEventEvaluation, setCurrentEvent, setEditMode } from "../redux/eventsSlice"
+import {
+  fetchEvents,
+  updateEvent,
+  updateEventEvaluation,
+  deleteEventEvaluation,
+  setCurrentEvent,
+  setEditMode,
+} from "../redux/eventsSlice"
 import { fetchEventAttendees } from "../redux/attendeesSlice"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
@@ -41,6 +48,7 @@ function ManageEvent() {
   } = useSelector((state) => state.attendees)
 
   const [showPasscodeModal, setShowPasscodeModal] = useState(false)
+  const [localEvent, setLocalEvent] = useState(null) // Add local state for immediate UI updates
 
   // Check authentication on component mount
   useEffect(() => {
@@ -70,6 +78,13 @@ function ManageEvent() {
     }
   }, [dispatch, eventId, navigate, events.length, currentEventId])
 
+  // Update local event state when event changes in Redux
+  useEffect(() => {
+    if (event) {
+      setLocalEvent(event)
+    }
+  }, [event])
+
   // Show error toast if there's an error
   useEffect(() => {
     if (eventError) {
@@ -81,17 +96,7 @@ function ManageEvent() {
   }, [eventError, attendeesError])
 
   // Use direct localhost URL
-  const eventUrl = `http://localhost:3000/event/${eventId}`
-
-  // Replace the dummy metrics with the metrics from Redux
-  // Remove this line:
-  // const metrics = {
-  //   totalRegistered: 158,
-  //   totalAttendedOnline: 89,
-  //   totalAttendedOffline: 45,
-  //   totalAttendedBoth: 12,
-  //   totalDidNotAttend: 36,
-  // }
+  const eventUrl = `https://jjrsf-event-manager.vercel.app/event/${eventId}`
 
   const handleBack = () => {
     navigate("/events")
@@ -105,6 +110,26 @@ function ManageEvent() {
   }
 
   const updateEventData = (updatedData) => {
+    // Immediately update local state for UI
+    const mappedUpdatedData = {
+      id: eventId,
+      name: updatedData.name,
+      start_date: updatedData.startDate,
+      end_date: updatedData.endDate,
+      registration_deadline: updatedData.registrationDeadline,
+      location: updatedData.location,
+      status: updatedData.status,
+      onsite: updatedData.isOnsite,
+      online: updatedData.isOffline,
+      description: updatedData.description,
+    }
+    
+    // Update local state for immediate UI refresh
+    setLocalEvent(prev => ({
+      ...prev,
+      ...mappedUpdatedData
+    }))
+
     // Map form field names to API field names
     const apiData = {
       name: updatedData.name,
@@ -136,13 +161,49 @@ function ManageEvent() {
   }
 
   const updateEventEvaluationHandler = (evaluationText) => {
-    dispatch(updateEventEvaluation({ eventId, evaluation: evaluationText }))
+    // First update local state for immediate UI refresh
+    setLocalEvent(prev => ({
+      ...prev,
+      evaluation: evaluationText
+    }))
+    
+    return dispatch(updateEventEvaluation({ eventId, evaluation: evaluationText }))
       .unwrap()
       .then(() => {
         toast.success("Evaluation saved successfully!")
+        return Promise.resolve() // Return a resolved promise on success
       })
       .catch((error) => {
+        // If API call fails, revert local state
+        setLocalEvent(prev => ({
+          ...prev,
+          evaluation: event.evaluation
+        }))
         toast.error(error || "Failed to update evaluation")
+        return Promise.reject(error) // Return a rejected promise on failure
+      })
+  }
+
+  // Add a new function to handle evaluation deletion
+  const deleteEventEvaluationHandler = () => {
+    // First update local state for immediate UI refresh
+    setLocalEvent(prev => ({
+      ...prev,
+      evaluation: null
+    }))
+    
+    return dispatch(deleteEventEvaluation(eventId))
+      .unwrap()
+      .then(() => {
+        return Promise.resolve()
+      })
+      .catch((error) => {
+        // If API call fails, revert local state
+        setLocalEvent(prev => ({
+          ...prev,
+          evaluation: event.evaluation
+        }))
+        return Promise.reject(error || "Failed to delete evaluation")
       })
   }
 
@@ -153,7 +214,7 @@ function ManageEvent() {
   // Update loading state to consider both event and attendees loading
   const loading = eventLoading || attendeesLoading
 
-  if (loading && !event) {
+  if (loading && !localEvent) {
     return (
       <div className="manage-event-page-background">
         <div className="loading-container">
@@ -164,7 +225,7 @@ function ManageEvent() {
     )
   }
 
-  if (!event && !loading) {
+  if (!localEvent && !loading) {
     return (
       <div className="manage-event-page-background">
         <div className="loading-container">
@@ -177,21 +238,21 @@ function ManageEvent() {
     )
   }
 
-  // Map API fields to component fields
-  const mappedEvent = event
+  // Map API fields to component fields - now using localEvent for immediate UI updates
+  const mappedEvent = localEvent
     ? {
-        id: event.id,
-        name: event.name,
-        startDate: event.start_date,
-        endDate: event.end_date,
-        registrationDeadline: event.registration_deadline,
-        location: event.location,
-        status: event.status,
-        isOnsite: event.onsite,
-        isOffline: event.online,
-        description: event.description,
-        evaluation: event.evaluation,
-        imageUrl: event.image_url,
+        id: localEvent.id,
+        name: localEvent.name,
+        startDate: localEvent.start_date,
+        endDate: localEvent.end_date,
+        registrationDeadline: localEvent.registration_deadline,
+        location: localEvent.location,
+        status: localEvent.status,
+        isOnsite: localEvent.onsite,
+        isOffline: localEvent.online,
+        description: localEvent.description,
+        evaluation: localEvent.evaluation,
+        imageUrl: localEvent.image_url,
       }
     : null
 
@@ -228,6 +289,7 @@ function ManageEvent() {
           event={mappedEvent}
           eventId={eventId}
           updateEventEvaluation={updateEventEvaluationHandler}
+          deleteEventEvaluation={deleteEventEvaluationHandler}
         />
 
         <StreamsSection event={mappedEvent} />
