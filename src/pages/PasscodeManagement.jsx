@@ -152,8 +152,8 @@ const PasscodeManagement = () => {
       day: "numeric",
     });
   const maskPasscode = (passcode) => {
-    if (!passcode || typeof passcode !== "string") return "••••";
-    const visibleDigits = 4;
+    if (!passcode || typeof passcode !== "string" || "number") return "••••";
+    const visibleDigits = 4; // You can adjust this number to show more or fewer digits
     const masked = "•".repeat(Math.max(0, passcode.length - visibleDigits));
     return masked + passcode.slice(-visibleDigits);
   };
@@ -231,7 +231,7 @@ const PasscodeManagement = () => {
                         <td>{passcode.name}</td>
                         <td>
                           <div className="passcode-value-container">
-                            <span>
+                            <span className="passcode-value">
                               {showPasscode[passcode.id]
                                 ? passcode.passcode
                                 : maskPasscode(passcode.passcode)}
@@ -239,6 +239,11 @@ const PasscodeManagement = () => {
                             <button
                               onClick={() =>
                                 togglePasscodeVisibility(passcode.id)
+                              }
+                              aria-label={
+                                showPasscode[passcode.id]
+                                  ? "Hide passcode"
+                                  : "Show passcode"
                               }
                             >
                               <FontAwesomeIcon
@@ -249,14 +254,23 @@ const PasscodeManagement = () => {
                             </button>
                           </div>
                         </td>
+
                         <td>{formatDate(passcode.created_at)}</td>
                         <td>
-                          <button onClick={() => showEditModal(passcode)}>
-                            Edit
-                          </button>
-                          <button onClick={() => handleDelete(passcode.id)}>
-                            <FontAwesomeIcon icon={faTrash} />
-                          </button>
+                          <div className="passcode-actions">
+                            <button
+                              className="edit-passcode-button"
+                              onClick={() => showEditModal(passcode)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="delete-passcode-button"
+                              onClick={() => handleDelete(passcode.id)}
+                            >
+                              <FontAwesomeIcon icon={faTrash} />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
