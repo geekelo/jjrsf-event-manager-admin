@@ -1,13 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit"
 import eventsReducer from "./eventsSlice"
 import attendeesReducer from "./attendeesSlice"
-import frontDeskReducer from './frontDeskSlice'
+import quickRegistrationsReducer from "./quickRegistrationsSlice"
 
 export const store = configureStore({
   reducer: {
     events: eventsReducer,
-    frontDesk: frontDeskReducer,
-    
     attendees: attendeesReducer,
+    quickRegistrations: quickRegistrationsReducer,
   },
 })

@@ -10,20 +10,24 @@ import {
   faArrowRight,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons"
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { fetchEventQuickRegistrations } from "../../redux/quickRegistrationsSlice"
 
 const EventMetricsSection = ({ metrics, eventId }) => {
   const navigate = useNavigate()
-  // State to store the dummy quick registrations count
-  const [quickRegCount, setQuickRegCount] = useState(0)
+  const dispatch = useDispatch()
+  
+  // Get quick registration data from Redux store
+  const { totalCount: quickRegCount, loading: quickRegLoading } = useSelector(
+    (state) => state.quickRegistrations
+  )
 
-  // Generate a random number of quick registrations on component mount
+  // Fetch quick registrations when component mounts
   useEffect(() => {
-    // Generate a random number between 25-50
-    const randomCount = Math.floor(25 + Math.random() * 25)
-    setQuickRegCount(randomCount)
-  }, [])
-
+    dispatch(fetchEventQuickRegistrations(eventId))
+  }, [dispatch, eventId])
+  
   const navigateToAttendees = (type) => {
     navigate(`/events/${eventId}/attendees/${type}`)
   }
@@ -156,7 +160,7 @@ const EventMetricsSection = ({ metrics, eventId }) => {
           </button>
         </div>
 
-        {/* New Quick Registrations Card with dummy data */}
+        {/* Quick Registrations Card with real data from API */}
         <div className="metric-card">
           <div className="metric-icon quick-reg">
             <FontAwesomeIcon icon={faUserPlus} />
@@ -164,7 +168,9 @@ const EventMetricsSection = ({ metrics, eventId }) => {
           <div className="metric-content">
             <h3>Quick Registrations</h3>
             <p className="metric-description">Users who registered with minimal information</p>
-            <div className="metric-value">{quickRegCount}</div>
+            <div className="metric-value">
+              {quickRegLoading ? "Loading..." : quickRegCount}
+            </div>
           </div>
           <button
             className="metrics-view-button"
