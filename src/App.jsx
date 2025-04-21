@@ -9,6 +9,7 @@ import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import "./App.css"
 import ProtectedRoute from "./components/auth/protectedRoute"
+import FrontDesksPage from './pages/frontDesk';
 
 function App() {
   return (
@@ -76,6 +77,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+       <Route
+  path="/events/:eventId/frontdesk"
+  element={
+    <ProtectedRoute>
+      <FrontDesksPage />
+    </ProtectedRoute>
+  }
+/>
+
 
         {/* Redirect root and wildcard to login */}
         <Route path="/" element={<Navigate replace to="/events" />} />

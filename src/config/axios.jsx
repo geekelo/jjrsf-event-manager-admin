@@ -9,7 +9,6 @@ if (!API_BASE_URL) {
 export const createAxiosInstance = () => {
   // Get the token from sessionStorage
   const token = sessionStorage.getItem("admin_token")
-
   return axios.create({
     baseURL: API_BASE_URL,
     headers: {

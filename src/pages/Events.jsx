@@ -99,7 +99,7 @@ function EventsPage() {
       [name]: value,
     }))
   }
-
+console.log(filteredEvents.id)
   // Handle form submission
   const handleSubmitEvent = (e) => {
     e.preventDefault()
