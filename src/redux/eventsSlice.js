@@ -4,11 +4,9 @@ import { axiosWithAuth } from "../config/axios"
 // Async thunk for fetching all events
 export const fetchEvents = createAsyncThunk("events/fetchEvents", async (_, { rejectWithValue }) => {
   try {
-    // Use axiosWithAuth instead of createAxiosInstance
     const response = await axiosWithAuth.get("/api/v1/foundation_events")
     return response.data
   } catch (error) {
-    // Improved error handling
     const errorMessage =
       error.response?.data?.message ||
       error.response?.data?.error ||
@@ -20,11 +18,9 @@ export const fetchEvents = createAsyncThunk("events/fetchEvents", async (_, { re
 // Async thunk for creating a new event
 export const createEvent = createAsyncThunk("events/createEvent", async (eventData, { rejectWithValue }) => {
   try {
-    // Use axiosWithAuth instead of createAxiosInstance
     const response = await axiosWithAuth.post("/api/v1/foundation_events", { event: eventData })
     return response.data
   } catch (error) {
-    // Improved error handling
     const errorMessage =
       error.response?.data?.message || error.response?.data?.error || "Failed to create event. Please try again."
     return rejectWithValue(errorMessage)
@@ -34,17 +30,18 @@ export const createEvent = createAsyncThunk("events/createEvent", async (eventDa
 // Async thunk for updating an event
 export const updateEvent = createAsyncThunk(
   "events/updateEvent",
-  async ({ eventId, eventData }, { rejectWithValue }) => {
+  async ({ eventId, eventData }, { rejectWithValue, dispatch }) => {
     try {
-      // Use PATCH and axiosWithAuth with the correct format
       const response = await axiosWithAuth.patch(`/api/v1/foundation_events/${eventId}`, {
-        id: eventId,
+        event_id: eventId,
         event: eventData,
       })
 
+      // Force a refresh of the events to ensure we have the latest data
+      dispatch(fetchEvents())
+      
       return response.data
     } catch (error) {
-      // Improved error handling
       const errorMessage =
         error.response?.data?.message || error.response?.data?.error || "Failed to update event. Please try again."
       return rejectWithValue(errorMessage)
@@ -52,21 +49,57 @@ export const updateEvent = createAsyncThunk(
   },
 )
 
-// Async thunk for updating event evaluation
+// Update event evaluation
 export const updateEventEvaluation = createAsyncThunk(
   "events/updateEventEvaluation",
-  async ({ eventId, evaluation }, { rejectWithValue }) => {
+  async ({ eventId, evaluation }, { rejectWithValue, dispatch }) => {
     try {
-      // Use PATCH for evaluation update with the correct format
       const response = await axiosWithAuth.patch(`/api/v1/foundation_events/${eventId}`, {
-        id: eventId,
-        event_updates: { evaluation },
+        event_id: eventId,
+        event: {
+          evaluation,
+        },
       })
+
+      // Store in localStorage to track that this event has been edited
+      const editedEvents = JSON.parse(localStorage.getItem('editedEvaluations') || '{}')
+      editedEvents[eventId] = true
+      localStorage.setItem('editedEvaluations', JSON.stringify(editedEvents))
+
+      // Force refresh of all events to get the latest data
+      dispatch(fetchEvents())
+      
       return response.data
     } catch (error) {
-      // Improved error handling
       const errorMessage =
         error.response?.data?.message || error.response?.data?.error || "Failed to update evaluation. Please try again."
+      return rejectWithValue(errorMessage)
+    }
+  },
+)
+
+// Delete event evaluation
+export const deleteEventEvaluation = createAsyncThunk(
+  "events/deleteEventEvaluation",
+  async (eventId, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await axiosWithAuth.patch(`/api/v1/foundation_events/${eventId}`, {
+        event_id: eventId,
+        event: { evaluation: null },
+      })
+
+      // Remove from localStorage when evaluation is deleted
+      const editedEvents = JSON.parse(localStorage.getItem('editedEvaluations') || '{}')
+      delete editedEvents[eventId]
+      localStorage.setItem('editedEvaluations', JSON.stringify(editedEvents))
+
+      // Force refresh of all events to get the latest data
+      dispatch(fetchEvents())
+      
+      return response.data
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || error.response?.data?.error || "Failed to delete evaluation. Please try again."
       return rejectWithValue(errorMessage)
     }
   },
@@ -77,7 +110,7 @@ const initialState = {
   events: [],
   filteredEvents: [],
   currentEvent: null,
-  currentEventId: null, // Add this line
+  currentEventId: null,
   loading: false,
   error: null,
   filters: {
@@ -109,12 +142,10 @@ const eventsSlice = createSlice({
       }
       state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
     },
-    // Add a local event (for optimistic updates)
     addLocalEvent: (state, action) => {
       state.events.push(action.payload)
       state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
     },
-    // Update a local event (for optimistic updates)
     updateLocalEvent: (state, action) => {
       const index = state.events.findIndex((event) => event.id === action.payload.id)
       if (index !== -1) {
@@ -127,27 +158,29 @@ const eventsSlice = createSlice({
         }
       }
     },
-    // Set current event by ID
     setCurrentEvent: (state, action) => {
       const eventId = action.payload
-      state.currentEventId = eventId // Add this line
+      state.currentEventId = eventId
       state.currentEvent = state.events.find((event) => event.id === eventId) || null
       state.error = state.currentEvent ? null : "Event not found"
     },
-    // Set edit mode
     setEditMode: (state, action) => {
       state.isEditMode = action.payload
     },
-    // Reset current event
     resetCurrentEvent: (state) => {
       state.currentEvent = null
-      state.currentEventId = null // Add this line
+      state.currentEventId = null
       state.isEditMode = false
     },
+    // Manually update current event in state
+    updateCurrentEvent: (state, action) => {
+      if (state.currentEvent && state.currentEvent.id === action.payload.id) {
+        state.currentEvent = { ...state.currentEvent, ...action.payload }
+      }
+    }
   },
   extraReducers: (builder) => {
     builder
-      // Fetch events
       .addCase(fetchEvents.pending, (state) => {
         state.loading = true
         state.error = null
@@ -156,12 +189,19 @@ const eventsSlice = createSlice({
         state.loading = false
         state.events = action.payload
         state.filteredEvents = filterEvents(action.payload, state.searchTerm, state.filters)
+        
+        // Also update currentEvent if it exists
+        if (state.currentEvent) {
+          const updatedEvent = action.payload.find(event => event.id === state.currentEvent.id)
+          if (updatedEvent) {
+            state.currentEvent = updatedEvent
+          }
+        }
       })
       .addCase(fetchEvents.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload
       })
-      // Create event
       .addCase(createEvent.pending, (state) => {
         state.loading = true
         state.error = null
@@ -175,7 +215,6 @@ const eventsSlice = createSlice({
         state.loading = false
         state.error = action.payload
       })
-      // Update event
       .addCase(updateEvent.pending, (state) => {
         state.loading = true
         state.error = null
@@ -198,7 +237,6 @@ const eventsSlice = createSlice({
         state.loading = false
         state.error = action.payload
       })
-      // Update event evaluation
       .addCase(updateEventEvaluation.pending, (state) => {
         state.loading = true
         state.error = null
@@ -217,6 +255,27 @@ const eventsSlice = createSlice({
         }
       })
       .addCase(updateEventEvaluation.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload
+      })
+      .addCase(deleteEventEvaluation.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(deleteEventEvaluation.fulfilled, (state, action) => {
+        state.loading = false
+        // Update in events array
+        const index = state.events.findIndex((event) => event.id === action.payload.id)
+        if (index !== -1) {
+          state.events[index] = action.payload
+          state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
+        }
+        // Update current event
+        if (state.currentEvent && state.currentEvent.id === action.payload.id) {
+          state.currentEvent = action.payload
+        }
+      })
+      .addCase(deleteEventEvaluation.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload
       })
@@ -277,6 +336,7 @@ export const {
   setCurrentEvent,
   setEditMode,
   resetCurrentEvent,
+  updateCurrentEvent
 } = eventsSlice.actions
 
 export default eventsSlice.reducer
