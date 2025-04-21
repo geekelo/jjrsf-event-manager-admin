@@ -11,13 +11,6 @@ const EventEvaluationSection = ({ event, eventId, updateEventEvaluation, deleteE
   const [showEvaluationForm, setShowEvaluationForm] = useState(false)
   const [evaluationText, setEvaluationText] = useState(event.evaluation || "")
   const [isDeleting, setIsDeleting] = useState(false)
-  const [hasBeenEdited, setHasBeenEdited] = useState(false)
-
-  // Check localStorage on mount to see if this evaluation has been edited
-  useEffect(() => {
-    const editedEvaluations = JSON.parse(localStorage.getItem('editedEvaluations') || '{}')
-    setHasBeenEdited(!!editedEvaluations[eventId])
-  }, [eventId])
 
   // Update the evaluation text when the event changes
   useEffect(() => {
@@ -37,14 +30,6 @@ const EventEvaluationSection = ({ event, eventId, updateEventEvaluation, deleteE
     updateEventEvaluation(evaluationText)
       .then(() => {
         setShowEvaluationForm(false)
-        
-        // Update local state to hide edit button
-        setHasBeenEdited(true)
-        
-        // Store in localStorage that this evaluation has been edited
-        const editedEvaluations = JSON.parse(localStorage.getItem('editedEvaluations') || '{}')
-        editedEvaluations[eventId] = true
-        localStorage.setItem('editedEvaluations', JSON.stringify(editedEvaluations))
       })
       .catch((error) => {
         toast.error(error || "Failed to update evaluation")
@@ -58,15 +43,6 @@ const EventEvaluationSection = ({ event, eventId, updateEventEvaluation, deleteE
         .then(() => {
           setEvaluationText("")
           setIsDeleting(false)
-          
-          // Reset edited state when evaluation is deleted
-          setHasBeenEdited(false)
-          
-          // Remove from localStorage when evaluation is deleted
-          const editedEvaluations = JSON.parse(localStorage.getItem('editedEvaluations') || '{}')
-          delete editedEvaluations[eventId]
-          localStorage.setItem('editedEvaluations', JSON.stringify(editedEvaluations))
-          
           toast.success("Evaluation deleted successfully")
         })
         .catch((error) => {
@@ -104,18 +80,16 @@ const EventEvaluationSection = ({ event, eventId, updateEventEvaluation, deleteE
           <>
             <div className="evaluation-text red-text">{renderEvaluationWithLineBreaks(event.evaluation)}</div>
             <div className="evaluation-actions">
-              {/* Show edit button only if this evaluation has not been edited based on localStorage */}
-              {!hasBeenEdited && (
-                <button
-                  className="primary-button"
-                  onClick={() => {
-                    setEvaluationText(event.evaluation)
-                    setShowEvaluationForm(true)
-                  }}
-                >
-                  <FontAwesomeIcon icon={faEdit} /> Edit Evaluation
-                </button>
-              )}
+              {/* Always show edit button regardless of edit history */}
+              <button
+                className="primary-button"
+                onClick={() => {
+                  setEvaluationText(event.evaluation)
+                  setShowEvaluationForm(true)
+                }}
+              >
+                <FontAwesomeIcon icon={faEdit} /> Edit Evaluation
+              </button>
               <button className="delete-button" onClick={handleDeleteEvaluation} disabled={isDeleting}>
                 <FontAwesomeIcon icon={faTrash} /> {isDeleting ? "Deleting..." : "Delete Evaluation"}
               </button>

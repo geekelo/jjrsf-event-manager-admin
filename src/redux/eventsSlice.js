@@ -61,11 +61,6 @@ export const updateEventEvaluation = createAsyncThunk(
         },
       })
 
-      // Store in localStorage to track that this event has been edited
-      const editedEvents = JSON.parse(localStorage.getItem('editedEvaluations') || '{}')
-      editedEvents[eventId] = true
-      localStorage.setItem('editedEvaluations', JSON.stringify(editedEvents))
-
       // Force refresh of all events to get the latest data
       dispatch(fetchEvents())
       
@@ -87,11 +82,6 @@ export const deleteEventEvaluation = createAsyncThunk(
         event_id: eventId,
         event: { evaluation: null },
       })
-
-      // Remove from localStorage when evaluation is deleted
-      const editedEvents = JSON.parse(localStorage.getItem('editedEvaluations') || '{}')
-      delete editedEvents[eventId]
-      localStorage.setItem('editedEvaluations', JSON.stringify(editedEvents))
 
       // Force refresh of all events to get the latest data
       dispatch(fetchEvents())
