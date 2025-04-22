@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilm} from '@fortawesome/free-solid-svg-icons';
-import StreamAccordion from '../StreamAccordion';
+import { faFilm } from '@fortawesome/free-solid-svg-icons';
 
-const StreamsSection = ({ event }) => {
-  const [showStreamAccordion, setShowStreamAccordion] = useState(false);
-  
-  const toggleStreamAccordion = () => {
-    setShowStreamAccordion(!showStreamAccordion);
+const StreamsSection = () => {
+  const navigate = useNavigate();
+  const { eventId } = useParams();
+
+  const goToManageStream = () => {
+    navigate(`/events/${eventId}/manage_stream`);
   };
-  
+
   return (
     <section className="streams-section">
       <div className="section-header">
@@ -17,20 +18,16 @@ const StreamsSection = ({ event }) => {
           <FontAwesomeIcon icon={faFilm} /> Stream Management
         </h2>
       </div>
-      
-      {!showStreamAccordion ? (
-        <div className="stream-management-intro">
-          <p>Manage streaming platforms for this event. You can add multiple platforms like YouTube, Mixlr, and Zoom.</p>
-          <button 
-            className="manage-streams-button"
-            onClick={toggleStreamAccordion}
-          >
-            <FontAwesomeIcon icon={faFilm} /> Manage Streams
-          </button>
-        </div>
-      ) : (
-        <StreamAccordion event={event} />
-      )}
+
+      <div className="stream-management-intro">
+        <p>
+          Manage streaming platforms for this event. You can add multiple platforms
+          like YouTube, Mixlr, and Zoom.
+        </p>
+        <button className="manage-streams-button" onClick={goToManageStream}>
+          <FontAwesomeIcon icon={faFilm} /> Manage Streams
+        </button>
+      </div>
     </section>
   );
 };
