@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
@@ -12,6 +10,7 @@ import {
   setEditMode,
 } from "../redux/eventsSlice"
 import { fetchEventAttendees } from "../redux/attendeesSlice"
+import { fetchEventQuickRegistrations } from "../redux/quickRegistrationsSlice"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import "../stylesheets/manageEvent.css"
@@ -24,7 +23,6 @@ import EventMetricsSection from "../components/event/EventMetricsSection"
 import EventEvaluationSection from "../components/event/EventEvaluationSection"
 import StreamsSection from "../components/event/StreamsSection"
 import PasscodeModal from "../components/PasscodeModal"
-
 function ManageEvent() {
   const { eventId } = useParams()
   const navigate = useNavigate()
@@ -51,33 +49,36 @@ function ManageEvent() {
   const [localEvent, setLocalEvent] = useState(null) // Add local state for immediate UI updates
 
   // Check authentication on component mount
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      toast.error("You must be logged in to access this page")
-      navigate("/admin/login")
-      return
-    }
+ // Check authentication and fetch data on component mount
+useEffect(() => {
+  if (!isAuthenticated()) {
+    toast.error("You must be logged in to access this page")
+    navigate("/admin/login")
+    return
+  }
 
-    // If events are not loaded yet, fetch them
-    if (events.length === 0) {
-      dispatch(fetchEvents())
-    } else {
-      // Set the current event from the events array
-      dispatch(setCurrentEvent(eventId))
-    }
+  // If events are not loaded yet, fetch them
+  if (events.length === 0) {
+    dispatch(fetchEvents())
+  } else {
+    // Set the current event from the events array
+    dispatch(setCurrentEvent(eventId))
+  }
 
-    // Only fetch attendees if we don't already have them for this event
-    if (!currentEventId || currentEventId !== eventId) {
-      dispatch(fetchEventAttendees(eventId))
-    }
+  // Only fetch attendees if we don't already have them for this event
+  if (!currentEventId || currentEventId !== eventId) {
+    dispatch(fetchEventAttendees(eventId))
+  }
+  
+  // Fetch quick registrations for this event
+  dispatch(fetchEventQuickRegistrations(eventId))
 
-    // Cleanup on unmount
-    return () => {
-      // Don't reset current event when navigating to attendee list
-      // We'll let the component decide when to reset
-    }
-  }, [dispatch, eventId, navigate, events.length, currentEventId])
-
+  // Cleanup on unmount
+  return () => {
+    // Don't reset current event when navigating to attendee list
+    // We'll let the component decide when to reset
+  }
+}, [dispatch, eventId, navigate, events.length, currentEventId])
   // Update local event state when event changes in Redux
   useEffect(() => {
     if (event) {

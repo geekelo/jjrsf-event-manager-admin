@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
+import { fetchEventQuickRegistrations } from "../redux/quickRegistrationsSlice"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faArrowLeft,
@@ -60,20 +61,26 @@ import "../stylesheets/QuickRegistrations.css"
 const QuickRegistrationsList = () => {
   const { eventId } = useParams()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   // Get event data from Redux store
   const { events } = useSelector((state) => state.events)
+  
+  // Get quick registrations from Redux store
+  const { 
+    quickRegistrations,
+    loading,
+    error 
+  } = useSelector((state) => state.quickRegistrations)
 
   // Local state
-  const [quickRegistrations, setQuickRegistrations] = useState([])
   const [filteredRegistrations, setFilteredRegistrations] = useState([])
   const [displayedRegistrations, setDisplayedRegistrations] = useState([])
-  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [eventName, setEventName] = useState("Event Name")
   const [filterActive, setFilterActive] = useState(false)
 
-  // Update the filters state to include attendance and verification status
+  // Filters state
   const [filters, setFilters] = useState({
     gender: "all",
     dateRange: "all",
@@ -86,7 +93,7 @@ const QuickRegistrationsList = () => {
   const [itemsPerPage, setItemsPerPage] = useState(12)
   const [totalPages, setTotalPages] = useState(1)
 
-  // Load dummy data and event name when component mounts
+  // Load event name and quick registrations data when component mounts
   useEffect(() => {
     // Find event name from events array
     const currentEvent = events.find((event) => event.id === eventId)
@@ -101,7 +108,7 @@ const QuickRegistrationsList = () => {
     setLoading(false)
   }, [eventId, events])
 
-  // Update the filter function to include the new filters
+  // Apply filters and search to the quick registrations data
   useEffect(() => {
     if (quickRegistrations.length) {
       const filtered = quickRegistrations.filter((reg) => {
@@ -117,7 +124,7 @@ const QuickRegistrationsList = () => {
 
         // Date range filter
         let dateMatch = true
-        const regDate = new Date(reg.registrationDate)
+        const regDate = new Date(reg.registrationDate || reg.created_at) // Use created_at if registrationDate is not available
         const today = new Date()
 
         if (filters.dateRange === "today") {
@@ -209,7 +216,6 @@ const QuickRegistrationsList = () => {
     }))
   }
 
-  // Update the clearFilters function
   const clearFilters = () => {
     setFilters({
       gender: "all",
@@ -225,6 +231,19 @@ const QuickRegistrationsList = () => {
         <div className="loading-container">
           <div className="spinner"></div>
           <p>Loading quick registrations...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="attendee-list-page">
+        <div className="loading-container">
+          <p>Error loading quick registrations: {error}</p>
+          <button className="primary-button" onClick={handleBack}>
+            Back to Event
+          </button>
         </div>
       </div>
     )
@@ -267,11 +286,12 @@ const QuickRegistrationsList = () => {
           <button className={`filter-button ${filterActive ? "active" : ""}`} onClick={toggleFilter}>
             <FontAwesomeIcon icon={faFilter} />
             <span>Filter</span>
-            {(filters.gender !== "all" || filters.dateRange !== "all") && <span className="filter-badge"></span>}
+            {(filters.gender !== "all" || filters.dateRange !== "all" || 
+              filters.attendance !== "all" || filters.verification !== "all") && 
+              <span className="filter-badge"></span>}
           </button>
         </div>
 
-        {/* Update the filter panel to include the new filters */}
         {filterActive && (
           <div className="filter-panel">
             <div className="filter-panel-content">
@@ -344,7 +364,6 @@ const QuickRegistrationsList = () => {
           {filteredRegistrations.length > 0 ? (
             <>
               <div className="quick-reg-grid">
-                {/* Update the card display to include attendance and verification status */}
                 {displayedRegistrations.map((registration) => (
                   <div key={registration.id} className="quick-reg-card">
                     <div className="quick-reg-header">
@@ -387,7 +406,7 @@ const QuickRegistrationsList = () => {
                         <div className="quick-reg-value otp-value">{registration.otp || "N/A"}</div>
                       </div>
 
-                      {/* Add attendance status */}
+                      {/* Attendance status */}
                       <div className="quick-reg-item">
                         <div className="quick-reg-label">
                           <FontAwesomeIcon icon={faCheck} />
@@ -423,7 +442,7 @@ const QuickRegistrationsList = () => {
                         </div>
                       </div>
 
-                      {/* Add verification status */}
+                      {/* Verification status */}
                       <div className="quick-reg-item">
                         <div className="quick-reg-label">
                           <FontAwesomeIcon icon={faShieldAlt} />
@@ -455,12 +474,14 @@ const QuickRegistrationsList = () => {
               <FontAwesomeIcon icon={faUserPlus} size="3x" style={{ opacity: 0.3, marginBottom: "1rem" }} />
               <p>
                 No quick registrations found
-                {searchTerm || filters.gender !== "all" || filters.dateRange !== "all"
+                {searchTerm || filters.gender !== "all" || filters.dateRange !== "all" || 
+                 filters.attendance !== "all" || filters.verification !== "all"
                   ? " matching your search criteria"
                   : ""}
                 .
               </p>
-              {(searchTerm || filters.gender !== "all" || filters.dateRange !== "all") && (
+              {(searchTerm || filters.gender !== "all" || filters.dateRange !== "all" || 
+                filters.attendance !== "all" || filters.verification !== "all") && (
                 <button
                   className="clear-filters-button"
                   onClick={() => {

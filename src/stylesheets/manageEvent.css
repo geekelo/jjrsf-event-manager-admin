@@ -248,7 +248,7 @@ section {
   font-size: 36px;
   font-weight: 700;
   color: #333;
-  margin-top: 10px;
+  margin-top: 8px;
   text-align: center;
 }
 
@@ -1057,4 +1057,11 @@ select {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+}
+
+/* Add this to your manageEvent.css file */
+.loading-text {
+  font-size: 16px; /* Smaller font size */
+  color: #666;
+  font-weight: normal;
 }
