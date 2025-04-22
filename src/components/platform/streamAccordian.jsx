@@ -176,7 +176,7 @@ const StreamAccordion = ({ eventId }) => {
         <div className="youtube-container">
           <iframe
             width="100%"
-            height="400"
+            height="500"
             src={platform.embed_link}
             title="YouTube video player"
             frameBorder="0"
@@ -193,7 +193,7 @@ const StreamAccordion = ({ eventId }) => {
         <div className="mixlr-container">
           <iframe
             width="100%"
-            height="180"
+            height="250"
             src={platform.embed_link}
             frameBorder="0"
             title="Mixlr audio player"
@@ -207,7 +207,7 @@ const StreamAccordion = ({ eventId }) => {
       <div className="generic-embed-container">
         <iframe
           width="100%"
-          height="400"
+          height="500"
           src={platform.embed_link}
           title={`${platform.platform_name} content`}
           frameBorder="0"
@@ -229,6 +229,14 @@ const StreamAccordion = ({ eventId }) => {
 
       {isOpen && (
         <div className="accordion-content">
+          {/* Add Platform Button - Moved to top */}
+          <div className="add-platform-button-container top-button">
+            <button className="add-platform-button" onClick={openAddModal}>
+              <PlusCircle size={18} />
+              Add Platform
+            </button>
+          </div>
+          
           {loading ? (
             <div className="loading-container">
               <div className="spinner"></div>
@@ -280,12 +288,7 @@ const StreamAccordion = ({ eventId }) => {
             </div>
           )}
 
-          <div className="add-platform-button-container">
-            <button className="add-platform-button" onClick={openAddModal}>
-              <PlusCircle size={18} />
-              Add Platform
-            </button>
-          </div>
+          {/* Removed the button from here as it's now at the top */}
         </div>
       )}
 
