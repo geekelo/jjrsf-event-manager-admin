@@ -23,6 +23,41 @@ import Pagination from "../components/Pagination"
 import "../stylesheets/attendeeList.css"
 import "../stylesheets/QuickRegistrations.css"
 
+// // Update the generateDummyQuickRegistrations function to include attendance and verification status
+// const generateDummyQuickRegistrations = (count) => {
+//   const genders = ["Male", "Female"]
+//   const registrations = []
+
+//   for (let i = 1; i <= count; i++) {
+//     const gender = genders[Math.floor(Math.random() * genders.length)]
+
+//     // Generate a random date within the last 30 days
+//     const randomDaysAgo = Math.floor(Math.random() * 30)
+//     const registrationDate = new Date()
+//     registrationDate.setDate(registrationDate.getDate() - randomDaysAgo)
+
+//     // Generate random attendance and verification status
+//     const attendedOnline = Math.random() > 0.5
+//     const attendedOffline = Math.random() > 0.5
+//     const verified = Math.random() > 0.3
+
+//     registrations.push({
+//       id: i,
+//       name: `Quick User ${i}`,
+//       email: `quick${i}@example.com`,
+//       phone: `+1 555-${String(i).padStart(3, "0")}-${Math.floor(1000 + Math.random() * 9000)}`,
+//       gender,
+//       otp: Math.floor(100000 + Math.random() * 900000).toString(), // 6-digit OTP
+//       registrationDate: registrationDate.toISOString(),
+//       attendedOnline,
+//       attendedOffline,
+//       verified,
+//     })
+//   }
+
+//   return registrations
+// }
+
 const QuickRegistrationsList = () => {
   const { eventId } = useParams()
   const navigate = useNavigate()
@@ -65,10 +100,15 @@ const QuickRegistrationsList = () => {
     if (currentEvent) {
       setEventName(currentEvent.name)
     }
-
-    // Fetch quick registrations from the API
-    dispatch(fetchEventQuickRegistrations(eventId))
+  
+    // ✅ Fetch quick registrations from API
+    if (eventId) {
+    const res =  dispatch(fetchEventQuickRegistrations(eventId))
+   
+    }
   }, [eventId, events, dispatch])
+  
+ 
 
   // Apply filters and search to the quick registrations data
   useEffect(() => {
