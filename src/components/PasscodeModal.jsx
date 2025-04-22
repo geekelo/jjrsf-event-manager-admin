@@ -71,7 +71,7 @@ const PasscodeModal = ({
               />
               
   <p className="empty-pin">
-    If left empty, a PIN will be auto-generated for you.
+    If left empty, a Passcode will be auto-generated for you.
   </p>
 
               {formErrors.passcode && <div className="error-message">{formErrors.passcode}</div>}
