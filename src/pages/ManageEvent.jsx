@@ -46,7 +46,7 @@ function ManageEvent() {
     error: attendeesError,
     currentEventId,
   } = useSelector((state) => state.attendees)
-console.log(metrics)
+
   const [showPasscodeModal, setShowPasscodeModal] = useState(false)
   const [localEvent, setLocalEvent] = useState(null) // Add local state for immediate UI updates
 
@@ -143,7 +143,6 @@ console.log(metrics)
       description: updatedData.description,
     }
 
-    console.log("Sending update with data:", apiData)
 
     dispatch(updateEvent({ eventId, eventData: apiData }))
       .unwrap()
