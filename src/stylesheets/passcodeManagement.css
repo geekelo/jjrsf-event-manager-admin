@@ -308,7 +308,9 @@
   align-items: center;
   gap: 10px;
 }
-
+.empty-pin{
+  font-size: 12px;
+}
 .card-actions {
   display: flex;
   gap: 10px;

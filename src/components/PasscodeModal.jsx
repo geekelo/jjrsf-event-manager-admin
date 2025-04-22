@@ -70,7 +70,7 @@ const PasscodeModal = ({
                 placeholder="Enter a numeric passcode"
               />
               
-  <p className="">
+  <p className="empty-pin">
     If left empty, a PIN will be auto-generated for you.
   </p>
 
