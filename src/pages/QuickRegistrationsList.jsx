@@ -22,40 +22,40 @@ import Pagination from "../components/Pagination"
 import "../stylesheets/attendeeList.css"
 import "../stylesheets/QuickRegistrations.css"
 
-// Update the generateDummyQuickRegistrations function to include attendance and verification status
-const generateDummyQuickRegistrations = (count) => {
-  const genders = ["Male", "Female"]
-  const registrations = []
+// // Update the generateDummyQuickRegistrations function to include attendance and verification status
+// const generateDummyQuickRegistrations = (count) => {
+//   const genders = ["Male", "Female"]
+//   const registrations = []
 
-  for (let i = 1; i <= count; i++) {
-    const gender = genders[Math.floor(Math.random() * genders.length)]
+//   for (let i = 1; i <= count; i++) {
+//     const gender = genders[Math.floor(Math.random() * genders.length)]
 
-    // Generate a random date within the last 30 days
-    const randomDaysAgo = Math.floor(Math.random() * 30)
-    const registrationDate = new Date()
-    registrationDate.setDate(registrationDate.getDate() - randomDaysAgo)
+//     // Generate a random date within the last 30 days
+//     const randomDaysAgo = Math.floor(Math.random() * 30)
+//     const registrationDate = new Date()
+//     registrationDate.setDate(registrationDate.getDate() - randomDaysAgo)
 
-    // Generate random attendance and verification status
-    const attendedOnline = Math.random() > 0.5
-    const attendedOffline = Math.random() > 0.5
-    const verified = Math.random() > 0.3
+//     // Generate random attendance and verification status
+//     const attendedOnline = Math.random() > 0.5
+//     const attendedOffline = Math.random() > 0.5
+//     const verified = Math.random() > 0.3
 
-    registrations.push({
-      id: i,
-      name: `Quick User ${i}`,
-      email: `quick${i}@example.com`,
-      phone: `+1 555-${String(i).padStart(3, "0")}-${Math.floor(1000 + Math.random() * 9000)}`,
-      gender,
-      otp: Math.floor(100000 + Math.random() * 900000).toString(), // 6-digit OTP
-      registrationDate: registrationDate.toISOString(),
-      attendedOnline,
-      attendedOffline,
-      verified,
-    })
-  }
+//     registrations.push({
+//       id: i,
+//       name: `Quick User ${i}`,
+//       email: `quick${i}@example.com`,
+//       phone: `+1 555-${String(i).padStart(3, "0")}-${Math.floor(1000 + Math.random() * 9000)}`,
+//       gender,
+//       otp: Math.floor(100000 + Math.random() * 900000).toString(), // 6-digit OTP
+//       registrationDate: registrationDate.toISOString(),
+//       attendedOnline,
+//       attendedOffline,
+//       verified,
+//     })
+//   }
 
-  return registrations
-}
+//   return registrations
+// }
 
 const QuickRegistrationsList = () => {
   const { eventId } = useParams()
@@ -94,10 +94,10 @@ const QuickRegistrationsList = () => {
       setEventName(currentEvent.name)
     }
 
-    // Generate dummy data (between 25-50 registrations)
-    const dummyCount = Math.floor(25 + Math.random() * 25)
-    const dummyData = generateDummyQuickRegistrations(dummyCount)
-    setQuickRegistrations(dummyData)
+    // // Generate dummy data (between 25-50 registrations)
+    // const dummyCount = Math.floor(25 + Math.random() * 25)
+    // const dummyData = generateDummyQuickRegistrations(dummyCount)
+    // setQuickRegistrations(dummyData)
     setLoading(false)
   }, [eventId, events])
 

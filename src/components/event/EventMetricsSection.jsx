@@ -164,7 +164,7 @@ const EventMetricsSection = ({ metrics, eventId }) => {
           <div className="metric-content">
             <h3>Quick Registrations</h3>
             <p className="metric-description">Users who registered with minimal information</p>
-            <div className="metric-value">{quickRegCount}</div>
+            <div className="metric-value">{metrics.totalRegistered}</div>
           </div>
           <button
             className="metrics-view-button"
