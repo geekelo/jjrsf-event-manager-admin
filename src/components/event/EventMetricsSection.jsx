@@ -45,6 +45,8 @@ const EventMetricsSection = ({ metrics, eventId }) => {
       </div>
 
       <div className="metrics-grid">
+        {/* Other metric cards remain the same */}
+        
         <div className="metric-card">
           <div className="metric-icon">
             <FontAwesomeIcon icon={faUsers} />
@@ -160,7 +162,7 @@ const EventMetricsSection = ({ metrics, eventId }) => {
           </button>
         </div>
 
-        {/* Quick Registrations Card with real data from API */}
+        {/* Updated Quick Registrations Card with smaller loading text */}
         <div className="metric-card">
           <div className="metric-icon quick-reg">
             <FontAwesomeIcon icon={faUserPlus} />
@@ -169,7 +171,7 @@ const EventMetricsSection = ({ metrics, eventId }) => {
             <h3>Quick Registrations</h3>
             <p className="metric-description">Users who registered with minimal information</p>
             <div className="metric-value">
-              {quickRegLoading ? "Loading..." : quickRegCount}
+              {quickRegLoading ? <span className="loading-text">Loading...</span> : quickRegCount}
             </div>
           </div>
           <button
