@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css"
 import "./App.css"
 import ProtectedRoute from "./components/auth/protectedRoute"
 import ManageStream from "./pages/manageStream"
+import EventFeedback from "./pages/EventFeedback"
 
 function App() {
   return (
@@ -74,6 +75,16 @@ function App() {
           element={
             <ProtectedRoute>
               <PasscodeManagement />
+            </ProtectedRoute>
+          }
+
+        />
+        
+        <Route
+          path="/events/:eventId/feedback"
+          element={
+            <ProtectedRoute>
+              <EventFeedback />
             </ProtectedRoute>
           }
         />

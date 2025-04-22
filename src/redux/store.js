@@ -4,6 +4,7 @@ import attendeesReducer from "./attendeesSlice"
 import quickRegistrationsReducer from "./quickRegistrationsSlice"
 import frontDeskReducer from './frontDeskSlice'
 import platformReducer from './platformSlice'
+import feedbackReducer from './feedbackSlice'
 
 export const store = configureStore({
   reducer: {
@@ -12,5 +13,6 @@ export const store = configureStore({
   attendees: attendeesReducer,
     platform: platformReducer,
     quickRegistrations: quickRegistrationsReducer,
+    feedback: feedbackReducer
   },
 })
