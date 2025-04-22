@@ -6,6 +6,7 @@ import {
   fetchPlatforms,
   createPlatform,
   updatePlatform,
+  deletePlatform,
 } from "../../redux/platformSlice";
 import { toast } from "react-toastify";
 
@@ -68,6 +69,17 @@ const StreamAccordion = ({ eventId }) => {
       toast.error("Update failed");
     }
   };
+  const handleDeletePlatform = async (id) => {
+    try {
+     const res = await dispatch(deletePlatform({ id, event_id: eventId })).unwrap();
+     console.log(res)
+      toast.success("Platform deleted successfully");
+    } catch (err) {
+      console.error("Failed to delete platform:", err);
+      toast.error("Delete failed");
+    }
+  };
+  
 
   if (loading) return <div>Loading platforms...</div>;
   if (error) return <div>{error}</div>;
@@ -82,20 +94,22 @@ const StreamAccordion = ({ eventId }) => {
 
       <div>
         {platforms.map((platform) => (
-          <PlatformTab
-            key={platform.id}
-            platform={{
-              ...platform,
-              logo: getPlatformLogo(platform.platform_name),
-            }}
-            isActive={activePlatformId === platform.id}
-            onClick={() =>
-              setActivePlatformId(
-                activePlatformId === platform.id ? null : platform.id
-              )
-            }
-            onUpdate={handleUpdatePlatform}
-          />
+         <PlatformTab
+         key={platform.id}
+         platform={{
+           ...platform,
+           logo: getPlatformLogo(platform.platform_name),
+         }}
+         isActive={activePlatformId === platform.id}
+         onClick={() =>
+           setActivePlatformId(
+             activePlatformId === platform.id ? null : platform.id
+           )
+         }
+         onUpdate={handleUpdatePlatform}
+         onDelete={handleDeletePlatform} 
+       />
+       
         ))}
       </div>
 

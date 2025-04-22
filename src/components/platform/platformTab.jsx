@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import EditPlatformModal from "./editPlatformModal";
 
-const PlatformTab = ({ platform, isActive, onClick, onUpdate }) => {
+const PlatformTab = ({ platform, isActive, onClick, onUpdate, onDelete }) => {
   const [showEditModal, setShowEditModal] = useState(false);
 
   const renderEmbed = () => {
@@ -30,14 +30,25 @@ const PlatformTab = ({ platform, isActive, onClick, onUpdate }) => {
           <span>{platform.platform_name}</span>
           <span>{platform.views ?? 0} views</span>
         </div>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowEditModal(true);
-          }}
-        >
-          Edit
-        </button>
+        <div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowEditModal(true);
+            }}
+          >
+            Edit
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(platform.id);
+            }}
+           
+          >
+            Delete
+          </button>
+        </div>
       </div>
 
       {isActive && <div>{renderEmbed()}</div>}

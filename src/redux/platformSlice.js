@@ -70,6 +70,19 @@ export const updatePlatform = createAsyncThunk(
   }
 );
 
+//  Delete a platform
+export const deletePlatform = createAsyncThunk(
+  "platform/delete",
+  async ({ id, event_id }, { rejectWithValue }) => {
+    try {
+      await axiosWithAuth.delete(`${API_BASE}/${id}?event_id=${event_id}`);
+      return id;
+    } catch (error) {
+      return rejectWithValue(handleError(error));
+    }
+  }
+);
+
 // Platform slice
 const platformSlice = createSlice({
   name: "platform",
@@ -108,7 +121,13 @@ const platformSlice = createSlice({
         if (index !== -1) {
           state.items[index] = action.payload;
         }
+      })
+      
+       .addCase(deletePlatform.fulfilled, (state, action) => {
+        state.items = state.items.filter((item) => item.id !== action.payload);
       });
+
+      
   },
 });
 
