@@ -69,6 +69,11 @@ const PasscodeModal = ({
                 onChange={handleFormChange}
                 placeholder="Enter a numeric passcode"
               />
+              
+  <p className="">
+    If left empty, a PIN will be auto-generated for you.
+  </p>
+
               {formErrors.passcode && <div className="error-message">{formErrors.passcode}</div>}
             </div>
 

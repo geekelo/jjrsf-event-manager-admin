@@ -84,18 +84,23 @@ const PasscodeManagement = () => {
   };
 
   const handleSearch = (e) => setSearchTerm(e.target.value);
-
   const validateForm = () => {
     const errors = {};
-    if (!formData.name.trim()) errors.name = "Name is required";
-    if (!formData.passcode.trim()) {
-      errors.passcode = "Passcode is required";
-    } else if (!/^\d+$/.test(formData.passcode)) {
-      errors.passcode = "Passcode must be numeric";
+  
+    if (!formData.name.trim()) {
+      errors.name = "Name is required";
     }
+  
+    if (formData.passcode.trim()) {
+      if (!/^\d+$/.test(formData.passcode)) {
+        errors.passcode = "Passcode must be numeric";
+      }
+    }
+  
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
+  
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
