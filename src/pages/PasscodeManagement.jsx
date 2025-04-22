@@ -86,13 +86,12 @@ const PasscodeManagement = () => {
   const handleSearch = (e) => setSearchTerm(e.target.value);
   const validateForm = () => {
     const errors = {};
+    const passcode = formData.passcode?.toString().trim();
   
-    if (!formData.name.trim()) {
-      errors.name = "Name is required";
-    }
+    if (!formData.name.trim()) errors.name = "Name is required";
   
-    if (formData.passcode.trim()) {
-      if (!/^\d+$/.test(formData.passcode)) {
+    if (passcode) {
+      if (!/^\d+$/.test(passcode)) {
         errors.passcode = "Passcode must be numeric";
       }
     }
@@ -101,38 +100,47 @@ const PasscodeManagement = () => {
     return Object.keys(errors).length === 0;
   };
   
-
   const handleSubmitForm = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
+  
+    if (!eventId) {
+      toast.error("Missing event ID.");
+      return;
+    }
+  
     const payload = {
       name: formData.name.trim(),
-      pin: formData.passcode.trim(),
       event_id: eventId,
     };
-
+  
+    // Include pin only if user entered one
+    if (formData.passcode) {
+      payload.pin = formData.passcode;
+    }
+  
     try {
       if (editingId) {
-        const res = await dispatch(
+        await dispatch(
           updateFrontDesk({
             id: editingId,
             event_id: eventId,
             updates: payload,
           })
         ).unwrap();
-
+  
         toast.success("Passcode updated successfully!");
       } else {
-        const res = await dispatch(createFrontDesk(payload)).unwrap();
-
+        await dispatch(createFrontDesk(payload)).unwrap();
         toast.success("New passcode added successfully!");
       }
+  
       closeModal();
     } catch (err) {
       toast.error("Something went wrong!");
     }
   };
+  
 
   const handleDelete = async (id) => {
     if (!id || !eventId) {
