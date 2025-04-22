@@ -10,24 +10,26 @@ import {
   faArrowRight,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons"
-import { useEffect } from "react"
+import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchEventQuickRegistrations } from "../../redux/quickRegistrationsSlice"
 
 const EventMetricsSection = ({ metrics, eventId }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  
-  // Get quick registration data from Redux store
-  const { totalCount: quickRegCount, loading: quickRegLoading } = useSelector(
+
+  const { quickRegistrations, loading, error } = useSelector(
     (state) => state.quickRegistrations
   )
 
-  // Fetch quick registrations when component mounts
   useEffect(() => {
-    dispatch(fetchEventQuickRegistrations(eventId))
-  }, [dispatch, eventId])
+    if (eventId) {
+      dispatch(fetchEventQuickRegistrations(eventId))
+    }
+  }, [eventId, dispatch])
+
   
+
   const navigateToAttendees = (type) => {
     navigate(`/events/${eventId}/attendees/${type}`)
   }
@@ -45,8 +47,6 @@ const EventMetricsSection = ({ metrics, eventId }) => {
       </div>
 
       <div className="metrics-grid">
-        {/* Other metric cards remain the same */}
-        
         <div className="metric-card">
           <div className="metric-icon">
             <FontAwesomeIcon icon={faUsers} />
@@ -162,15 +162,19 @@ const EventMetricsSection = ({ metrics, eventId }) => {
           </button>
         </div>
 
-        {/* Updated Quick Registrations Card with smaller loading text */}
+        {/* New Quick Registrations Card with dummy data */}
         <div className="metric-card">
           <div className="metric-icon quick-reg">
             <FontAwesomeIcon icon={faUserPlus} />
           </div>
           <div className="metric-content">
             <h3>Quick Registrations</h3>
-            <p className="metric-description">Users who registered with minimal information</p>
-            <div className="metric-value">{metrics.totalRegistered}</div>
+            <p className="metric-description">
+              Users who registered with minimal information
+            </p>
+            <div className="metric-value">
+              {loading ? "Loading..." : error ? "Error" : quickRegistrations?.length || 0}
+            </div>
           </div>
           <button
             className="metrics-view-button"

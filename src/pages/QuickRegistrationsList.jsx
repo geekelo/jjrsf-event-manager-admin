@@ -100,13 +100,15 @@ const QuickRegistrationsList = () => {
     if (currentEvent) {
       setEventName(currentEvent.name)
     }
-
-    // // Generate dummy data (between 25-50 registrations)
-    // const dummyCount = Math.floor(25 + Math.random() * 25)
-    // const dummyData = generateDummyQuickRegistrations(dummyCount)
-    // setQuickRegistrations(dummyData)
-    setLoading(false)
-  }, [eventId, events])
+  
+    // ✅ Fetch quick registrations from API
+    if (eventId) {
+    const res =  dispatch(fetchEventQuickRegistrations(eventId))
+   
+    }
+  }, [eventId, events, dispatch])
+  
+ 
 
   // Apply filters and search to the quick registrations data
   useEffect(() => {

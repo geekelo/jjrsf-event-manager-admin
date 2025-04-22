@@ -50,6 +50,7 @@ function ManageEvent() {
 
   // Check authentication on component mount
  // Check authentication and fetch data on component mount
+ 
 useEffect(() => {
   if (!isAuthenticated()) {
     toast.error("You must be logged in to access this page")
