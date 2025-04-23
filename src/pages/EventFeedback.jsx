@@ -1,8 +1,7 @@
-// src/pages/EventFeedback.jsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchFeedbacks } from "../redux/feedbackSlice"; // Redux action
+import { fetchFeedbacks } from "../redux/feedbackSlice"; 
 import FeedbackTabs from "../components/feedback/FeedbackTabs";
 import FeedbackForm from "../components/feedback/FeedbackForm";
 import FeedbackList from "../components/feedback/FeedbackList";
@@ -19,7 +18,6 @@ const EventFeedback = () => {
     // Dispatch fetchFeedbacks action to get feedbacks from the API
     dispatch(fetchFeedbacks(eventId));
   }, [eventId, dispatch]);
-console.log(allFeedbacks)
   // Filter feedbacks based on the active tab
  
   const handleNewFeedback = () => {
@@ -36,7 +34,7 @@ console.log(allFeedbacks)
         activeTab={activeTab}
         loading={loading}
       />
-      {error && <p className="text-red-500">{error}</p>} {/* Display error if any */}
+      {error && <p >{error}</p>} {/* Display error if any */}
     </div>
   );
 };
