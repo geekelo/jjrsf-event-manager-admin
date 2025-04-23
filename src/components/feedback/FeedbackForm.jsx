@@ -1,4 +1,3 @@
-// src/components/feedback/FeedbackForm.jsx
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -6,7 +5,7 @@ import { createFeedback, fetchFeedbacks } from '../../redux/feedbackSlice';
 
 const FeedbackForm = ({ eventId, onSuccess }) => {
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.feedback); // Get loading state from Redux
+  const { loading } = useSelector((state) => state.feedback); 
 
   const [name, setName] = useState('');
   const [review, setReview] = useState('');
@@ -27,7 +26,6 @@ const FeedbackForm = ({ eventId, onSuccess }) => {
 
     try {
       const actionResult = await dispatch(createFeedback(payload));
-      console.log(actionResult)
 
       if (createFeedback.fulfilled.match(actionResult)) {
         toast.success('Feedback submitted!');

@@ -1,39 +1,34 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { updateFeedback } from "../../redux/feedbackSlice";
-import { Edit } from "lucide-react";
+import { deleteFeedback,  } from "../../redux/feedbackSlice";
+import { Delete,  } from "lucide-react";
 
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 const FeedbackList = ({ feedbacks = [], activeTab, loading }) => {
   const dispatch = useDispatch();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState(null);
   const [editedText, setEditedText] = useState("");
 
-  const handleEditClick = (item) => {
-    setEditingItem(item);
-    setEditedText(activeTab === "reviews" ? item.review : item.testimony);
-    setIsModalOpen(true);
-  };
-
-  const handleUpdate = () => {
-    const updatedData =
-      activeTab === "reviews"
-        ? { review: editedText, testimony: editingItem.testimony }
-        : { testimony: editedText, review: editingItem.review };
-
-   const res = dispatch(updateFeedback({ id: editingItem.id, data: updatedData }));
-   console.log(res)
-   toast.success('Feedback updated!');
-    setIsModalOpen(false);
+  const handleDeleteFeedback = async (item) => {
+    try {
+      const res = await dispatch(
+        deleteFeedback({ id: item.id, event_id: item.foundation_event_id })
+      ).unwrap();
+      toast.success("Feedback deleted successfully");
+    } catch (err) {
+      console.error("Failed to delete feedback:", err);
+      toast.error("Delete failed");
+    }
   };
 
   const feedbackData = feedbacks.map((f) => f.feedback || f);
 
   const filtered = feedbackData.filter((f) =>
-    activeTab === "reviews" ? f.review?.trim() !== "" : f.testimony?.trim() !== ""
+    activeTab === "reviews"
+      ? f.review?.trim() !== ""
+      : f.testimony?.trim() !== ""
   );
 
   return (
@@ -42,9 +37,14 @@ const FeedbackList = ({ feedbacks = [], activeTab, loading }) => {
         <p>No {activeTab === "reviews" ? "reviews" : "testimonies"} yet.</p>
       ) : (
         filtered.map((item) => (
-          <div key={item.id} className="feedback-item p-4 mb-4 bg-white rounded shadow">
+          <div
+            key={item.id}
+            className="feedback-item p-4 mb-4 bg-white rounded shadow"
+          >
             <div className="flex justify-between items-center mb-2">
-              <h3 className="text-lg font-semibold">{item.name || "Anonymous"}</h3>
+              <h3 className="text-lg font-semibold">
+                {item.name || "Anonymous"}
+              </h3>
               <span className="text-sm text-gray-500">
                 {new Date(item.created_at).toLocaleDateString()}
               </span>
@@ -52,12 +52,13 @@ const FeedbackList = ({ feedbacks = [], activeTab, loading }) => {
             <p className="mb-2">
               {activeTab === "reviews" ? item.review : item.testimony}
             </p>
+
             <button
-              onClick={() => handleEditClick(item)}
+              onClick={() => handleDeleteFeedback(item)}
               disabled={loading}
-              className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
+              className="flex items-center gap-1 text-red-600 hover:text-red-800"
             >
-              <Edit size={16} /> Edit
+              <Delete size={16} /> Delete
             </button>
           </div>
         ))
@@ -67,7 +68,9 @@ const FeedbackList = ({ feedbacks = [], activeTab, loading }) => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
-            <h2 className="text-xl font-semibold mb-4">Edit {activeTab.slice(0, -1)}</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              Edit {activeTab.slice(0, -1)}
+            </h2>
             <textarea
               rows="4"
               value={editedText}

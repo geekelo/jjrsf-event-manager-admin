@@ -1,37 +1,51 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { axiosWithAuth } from '../config/axios'
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { axiosWithAuth } from "../config/axios";
 
-const API_BASE = '/api/v1/event_feedbacks'
+const API_BASE = "/api/v1/event_feedbacks";
 
 // Fetch feedbacks for a specific event
 export const fetchFeedbacks = createAsyncThunk(
-  'feedback/fetchFeedbacks',
+  "feedback/fetchFeedbacks",
   async (eventId, { rejectWithValue }) => {
     try {
-      const res = await axiosWithAuth.get(`${API_BASE}?foundation_event_id=${eventId}`)
-      return res.data
+      const res = await axiosWithAuth.get(`${API_BASE}?event_id=${eventId}`);
+      return res.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch feedbacks')
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch feedbacks"
+      );
     }
   }
-)
-
+);
 
 // Update feedback
 export const updateFeedback = createAsyncThunk(
-  'feedback/updateFeedback',
-  async ({ id, data }, { rejectWithValue }) => {
+  "feedback/updateFeedback",
+  async ({ id, review, testimony }, { rejectWithValue }) => {
     try {
-      const res = await axiosWithAuth.patch(`${API_BASE}/${id}`, data)
-      return res.data
+      const payload = {
+        event_id: eventId,
+        id: id,
+        event_feedback: {
+          review: review,
+          testimony: testimony,
+        },
+      };
+      const res = await axiosWithAuth.patch(
+        `${API_BASE}/${id}?event_id=${eventId}`,
+        payload
+      );
+      return res.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to update feedback')
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update feedback"
+      );
     }
   }
-)
+);
 
 export const createFeedback = createAsyncThunk(
-  'feedback/createFeedback',
+  "feedback/createFeedback",
   async ({ eventId, review, testimony, name }, { rejectWithValue }) => {
     try {
       const payload = {
@@ -44,20 +58,37 @@ export const createFeedback = createAsyncThunk(
       };
 
       // Make the API request with axiosWithAuth (assuming it's a POST request)
-      const res = await axiosWithAuth.post(`${API_BASE}?foundation_event_id=${eventId}`, payload);
+      const res = await axiosWithAuth.post(
+        `${API_BASE}?foundation_event_id=${eventId}`,
+        payload
+      );
 
       // Return the response data from the API
       return res.data;
     } catch (error) {
       // Handle error and provide a reject value
-      return rejectWithValue(error.response?.data?.message || 'Failed to submit feedback');
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to submit feedback"
+      );
+    }
+  }
+);
+
+export const deleteFeedback = createAsyncThunk(
+  "feedback/deleteFeedback",
+  async ({ id, event_id }, { rejectWithValue }) => {
+    try {
+      await axiosWithAuth.delete(`${API_BASE}/${id}?event_id=${event_id}`);
+      return id;
+    } catch (error) {
+      return rejectWithValue(handleError(error));
     }
   }
 );
 
 // Slice
 const feedbackSlice = createSlice({
-  name: 'feedback',
+  name: "feedback",
   initialState: {
     allFeedbacks: [],
     loading: false,
@@ -65,26 +96,25 @@ const feedbackSlice = createSlice({
   },
   reducers: {
     resetFeedbackState: (state) => {
-      state.allFeedbacks = []
-      state.error = null
-      state.loading = false
+      state.allFeedbacks = [];
+      state.error = null;
+      state.loading = false;
     },
-   
   },
   extraReducers: (builder) => {
     builder
       // Fetch feedbacks
       .addCase(fetchFeedbacks.pending, (state) => {
-        state.loading = true
-        state.error = null
+        state.loading = true;
+        state.error = null;
       })
       .addCase(fetchFeedbacks.fulfilled, (state, action) => {
-        state.loading = false
-        state.allFeedbacks = action.payload
+        state.loading = false;
+        state.allFeedbacks = action.payload;
       })
       .addCase(fetchFeedbacks.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload
+        state.loading = false;
+        state.error = action.payload;
       })
 
       // Create feedback
@@ -93,7 +123,7 @@ const feedbackSlice = createSlice({
       })
       .addCase(createFeedback.fulfilled, (state, action) => {
         state.loading = false;
-        state.allFeedbacks.push(action.payload); 
+        state.allFeedbacks.push(action.payload);
       })
       .addCase(createFeedback.rejected, (state, action) => {
         state.loading = false;
@@ -102,14 +132,22 @@ const feedbackSlice = createSlice({
 
       // Update feedback
       .addCase(updateFeedback.fulfilled, (state, action) => {
-        const index = state.allFeedbacks.findIndex(fb => fb.id === action.payload.id)
+        const index = state.allFeedbacks.findIndex(
+          (fb) => fb.id === action.payload.id
+        );
         if (index !== -1) {
-          state.allFeedbacks[index] = action.payload
+          state.allFeedbacks[index] = action.payload;
         }
       })
+
+      //  DELETE feedback
+      .addCase(deleteFeedback.fulfilled, (state, action) => {
+        state.allFeedbacks = state.allFeedbacks.filter(
+          (item) => item.id !== action.payload
+        );
+      });
   },
-})
+});
 
-export const { resetFeedbackState} = feedbackSlice.actions
-export default feedbackSlice.reducer
-
+export const { resetFeedbackState } = feedbackSlice.actions;
+export default feedbackSlice.reducer;
