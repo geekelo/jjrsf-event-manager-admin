@@ -4,7 +4,11 @@ import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchPlatforms, createPlatform, updatePlatform, deletePlatform } from "../../redux/platformSlice"
 import { toast } from "react-toastify"
-import { ChevronDown, ChevronUp, FilmIcon, PlusCircle, Edit2, Trash2 } from "lucide-react"
+import { 
+  ChevronDown, ChevronUp, FilmIcon, PlusCircle, Edit2, Trash2,
+  Video, Youtube, Mic, Globe, ExternalLink, Copy, Check, Code
+} from "lucide-react"
+import AddPlatformModal from "./addPlatformModal"
 import "../../stylesheets/streamAccordion.css"
 
 const StreamAccordion = ({ eventId }) => {
@@ -15,11 +19,8 @@ const StreamAccordion = ({ eventId }) => {
   const [activePlatformId, setActivePlatformId] = useState(null)
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingPlatform, setEditingPlatform] = useState(null)
-  const [formData, setFormData] = useState({
-    platform_name: "",
-    embed_link: "",
-    visit_link: "",
-  })
+  const [showEmbedCode, setShowEmbedCode] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     if (eventId) {
@@ -40,21 +41,11 @@ const StreamAccordion = ({ eventId }) => {
 
   const openAddModal = () => {
     setEditingPlatform(null)
-    setFormData({
-      platform_name: "",
-      embed_link: "",
-      visit_link: "",
-    })
     setShowAddModal(true)
   }
 
   const openEditModal = (platform) => {
     setEditingPlatform(platform)
-    setFormData({
-      platform_name: platform.platform_name || "",
-      embed_link: platform.embed_link || "",
-      visit_link: platform.visit_link || "",
-    })
     setShowAddModal(true)
   }
 
@@ -63,29 +54,28 @@ const StreamAccordion = ({ eventId }) => {
     setEditingPlatform(null)
   }
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
+  const toggleEmbedCodeDisplay = () => {
+    setShowEmbedCode(!showEmbedCode)
+    setCopied(false)
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const copyEmbedCode = (code) => {
+    navigator.clipboard.writeText(code).then(
+      () => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      },
+      (err) => {
+        console.error('Could not copy text: ', err)
+        toast.error("Failed to copy embed code")
+      }
+    )
+  }
 
-    if (!formData.platform_name.trim()) {
-      toast.error("Platform name is required")
-      return
-    }
-
+  const handleAddOrUpdatePlatform = async (formData) => {
     try {
       if (editingPlatform) {
         // Update existing platform
-        const embed_code = formData.embed_link
-          ? `<iframe src="${formData.embed_link}" frameborder="0" allowfullscreen></iframe>`
-          : null
-
         await dispatch(
           updatePlatform({
             id: editingPlatform.id,
@@ -93,7 +83,7 @@ const StreamAccordion = ({ eventId }) => {
             updates: {
               platform_name: formData.platform_name,
               embed_link: formData.embed_link,
-              embed_code,
+              embed_code: formData.embed_code,
               visit_link: formData.visit_link,
             },
           }),
@@ -106,6 +96,7 @@ const StreamAccordion = ({ eventId }) => {
           createPlatform({
             name: formData.platform_name,
             embedUrl: formData.embed_link,
+            embed_code: formData.embed_code,
             visit_link: formData.visit_link,
             event_id: eventId,
           }),
@@ -119,6 +110,7 @@ const StreamAccordion = ({ eventId }) => {
       dispatch(fetchPlatforms(eventId))
     } catch (error) {
       toast.error(error?.message || "An error occurred. Please try again.")
+      throw error;
     }
   }
 
@@ -143,17 +135,32 @@ const StreamAccordion = ({ eventId }) => {
     }
   }
 
-  const getPlatformLogo = (name) => {
+  const getPlatformIcon = (name) => {
     switch (name?.toLowerCase()) {
       case "youtube":
-        return "https://www.youtube.com/s/desktop/7c4be407/img/favicon_144x144.png"
+        return <Youtube size={20} className="platform-icon youtube-icon" />
       case "mixlr":
-        return "https://cdn.mixlr.com/images/favicons/favicon-196x196.png"
+        return <Mic size={20} className="platform-icon mixlr-icon" />
       case "zoom":
-        return "https://st1.zoom.us/zoom.ico"
+        return <Video size={20} className="platform-icon zoom-icon" />
       default:
-        return "https://via.placeholder.com/40x40?text=LOGO"
+        return <Globe size={20} className="platform-icon default-icon" />
     }
+  }
+
+  const getEmbedCodeToDisplay = (platform) => {
+    if (platform.embed_code) {
+      return platform.embed_code;
+    } else if (platform.embed_link) {
+      return `<iframe 
+  src="${platform.embed_link}" 
+  title="${platform.platform_name} content" 
+  frameborder="0" 
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+  allowfullscreen
+></iframe>`;
+    }
+    return null;
   }
 
   const renderEmbeddedContent = (platform) => {
@@ -163,58 +170,67 @@ const StreamAccordion = ({ eventId }) => {
           <p>No embeddable content available for this platform.</p>
           {platform?.visit_link && (
             <a href={platform.visit_link} target="_blank" rel="noopener noreferrer" className="visit-link">
-              Visit Platform
+              <ExternalLink size={16} /> Visit Platform
             </a>
           )}
         </div>
       )
     }
 
-    // For YouTube
-    if (platform.platform_name?.toLowerCase() === "youtube") {
+    // If embed code is provided, use it directly
+    if (platform.embed_code) {
       return (
-        <div className="youtube-container">
-          <iframe
-            width="100%"
-            height="500"
-            src={platform.embed_link}
-            title="YouTube video player"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
-        </div>
+        <div className="embed-container" dangerouslySetInnerHTML={{ __html: platform.embed_code }}></div>
       )
     }
 
-    // For Mixlr
-    if (platform.platform_name?.toLowerCase() === "mixlr") {
-      return (
-        <div className="mixlr-container">
-          <iframe
-            width="100%"
-            height="250"
-            src={platform.embed_link}
-            frameBorder="0"
-            title="Mixlr audio player"
-          ></iframe>
-        </div>
-      )
-    }
-
-    // Generic embed for other platforms
+    // Otherwise, use the embed link in an iframe - consistent for all platforms
     return (
-      <div className="generic-embed-container">
+      <div className="embed-container">
         <iframe
-          width="100%"
-          height="500"
           src={platform.embed_link}
           title={`${platform.platform_name} content`}
           frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         ></iframe>
       </div>
     )
+  }
+
+  const renderEmbedCodeSection = (platform) => {
+    const embedCode = getEmbedCodeToDisplay(platform);
+    
+    if (!embedCode) return null;
+
+    return (
+      <div className="embed-code-section">
+        <button 
+          className="embed-code-toggle" 
+          onClick={toggleEmbedCodeDisplay}
+        >
+          <Code size={16} />
+          {showEmbedCode ? "Hide Embed Code" : "Show Embed Code"}
+        </button>
+
+        {showEmbedCode && (
+          <div className="embed-code-display">
+            <div className="embed-code-header">
+              <span>Embed Code</span>
+              <button 
+                className="copy-code-button" 
+                onClick={() => copyEmbedCode(embedCode)}
+                title="Copy to clipboard"
+              >
+                {copied ? <Check size={16} /> : <Copy size={16} />}
+                {copied ? "Copied!" : "Copy"}
+              </button>
+            </div>
+            <pre className="embed-code-content">{embedCode}</pre>
+          </div>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -229,7 +245,7 @@ const StreamAccordion = ({ eventId }) => {
 
       {isOpen && (
         <div className="accordion-content">
-          {/* Add Platform Button - Moved to top */}
+          {/* Add Platform Button - Top Position */}
           <div className="add-platform-button-container top-button">
             <button className="add-platform-button" onClick={openAddModal}>
               <PlusCircle size={18} />
@@ -255,12 +271,9 @@ const StreamAccordion = ({ eventId }) => {
                   <button
                     key={platform.id}
                     className={`platform-tab ${activePlatformId === platform.id ? "active" : ""}`}
-                    onClick={() => setActivePlatformId(activePlatformId === platform.id ? null : platform.id)}
+                    onClick={() => setActivePlatformId(platform.id === activePlatformId ? null : platform.id)}
                   >
-                    <img
-                      src={getPlatformLogo(platform.platform_name) || "/placeholder.svg"}
-                      alt={`${platform.platform_name} logo`}
-                    />
+                    {getPlatformIcon(platform.platform_name)}
                     {platform.platform_name}
                     <span className="view-count">{platform.views ?? 0} views</span>
                   </button>
@@ -282,87 +295,23 @@ const StreamAccordion = ({ eventId }) => {
                         </button>
                       </div>
                       {renderEmbeddedContent(platform)}
+                      {renderEmbedCodeSection(platform)}
                     </div>
                   ),
               )}
             </div>
           )}
-
-          {/* Removed the button from here as it's now at the top */}
         </div>
       )}
 
       {/* Add/Edit Platform Modal */}
       {showAddModal && (
-        <div className="platform-modal-overlay">
-          <div className="platform-modal">
-            <div className="platform-modal-header">
-              <h2>{editingPlatform ? "Edit Platform" : "Add New Platform"}</h2>
-              <button className="platform-modal-close" onClick={closeModal}>
-                ×
-              </button>
-            </div>
-
-            <form className="platform-form" onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="platform_name">Platform Name *</label>
-                <input
-                  type="text"
-                  id="platform_name"
-                  name="platform_name"
-                  value={formData.platform_name}
-                  onChange={handleInputChange}
-                  placeholder="e.g., YouTube, Mixlr, Zoom"
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="embed_link">Embed Link *</label>
-                <input
-                  type="text"
-                  id="embed_link"
-                  name="embed_link"
-                  value={formData.embed_link}
-                  onChange={handleInputChange}
-                  placeholder="e.g., https://youtube.com/embed/abc123"
-                  required
-                />
-                <small>The URL that will be used to embed the content in an iframe.</small>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="visit_link">Visit Link (Optional)</label>
-                <input
-                  type="text"
-                  id="visit_link"
-                  name="visit_link"
-                  value={formData.visit_link}
-                  onChange={handleInputChange}
-                  placeholder="e.g., https://youtube.com/watch?v=abc123"
-                />
-                <small>Direct URL to the content that users can visit.</small>
-              </div>
-
-              {formData.embed_link && (
-                <div className="preview-container">
-                  <p>
-                    <strong>Note:</strong> Embed preview will be available after saving.
-                  </p>
-                </div>
-              )}
-
-              <div className="platform-form-actions">
-                <button type="button" className="cancel-button" onClick={closeModal}>
-                  Cancel
-                </button>
-                <button type="submit" className="save-button">
-                  {editingPlatform ? "Update" : "Add"} Platform
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <AddPlatformModal 
+          onClose={closeModal} 
+          onAdd={handleAddOrUpdatePlatform} 
+          isEditing={!!editingPlatform}
+          initialData={editingPlatform || {}}
+        />
       )}
     </div>
   )
