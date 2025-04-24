@@ -23,9 +23,11 @@ import EventHeader from "../components/event/EventHeader"
 import EventDetailsSection from "../components/event/EventDetailsSection"
 import EventMetricsSection from "../components/event/EventMetricsSection"
 import EventEvaluationSection from "../components/event/EventEvaluationSection"
-import EventFeedbackSection from "../components/event/EventFeedbackSection" // Add this new import
+import EventFeedbackSection from "../components/event/EventFeedbackSection"
+import EventImageSection from "../components/event/EventImageSection" // Add this new import
 import StreamsSection from "../components/event/StreamsSection"
 import PasscodeModal from "../components/PasscodeModal"
+
 function ManageEvent() {
   const { eventId } = useParams()
   const navigate = useNavigate()
@@ -83,10 +85,12 @@ function ManageEvent() {
       // We'll let the component decide when to reset
     }
   }, [dispatch, eventId, navigate, events.length, currentEventId])
-  // Update local event state when event changes in Redux
+  // Update the ManageEvent component to properly handle image updates
+  // Find the useEffect that updates localEvent when event changes
   useEffect(() => {
     if (event) {
       setLocalEvent(event)
+      console.log("Event updated:", event)
     }
   }, [event])
 
@@ -143,7 +147,7 @@ function ManageEvent() {
       registration_deadline: updatedData.registrationDeadline,
       location: updatedData.location,
       status: updatedData.status,
-      onsite: updatedData.isOnsite,
+      onsite: updatedData.onsite,
       online: updatedData.isOffline, // Note: isOffline maps to online in the API
       description: updatedData.description,
     }
@@ -241,7 +245,7 @@ function ManageEvent() {
     )
   }
 
-  // Map API fields to component fields - now using localEvent for immediate UI updates
+  // Update the mappedEvent object to ensure imageUrl is properly passed
   const mappedEvent = localEvent
     ? {
         id: localEvent.id,
@@ -255,7 +259,7 @@ function ManageEvent() {
         isOffline: localEvent.online,
         description: localEvent.description,
         evaluation: localEvent.evaluation,
-        imageUrl: localEvent.image_url,
+        imageUrl: localEvent.image_url || null, // Ensure null if undefined
       }
     : null
 
@@ -276,6 +280,7 @@ function ManageEvent() {
 
       <div className="manage-event-container">
         <EventHeader event={mappedEvent} handleBack={handleBack} />
+
         <EventDetailsSection
           event={mappedEvent}
           eventUrl={eventUrl}
@@ -284,14 +289,21 @@ function ManageEvent() {
           toggleEditMode={toggleEditMode}
           updateEventData={updateEventData}
         />
+
+        {/* Add the new Event Image Section */}
+        <EventImageSection eventId={eventId} imageUrl={mappedEvent?.imageUrl} />
+
         <EventMetricsSection metrics={metrics} eventId={eventId} />
+
         <EventEvaluationSection
           event={mappedEvent}
           eventId={eventId}
           updateEventEvaluation={updateEventEvaluationHandler}
           deleteEventEvaluation={deleteEventEvaluationHandler}
         />
-        <EventFeedbackSection eventId={eventId} eventName={mappedEvent?.name} /> {/* Add this new component */}
+
+        <EventFeedbackSection eventId={eventId} eventName={mappedEvent?.name} />
+
         <StreamsSection event={mappedEvent} />
       </div>
 

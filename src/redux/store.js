@@ -1,18 +1,33 @@
 import { configureStore } from "@reduxjs/toolkit"
 import eventsReducer from "./eventsSlice"
 import attendeesReducer from "./attendeesSlice"
+import frontDeskReducer from "./frontDeskSlice"
+import platformReducer from "./platformSlice"
 import quickRegistrationsReducer from "./quickRegistrationsSlice"
-import frontDeskReducer from './frontDeskSlice'
-import platformReducer from './platformSlice'
-import feedbackReducer from './feedbackSlice'
+import feedbackReducer from "./feedbackSlice"
+import imageReducer from "./imageSlice"
 
 export const store = configureStore({
   reducer: {
     events: eventsReducer,
+    attendees: attendeesReducer,
     frontDesk: frontDeskReducer,
-  attendees: attendeesReducer,
     platform: platformReducer,
     quickRegistrations: quickRegistrationsReducer,
-    feedback: feedbackReducer
+    feedback: feedbackReducer,
+    image: imageReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Ignore these action types
+        ignoredActions: ["image/updateEventImage/fulfilled"],
+        // Ignore these field paths in all actions
+        ignoredActionPaths: ["meta.arg.imageUrl", "payload.image_url"],
+        // Ignore these paths in the state
+        ignoredPaths: ["events.currentEvent.image_url"],
+      },
+    }),
 })
+
+export default store
