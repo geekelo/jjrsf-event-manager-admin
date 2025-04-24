@@ -1437,9 +1437,9 @@ select {
 /* Update the event image styles to fix display issues */
 .event-image-container {
   position: relative;
-  width: 100%;
-  max-width: 600px;
-  height: 315px; /* 16:9 aspect ratio for 600px width */
+  width: 500px;
+  max-width: 500px;
+  height: 500px; /* 16:9 aspect ratio for 600px width */
   border-radius: 8px;
   overflow: hidden;
   background-color: #f9f9f9;
@@ -1613,6 +1613,8 @@ select {
 @media (max-width: 768px) {
   .event-image-container {
     height: 250px;
+    width: 100%;
+    max-width: 500px;
   }
 
   .image-actions {
