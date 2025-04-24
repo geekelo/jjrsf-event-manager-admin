@@ -24,7 +24,7 @@ const EventFeedbackSection = ({ eventId, eventName }) => {
       </div>
 
         <div className="feedback-action-container">
-          <button className="view-all-feedback-button" onClick={navigateToFeedback}>
+          <button className="manage-streams-button " onClick={navigateToFeedback}>
             <span className="button-text">View All Feedback</span>
             <span className="button-icon">
               <FontAwesomeIcon icon={faArrowRight} />
