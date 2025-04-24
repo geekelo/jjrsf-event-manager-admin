@@ -15,9 +15,20 @@ import {
   faBuilding,
   faInfoCircle,
   faListAlt,
+  faEye,
+  faEyeSlash,
+  faSpinner,
 } from "@fortawesome/free-solid-svg-icons"
 
-const EventDetailsSection = ({ event, eventUrl, copyEventUrl, isEditMode, toggleEditMode, updateEventData }) => {
+const EventDetailsSection = ({
+  event,
+  eventUrl,
+  copyEventUrl,
+  isEditMode,
+  toggleEditMode,
+  updateEventData,
+  updateEventVisibility,
+}) => {
   const [editFormData, setEditFormData] = useState({
     name: "",
     startDate: "",
@@ -29,6 +40,8 @@ const EventDetailsSection = ({ event, eventUrl, copyEventUrl, isEditMode, toggle
     isOffline: false,
     description: "",
   })
+
+  const [visibilityLoading, setVisibilityLoading] = useState(false)
 
   // Update form data when event changes
   useEffect(() => {
@@ -60,6 +73,17 @@ const EventDetailsSection = ({ event, eventUrl, copyEventUrl, isEditMode, toggle
     updateEventData(editFormData)
   }
 
+  const handleVisibilityToggle = () => {
+    if (!event) return
+
+    setVisibilityLoading(true)
+
+    // Call the updateEventVisibility function passed from parent
+    updateEventVisibility(!event.visibility).finally(() => {
+      setVisibilityLoading(false)
+    })
+  }
+
   if (!event) return null
 
   return (
@@ -68,11 +92,32 @@ const EventDetailsSection = ({ event, eventUrl, copyEventUrl, isEditMode, toggle
         <h2>
           <FontAwesomeIcon icon={faInfoCircle} /> Event Details
         </h2>
-        {!isEditMode && (
-          <button className="edit-button" onClick={toggleEditMode} aria-label="Edit event details">
-            <FontAwesomeIcon icon={faEdit} /> Edit Details
-          </button>
-        )}
+        <div className="section-header-actions">
+          {/* Visibility Toggle */}
+          <div className="visibility-toggle-container">
+            <span className="visibility-label">
+              <FontAwesomeIcon icon={event.visibility ? faEye : faEyeSlash} className="visibility-icon" />
+              {event.visibility ? "Public" : "Private"}
+            </span>
+            <label className="visibility-switch">
+              <input
+                type="checkbox"
+                checked={event.visibility || false}
+                onChange={handleVisibilityToggle}
+                disabled={visibilityLoading}
+              />
+              <span className="visibility-slider">
+                {visibilityLoading && <FontAwesomeIcon icon={faSpinner} className="visibility-spinner" />}
+              </span>
+            </label>
+          </div>
+
+          {!isEditMode && (
+            <button className="edit-button" onClick={toggleEditMode} aria-label="Edit event details">
+              <FontAwesomeIcon icon={faEdit} /> Edit Details
+            </button>
+          )}
+        </div>
       </div>
 
       {isEditMode ? (

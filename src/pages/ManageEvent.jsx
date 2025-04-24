@@ -10,6 +10,7 @@ import {
   deleteEventEvaluation,
   setCurrentEvent,
   setEditMode,
+  updateEventVisibility,
 } from "../redux/eventsSlice"
 import { fetchEventAttendees } from "../redux/attendeesSlice"
 import { fetchEventQuickRegistrations } from "../redux/quickRegistrationsSlice"
@@ -24,7 +25,7 @@ import EventDetailsSection from "../components/event/EventDetailsSection"
 import EventMetricsSection from "../components/event/EventMetricsSection"
 import EventEvaluationSection from "../components/event/EventEvaluationSection"
 import EventFeedbackSection from "../components/event/EventFeedbackSection"
-import EventImageSection from "../components/event/EventImageSection" // Add this new import
+import EventImageSection from "../components/event/EventImageSection"
 import StreamsSection from "../components/event/StreamsSection"
 import PasscodeModal from "../components/PasscodeModal"
 
@@ -85,6 +86,7 @@ function ManageEvent() {
       // We'll let the component decide when to reset
     }
   }, [dispatch, eventId, navigate, events.length, currentEventId])
+
   // Update the ManageEvent component to properly handle image updates
   // Find the useEffect that updates localEvent when event changes
   useEffect(() => {
@@ -159,6 +161,31 @@ function ManageEvent() {
       })
       .catch((error) => {
         toast.error(error || "Failed to update event")
+      })
+  }
+
+  // Add a function to handle visibility toggle
+  const handleVisibilityToggle = (newVisibility) => {
+    // Immediately update local state for UI
+    setLocalEvent((prev) => ({
+      ...prev,
+      visibility: newVisibility,
+    }))
+
+    return dispatch(updateEventVisibility({ eventId, visibility: newVisibility }))
+      .unwrap()
+      .then(() => {
+        toast.success(`Event is now ${newVisibility ? "public" : "private"}`)
+        return Promise.resolve()
+      })
+      .catch((error) => {
+        // If API call fails, revert local state
+        setLocalEvent((prev) => ({
+          ...prev,
+          visibility: !newVisibility, // Revert to previous state
+        }))
+        toast.error(error || "Failed to update visibility")
+        return Promise.reject(error)
       })
   }
 
@@ -260,6 +287,7 @@ function ManageEvent() {
         description: localEvent.description,
         evaluation: localEvent.evaluation,
         imageUrl: localEvent.image_url || null, // Ensure null if undefined
+        visibility: localEvent.visibility || false, // Add visibility with default to false
       }
     : null
 
@@ -288,6 +316,7 @@ function ManageEvent() {
           isEditMode={isEditMode}
           toggleEditMode={toggleEditMode}
           updateEventData={updateEventData}
+          updateEventVisibility={handleVisibilityToggle}
         />
 
         {/* Add the new Event Image Section */}
