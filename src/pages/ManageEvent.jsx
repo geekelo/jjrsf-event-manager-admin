@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
@@ -21,6 +23,7 @@ import EventHeader from "../components/event/EventHeader"
 import EventDetailsSection from "../components/event/EventDetailsSection"
 import EventMetricsSection from "../components/event/EventMetricsSection"
 import EventEvaluationSection from "../components/event/EventEvaluationSection"
+import EventFeedbackSection from "../components/event/EventFeedbackSection" // Add this new import
 import StreamsSection from "../components/event/StreamsSection"
 import PasscodeModal from "../components/PasscodeModal"
 function ManageEvent() {
@@ -49,37 +52,37 @@ function ManageEvent() {
   const [localEvent, setLocalEvent] = useState(null) // Add local state for immediate UI updates
 
   // Check authentication on component mount
- // Check authentication and fetch data on component mount
- 
-useEffect(() => {
-  if (!isAuthenticated()) {
-    toast.error("You must be logged in to access this page")
-    navigate("/admin/login")
-    return
-  }
+  // Check authentication and fetch data on component mount
 
-  // If events are not loaded yet, fetch them
-  if (events.length === 0) {
-    dispatch(fetchEvents())
-  } else {
-    // Set the current event from the events array
-    dispatch(setCurrentEvent(eventId))
-  }
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      toast.error("You must be logged in to access this page")
+      navigate("/admin/login")
+      return
+    }
 
-  // Only fetch attendees if we don't already have them for this event
-  if (!currentEventId || currentEventId !== eventId) {
-    dispatch(fetchEventAttendees(eventId))
-  }
-  
-  // Fetch quick registrations for this event
-  dispatch(fetchEventQuickRegistrations(eventId))
+    // If events are not loaded yet, fetch them
+    if (events.length === 0) {
+      dispatch(fetchEvents())
+    } else {
+      // Set the current event from the events array
+      dispatch(setCurrentEvent(eventId))
+    }
 
-  // Cleanup on unmount
-  return () => {
-    // Don't reset current event when navigating to attendee list
-    // We'll let the component decide when to reset
-  }
-}, [dispatch, eventId, navigate, events.length, currentEventId])
+    // Only fetch attendees if we don't already have them for this event
+    if (!currentEventId || currentEventId !== eventId) {
+      dispatch(fetchEventAttendees(eventId))
+    }
+
+    // Fetch quick registrations for this event
+    dispatch(fetchEventQuickRegistrations(eventId))
+
+    // Cleanup on unmount
+    return () => {
+      // Don't reset current event when navigating to attendee list
+      // We'll let the component decide when to reset
+    }
+  }, [dispatch, eventId, navigate, events.length, currentEventId])
   // Update local event state when event changes in Redux
   useEffect(() => {
     if (event) {
@@ -125,11 +128,11 @@ useEffect(() => {
       online: updatedData.isOffline,
       description: updatedData.description,
     }
-    
+
     // Update local state for immediate UI refresh
-    setLocalEvent(prev => ({
+    setLocalEvent((prev) => ({
       ...prev,
-      ...mappedUpdatedData
+      ...mappedUpdatedData,
     }))
 
     // Map form field names to API field names
@@ -144,7 +147,6 @@ useEffect(() => {
       online: updatedData.isOffline, // Note: isOffline maps to online in the API
       description: updatedData.description,
     }
-
 
     dispatch(updateEvent({ eventId, eventData: apiData }))
       .unwrap()
@@ -163,11 +165,11 @@ useEffect(() => {
 
   const updateEventEvaluationHandler = (evaluationText) => {
     // First update local state for immediate UI refresh
-    setLocalEvent(prev => ({
+    setLocalEvent((prev) => ({
       ...prev,
-      evaluation: evaluationText
+      evaluation: evaluationText,
     }))
-    
+
     return dispatch(updateEventEvaluation({ eventId, evaluation: evaluationText }))
       .unwrap()
       .then(() => {
@@ -176,9 +178,9 @@ useEffect(() => {
       })
       .catch((error) => {
         // If API call fails, revert local state
-        setLocalEvent(prev => ({
+        setLocalEvent((prev) => ({
           ...prev,
-          evaluation: event.evaluation
+          evaluation: event.evaluation,
         }))
         toast.error(error || "Failed to update evaluation")
         return Promise.reject(error) // Return a rejected promise on failure
@@ -188,11 +190,11 @@ useEffect(() => {
   // Add a new function to handle evaluation deletion
   const deleteEventEvaluationHandler = () => {
     // First update local state for immediate UI refresh
-    setLocalEvent(prev => ({
+    setLocalEvent((prev) => ({
       ...prev,
-      evaluation: null
+      evaluation: null,
     }))
-    
+
     return dispatch(deleteEventEvaluation(eventId))
       .unwrap()
       .then(() => {
@@ -200,9 +202,9 @@ useEffect(() => {
       })
       .catch((error) => {
         // If API call fails, revert local state
-        setLocalEvent(prev => ({
+        setLocalEvent((prev) => ({
           ...prev,
-          evaluation: event.evaluation
+          evaluation: event.evaluation,
         }))
         return Promise.reject(error || "Failed to delete evaluation")
       })
@@ -274,7 +276,6 @@ useEffect(() => {
 
       <div className="manage-event-container">
         <EventHeader event={mappedEvent} handleBack={handleBack} />
-
         <EventDetailsSection
           event={mappedEvent}
           eventUrl={eventUrl}
@@ -283,16 +284,14 @@ useEffect(() => {
           toggleEditMode={toggleEditMode}
           updateEventData={updateEventData}
         />
-
         <EventMetricsSection metrics={metrics} eventId={eventId} />
-
         <EventEvaluationSection
           event={mappedEvent}
           eventId={eventId}
           updateEventEvaluation={updateEventEvaluationHandler}
           deleteEventEvaluation={deleteEventEvaluationHandler}
         />
-
+        <EventFeedbackSection eventId={eventId} eventName={mappedEvent?.name} /> {/* Add this new component */}
         <StreamsSection event={mappedEvent} />
       </div>
 
