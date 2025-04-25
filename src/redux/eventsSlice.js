@@ -39,7 +39,7 @@ export const updateEvent = createAsyncThunk(
 
       // Force a refresh of the events to ensure we have the latest data
       dispatch(fetchEvents())
-      
+
       return response.data
     } catch (error) {
       const errorMessage =
@@ -63,7 +63,7 @@ export const updateEventEvaluation = createAsyncThunk(
 
       // Force refresh of all events to get the latest data
       dispatch(fetchEvents())
-      
+
       return response.data
     } catch (error) {
       const errorMessage =
@@ -85,11 +85,39 @@ export const deleteEventEvaluation = createAsyncThunk(
 
       // Force refresh of all events to get the latest data
       dispatch(fetchEvents())
-      
+
       return response.data
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || error.response?.data?.error || "Failed to delete evaluation. Please try again."
+      return rejectWithValue(errorMessage)
+    }
+  },
+)
+
+// Add a new thunk for updating event visibility
+export const updateEventVisibility = createAsyncThunk(
+  "events/updateEventVisibility",
+  async ({ eventId, visibility }, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await axiosWithAuth.patch(`/api/v1/foundation_events/${eventId}`, {
+        event_id: eventId,
+        event: {
+          visibility,
+        },
+      })
+
+      // Force refresh of all events to get the latest data
+      setTimeout(() => {
+        dispatch(fetchEvents())
+      }, 500) // Small delay to ensure the API has time to process
+
+      return response.data
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Failed to update event visibility. Please try again."
       return rejectWithValue(errorMessage)
     }
   },
@@ -167,7 +195,7 @@ const eventsSlice = createSlice({
       if (state.currentEvent && state.currentEvent.id === action.payload.id) {
         state.currentEvent = { ...state.currentEvent, ...action.payload }
       }
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -179,10 +207,10 @@ const eventsSlice = createSlice({
         state.loading = false
         state.events = action.payload
         state.filteredEvents = filterEvents(action.payload, state.searchTerm, state.filters)
-        
+
         // Also update currentEvent if it exists
         if (state.currentEvent) {
-          const updatedEvent = action.payload.find(event => event.id === state.currentEvent.id)
+          const updatedEvent = action.payload.find((event) => event.id === state.currentEvent.id)
           if (updatedEvent) {
             state.currentEvent = updatedEvent
           }
@@ -269,6 +297,28 @@ const eventsSlice = createSlice({
         state.loading = false
         state.error = action.payload
       })
+      // Add cases for updateEventVisibility
+      .addCase(updateEventVisibility.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(updateEventVisibility.fulfilled, (state, action) => {
+        state.loading = false
+        // Update in events array
+        const index = state.events.findIndex((event) => event.id === action.payload.id)
+        if (index !== -1) {
+          state.events[index] = action.payload
+          state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
+        }
+        // Update current event
+        if (state.currentEvent && state.currentEvent.id === action.payload.id) {
+          state.currentEvent = action.payload
+        }
+      })
+      .addCase(updateEventVisibility.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload
+      })
   },
 })
 
@@ -326,7 +376,7 @@ export const {
   setCurrentEvent,
   setEditMode,
   resetCurrentEvent,
-  updateCurrentEvent
+  updateCurrentEvent,
 } = eventsSlice.actions
 
 export default eventsSlice.reducer
