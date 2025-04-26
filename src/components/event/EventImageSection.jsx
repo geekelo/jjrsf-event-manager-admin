@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useRef, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -45,42 +43,70 @@ const EventImageSection = ({ eventId, imageUrl }) => {
     setImageError(false)
   }
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0]
-    if (!file) return
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
     // Check file type
     if (!file.type.match("image.*")) {
-      toast.error("Please select an image file (JPEG, PNG, etc.)")
-      return
+      toast.error("Please select an image file (JPEG, PNG, etc.)");
+      return;
     }
 
     // Check file size (limit to 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size should be less than 5MB")
-      return
+      toast.error("File size should be less than 5MB");
+      return;
     }
 
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      const base64String = event.target.result
-      setPreviewImage(base64String)
-      setImageError(false)
+    try {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64String = reader.result.split(",")[1]; // remove the "data:image/...;base64," part
 
-      // Dispatch action to update image
-      dispatch(
-        updateEventImage({
-          eventId,
-          imageUrl: base64String,
-        }),
-      ).then(() => {
-        toast.success("Image updated successfully")
-      }).catch((error) => {
-        toast.error("Failed to update image")
-      })
+        // Use environment variable with fallback
+        const apiKey = import.meta.env.VITE_IMGBB_API_KEY || "d44d270b693fcf092b6ebb50e7e6c781";
+
+        const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            image: base64String,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          const uploadedImageUrl = data.data.url;
+          setPreviewImage(uploadedImageUrl);
+
+          dispatch(
+            updateEventImage({
+              eventId,
+              imageUrl: uploadedImageUrl,
+            })
+          )
+            .then(() => {
+              toast.success("Image updated successfully");
+            })
+            .catch(() => {
+              toast.error("Failed to update image");
+            });
+        } else {
+          throw new Error(data.error?.message || "Image upload failed");
+        }
+      };
+
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error("Image upload error:", error);
+      toast.error("Image upload failed. Please try again.");
     }
-    reader.readAsDataURL(file)
-  }
+  };
+  
 
   const confirmRemoveImage = () => {
     setShowDeleteConfirm(true)
