@@ -179,7 +179,7 @@ const EventImageSection = ({ eventId, imageUrl }) => {
                 </div>
               ) : (
                 <img
-                  src={displayImageUrl || "/placeholder.svg"}
+                  src={displayImageUrl}
                   alt="Event"
                   className={`event-image ${!imageUrl && !previewImage ? "fallback-image" : ""}`}
                   onError={handleImageError}

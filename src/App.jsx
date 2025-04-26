@@ -11,6 +11,7 @@ import "./App.css"
 import ProtectedRoute from "./components/auth/protectedRoute"
 import ManageStream from "./pages/manageStream"
 import EventFeedback from "./pages/EventFeedback"
+import HomePage from "./pages/HomePage"
 
 function App() {
   return (
@@ -30,7 +31,8 @@ function App() {
         className="toastify-container" // Add a custom class for targeting in CSS
       />
       <Routes>
-        {/* Unprotected Routes */}
+        {/* Public Routes */}
+        <Route path="/" element={<HomePage />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
 
         {/* Protected Routes */}
@@ -77,9 +79,8 @@ function App() {
               <PasscodeManagement />
             </ProtectedRoute>
           }
-
         />
-        
+
         <Route
           path="/events/:eventId/feedback"
           element={
@@ -88,20 +89,17 @@ function App() {
             </ProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/events/:eventId/manage_stream"
           element={
             <ProtectedRoute>
-              <ManageStream/>
+              <ManageStream />
             </ProtectedRoute>
           }
         />
-       
 
-
-        {/* Redirect root and wildcard to login */}
-        <Route path="/" element={<Navigate replace to="/events" />} />
-        <Route path="*" element={<Navigate replace to="/events" />} />
+        {/* Redirect wildcard to home */}
+        <Route path="*" element={<Navigate replace to="/" />} />
       </Routes>
     </Router>
   )
