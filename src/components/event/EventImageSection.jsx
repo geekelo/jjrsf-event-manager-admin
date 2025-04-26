@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -47,26 +46,27 @@ const EventImageSection = ({ eventId, imageUrl }) => {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-  
+
     // Check file type
     if (!file.type.match("image.*")) {
       toast.error("Please select an image file (JPEG, PNG, etc.)");
       return;
     }
-  
+
     // Check file size (limit to 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast.error("File size should be less than 5MB");
       return;
     }
-  
+
     try {
       const reader = new FileReader();
       reader.onloadend = async () => {
         const base64String = reader.result.split(",")[1]; // remove the "data:image/...;base64," part
-  
-        const apiKey = "8f1297b57b02c3a803d131d546bb2e3e";
-  
+
+        // Use environment variable with fallback
+        const apiKey = import.meta.env.VITE_IMGBB_API_KEY || "d44d270b693fcf092b6ebb50e7e6c781";
+
         const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
           method: "POST",
           headers: {
@@ -76,13 +76,13 @@ const EventImageSection = ({ eventId, imageUrl }) => {
             image: base64String,
           }),
         });
-  
+
         const data = await response.json();
-  
+
         if (data.success) {
           const uploadedImageUrl = data.data.url;
           setPreviewImage(uploadedImageUrl);
-  
+
           dispatch(
             updateEventImage({
               eventId,
@@ -99,7 +99,7 @@ const EventImageSection = ({ eventId, imageUrl }) => {
           throw new Error(data.error?.message || "Image upload failed");
         }
       };
-  
+
       reader.readAsDataURL(file);
     } catch (error) {
       console.error("Image upload error:", error);
