@@ -1,0 +1,92 @@
+/* Manage Stream Page Styles */
+.manage-stream-page {
+  background: url("/assets/css-pattern.png") repeat;
+  min-height: 100vh;
+  font-family: "Poppins", sans-serif;
+  padding: 30px;
+}
+
+.stream-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  padding: 30px;
+}
+
+/* Header Styles */
+.stream-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 30px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.back-button {
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  color: #333;
+}
+
+.back-button:hover {
+  background-color: #e0e0e0;
+  transform: translateX(-3px);
+}
+
+.stream-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stream-header h2 svg {
+  color: #442777;
+}
+
+/* Stream Accordion Styles */
+.stream-accordion-wrapper {
+  margin-bottom: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
+  overflow: hidden;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .manage-stream-page {
+    padding: 15px;
+  }
+
+  .stream-container {
+    padding: 20px;
+  }
+
+  .stream-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    padding-bottom: 15px;
+  }
+
+  .stream-header h2 {
+    font-size: 22px;
+  }
+}

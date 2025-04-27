@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
@@ -8,6 +10,7 @@ import {
   deleteEventEvaluation,
   setCurrentEvent,
   setEditMode,
+  updateEventVisibility,
 } from "../redux/eventsSlice"
 import { fetchEventAttendees } from "../redux/attendeesSlice"
 import { fetchEventQuickRegistrations } from "../redux/quickRegistrationsSlice"
@@ -21,8 +24,11 @@ import EventHeader from "../components/event/EventHeader"
 import EventDetailsSection from "../components/event/EventDetailsSection"
 import EventMetricsSection from "../components/event/EventMetricsSection"
 import EventEvaluationSection from "../components/event/EventEvaluationSection"
+import EventFeedbackSection from "../components/event/EventFeedbackSection"
+import EventImageSection from "../components/event/EventImageSection"
 import StreamsSection from "../components/event/StreamsSection"
 import PasscodeModal from "../components/PasscodeModal"
+
 function ManageEvent() {
   const { eventId } = useParams()
   const navigate = useNavigate()
@@ -49,41 +55,44 @@ function ManageEvent() {
   const [localEvent, setLocalEvent] = useState(null) // Add local state for immediate UI updates
 
   // Check authentication on component mount
- // Check authentication and fetch data on component mount
- 
-useEffect(() => {
-  if (!isAuthenticated()) {
-    toast.error("You must be logged in to access this page")
-    navigate("/admin/login")
-    return
-  }
+  // Check authentication and fetch data on component mount
 
-  // If events are not loaded yet, fetch them
-  if (events.length === 0) {
-    dispatch(fetchEvents())
-  } else {
-    // Set the current event from the events array
-    dispatch(setCurrentEvent(eventId))
-  }
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      toast.error("You must be logged in to access this page")
+      navigate("/admin/login")
+      return
+    }
 
-  // Only fetch attendees if we don't already have them for this event
-  if (!currentEventId || currentEventId !== eventId) {
-    dispatch(fetchEventAttendees(eventId))
-  }
-  
-  // Fetch quick registrations for this event
-  dispatch(fetchEventQuickRegistrations(eventId))
+    // If events are not loaded yet, fetch them
+    if (events.length === 0) {
+      dispatch(fetchEvents())
+    } else {
+      // Set the current event from the events array
+      dispatch(setCurrentEvent(eventId))
+    }
 
-  // Cleanup on unmount
-  return () => {
-    // Don't reset current event when navigating to attendee list
-    // We'll let the component decide when to reset
-  }
-}, [dispatch, eventId, navigate, events.length, currentEventId])
-  // Update local event state when event changes in Redux
+    // Only fetch attendees if we don't already have them for this event
+    if (!currentEventId || currentEventId !== eventId) {
+      dispatch(fetchEventAttendees(eventId))
+    }
+
+    // Fetch quick registrations for this event
+    dispatch(fetchEventQuickRegistrations(eventId))
+
+    // Cleanup on unmount
+    return () => {
+      // Don't reset current event when navigating to attendee list
+      // We'll let the component decide when to reset
+    }
+  }, [dispatch, eventId, navigate, events.length, currentEventId])
+
+  // Update the ManageEvent component to properly handle image updates
+  // Find the useEffect that updates localEvent when event changes
   useEffect(() => {
     if (event) {
       setLocalEvent(event)
+      console.log("Event updated:", event)
     }
   }, [event])
 
@@ -124,11 +133,11 @@ useEffect(() => {
       online: updatedData.isOffline,
       description: updatedData.description,
     }
-    
+
     // Update local state for immediate UI refresh
-    setLocalEvent(prev => ({
+    setLocalEvent((prev) => ({
       ...prev,
-      ...mappedUpdatedData
+      ...mappedUpdatedData,
     }))
 
     // Map form field names to API field names
@@ -139,11 +148,10 @@ useEffect(() => {
       registration_deadline: updatedData.registrationDeadline,
       location: updatedData.location,
       status: updatedData.status,
-      onsite: updatedData.isOnsite,
+      onsite: updatedData.onsite,
       online: updatedData.isOffline, // Note: isOffline maps to online in the API
       description: updatedData.description,
     }
-
 
     dispatch(updateEvent({ eventId, eventData: apiData }))
       .unwrap()
@@ -155,6 +163,31 @@ useEffect(() => {
       })
   }
 
+  // Add a function to handle visibility toggle
+  const handleVisibilityToggle = (newVisibility) => {
+    // Immediately update local state for UI
+    setLocalEvent((prev) => ({
+      ...prev,
+      visibility: newVisibility,
+    }))
+
+    return dispatch(updateEventVisibility({ eventId, visibility: newVisibility }))
+      .unwrap()
+      .then(() => {
+        toast.success(`Event is now ${newVisibility ? "public" : "private"}`)
+        return Promise.resolve()
+      })
+      .catch((error) => {
+        // If API call fails, revert local state
+        setLocalEvent((prev) => ({
+          ...prev,
+          visibility: !newVisibility, // Revert to previous state
+        }))
+        toast.error(error || "Failed to update visibility")
+        return Promise.reject(error)
+      })
+  }
+
   const copyEventUrl = () => {
     navigator.clipboard.writeText(eventUrl)
     toast.success("Event URL copied to clipboard!")
@@ -162,11 +195,11 @@ useEffect(() => {
 
   const updateEventEvaluationHandler = (evaluationText) => {
     // First update local state for immediate UI refresh
-    setLocalEvent(prev => ({
+    setLocalEvent((prev) => ({
       ...prev,
-      evaluation: evaluationText
+      evaluation: evaluationText,
     }))
-    
+
     return dispatch(updateEventEvaluation({ eventId, evaluation: evaluationText }))
       .unwrap()
       .then(() => {
@@ -175,9 +208,9 @@ useEffect(() => {
       })
       .catch((error) => {
         // If API call fails, revert local state
-        setLocalEvent(prev => ({
+        setLocalEvent((prev) => ({
           ...prev,
-          evaluation: event.evaluation
+          evaluation: event.evaluation,
         }))
         toast.error(error || "Failed to update evaluation")
         return Promise.reject(error) // Return a rejected promise on failure
@@ -187,11 +220,11 @@ useEffect(() => {
   // Add a new function to handle evaluation deletion
   const deleteEventEvaluationHandler = () => {
     // First update local state for immediate UI refresh
-    setLocalEvent(prev => ({
+    setLocalEvent((prev) => ({
       ...prev,
-      evaluation: null
+      evaluation: null,
     }))
-    
+
     return dispatch(deleteEventEvaluation(eventId))
       .unwrap()
       .then(() => {
@@ -199,9 +232,9 @@ useEffect(() => {
       })
       .catch((error) => {
         // If API call fails, revert local state
-        setLocalEvent(prev => ({
+        setLocalEvent((prev) => ({
           ...prev,
-          evaluation: event.evaluation
+          evaluation: event.evaluation,
         }))
         return Promise.reject(error || "Failed to delete evaluation")
       })
@@ -238,7 +271,7 @@ useEffect(() => {
     )
   }
 
-  // Map API fields to component fields - now using localEvent for immediate UI updates
+  // Update the mappedEvent object to ensure imageUrl is properly passed
   const mappedEvent = localEvent
     ? {
         id: localEvent.id,
@@ -252,7 +285,8 @@ useEffect(() => {
         isOffline: localEvent.online,
         description: localEvent.description,
         evaluation: localEvent.evaluation,
-        imageUrl: localEvent.image_url,
+        imageUrl: localEvent.image_url || null, // Ensure null if undefined
+        visibility: localEvent.visibility || false, // Add visibility with default to false
       }
     : null
 
@@ -281,7 +315,11 @@ useEffect(() => {
           isEditMode={isEditMode}
           toggleEditMode={toggleEditMode}
           updateEventData={updateEventData}
+          updateEventVisibility={handleVisibilityToggle}
         />
+
+        {/* Add the new Event Image Section */}
+        <EventImageSection eventId={eventId} imageUrl={mappedEvent?.imageUrl} />
 
         <EventMetricsSection metrics={metrics} eventId={eventId} />
 
@@ -291,6 +329,8 @@ useEffect(() => {
           updateEventEvaluation={updateEventEvaluationHandler}
           deleteEventEvaluation={deleteEventEvaluationHandler}
         />
+
+        <EventFeedbackSection eventId={eventId} eventName={mappedEvent?.name} />
 
         <StreamsSection event={mappedEvent} />
       </div>

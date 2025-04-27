@@ -1,0 +1,191 @@
+/* Platform Modal Styles */
+.platform-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  
+  .platform-modal {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalFadeIn 0.3s;
+  }
+  
+  @keyframes modalFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .platform-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #eeeeee;
+  }
+  
+  .platform-modal-header h2 {
+    font-size: 22px;
+    color: #442777;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .platform-modal-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #666;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+  }
+  
+  .platform-modal-close:hover {
+    background-color: #f6f4ff;
+    color: #442777;
+  }
+  
+  .platform-form {
+    padding: 24px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 15px;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  
+  .form-group input:focus {
+    outline: none;
+    border-color: #442777;
+    box-shadow: 0 0 0 2px rgba(68, 39, 119, 0.1);
+  }
+  
+  .form-group small {
+    display: block;
+    margin-top: 6px;
+    color: #666;
+    font-size: 12px;
+  }
+  
+  .preview-container {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .preview-container p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+  }
+  
+  .platform-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  
+  .cancel-button,
+  .save-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .cancel-button {
+    background-color: #f0f0f0;
+    color: #666;
+    border: 1px solid #ddd;
+  }
+  
+  .cancel-button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .save-button {
+    background-color: #442777;
+    color: white;
+    border: none;
+  }
+  
+  .save-button:hover {
+    background-color: #331c5a;
+  }
+  
+  .save-button:disabled {
+    background-color: #a99bc1;
+    cursor: not-allowed;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .platform-modal {
+      max-width: 95%;
+    }
+  
+    .platform-modal-header {
+      padding: 16px 20px;
+    }
+  
+    .platform-form {
+      padding: 16px;
+    }
+  
+    .platform-form-actions {
+      flex-direction: column;
+    }
+  
+    .platform-form-actions button {
+      width: 100%;
+    }
+  }
+  
