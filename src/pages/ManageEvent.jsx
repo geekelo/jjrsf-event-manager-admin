@@ -106,8 +106,7 @@ function ManageEvent() {
     }
   }, [eventError, attendeesError])
 
-  // Use direct localhost URL
-  const eventUrl = `https://jjrsf-event-manager.vercel.app/event/${eventId}`
+  const eventUrl = `${import.meta.env.VITE_FRONTEND_USER_URL}/events/${eventId}`;
 
   const handleBack = () => {
     navigate("/events")

@@ -53,6 +53,16 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/events/:unique_id"
+          element={
+            <ProtectedRoute>
+              <ManageEvent />
+            </ProtectedRoute>
+          }
+        />
+       
+
 
         <Route
           path="/events/:eventId/attendees/:type"
