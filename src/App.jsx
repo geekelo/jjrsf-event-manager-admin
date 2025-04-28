@@ -12,10 +12,12 @@ import ProtectedRoute from "./components/auth/protectedRoute"
 import ManageStream from "./pages/manageStream"
 import EventFeedback from "./pages/EventFeedback"
 import HomePage from "./pages/HomePage"
+import Header from "./components/Header";
 
 function App() {
   return (
     <Router>
+      <Header />
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -62,8 +64,6 @@ function App() {
           }
         />
        
-
-
         <Route
           path="/events/:eventId/attendees/:type"
           element={
