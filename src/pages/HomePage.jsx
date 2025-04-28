@@ -8,21 +8,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faCalendarDays,
   faLocationDot,
-  faArrowRight,
   faCalendarCheck,
   faChevronRight,
   faStar,
   faCircle,
-  faUser,
-  faEnvelope,
-  faPhone,
-  faMapMarkerAlt,
-  faGlobe, // Added this icon for website
+ // Added this icon for website
 } from "@fortawesome/free-solid-svg-icons"
-import { 
-  faLinkedinIn,
-  faYoutube, // Added this icon for YouTube
-} from "@fortawesome/free-brands-svg-icons"
 import "../stylesheets/homePage.css"
 import jjrsfLogo from "../assets/jjrsf-logo.png"
 
@@ -149,13 +140,9 @@ const HomePage = () => {
     navigate(`/events/${eventId}`)
   }
 
-  const handleViewEvents = () => {
-    navigate(`/events`)
-  }
+ 
 
-  const scrollToFeatured = () => {
-    featuredEventRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
+ 
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen)
@@ -187,7 +174,7 @@ const HomePage = () => {
             <img src={jjrsfLogo || "/placeholder.svg"} alt="JJRSF Logo" className="premium-logo" />
             <div className="premium-logo-text">
               <h1>JJRSF</h1>
-              <span className="premium-logo-tagline">Event Portal</span>
+              <span className="premium-logo-tagline">Program Portal</span>
             </div>
           </div>
           <button className="premium-mobile-menu-button" onClick={toggleNav} aria-label="Menu">
@@ -199,15 +186,6 @@ const HomePage = () => {
             <ul>
               <li className="active">
                 <a href="#home">Home</a>
-              </li>
-              <li>
-                <a href="#featured">Events</a>
-              </li>
-              <li>
-                <a href="#about">About</a>
-              </li>
-              <li>
-                <a href="#contact">Contact</a>
               </li>
               <li>
                 <Link to="/admin/login" className="premium-login-btn">
@@ -244,20 +222,13 @@ const HomePage = () => {
               <h1>
                 <span className="accent-text">JJRSF</span> Foundation
                 <br />
-                Event Portal
+                Program Portal
               </h1>
               <p className="premium-hero-description">
-                Discover transformative events designed to foster community, learning, and personal growth. Join us on a
-                journey of connection and development.
+              Create and Manage programs seamlessly and effectively
+
               </p>
-              <div className="premium-hero-buttons">
-                <button className="premium-cta-button" onClick={handleViewEvents}>
-                  Explore Events <FontAwesomeIcon icon={faArrowRight} />
-                </button>
-                <a href="#about" className="premium-secondary-button">
-                  About Us
-                </a>
-              </div>
+            
             </div>
             <div className="premium-hero-image">
               <div className="rotating-circles">
@@ -266,18 +237,12 @@ const HomePage = () => {
                 <div className="circle circle3"></div>
               </div>
               <div className="hero-stats">
-                <div className="stat-item">
-                  <span className="stat-number">{Math.round(eventCount)}+</span>
-                  <span className="stat-label">Events</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-number">{Math.round(attendeeCount)}+</span>
-                  <span className="stat-label">Attendees</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-number">{Math.round(speakerCount)}+</span>
-                  <span className="stat-label">Speakers</span>
-                </div>
+              <li>
+                <Link to="/admin/login" className="stat-item">
+                  Login
+                </Link>
+              </li>
+               
               </div>
             </div>
           </div>
@@ -347,73 +312,7 @@ const HomePage = () => {
       )}
 
      
-      {/* Testimonials Section */}
-      <section className="premium-testimonials-section">
-        <div className="premium-container">
-          <div className="premium-section-intro">
-            <div className="premium-section-header">
-              <span className="section-kicker">Success Stories</span>
-              <h2>What Attendees Say</h2>
-            </div>
-            <div className="section-decorator">
-              <span></span>
-              <FontAwesomeIcon icon={faUser} className="decorator-icon" />
-              <span></span>
-            </div>
-          </div>
-
-          <div className="premium-testimonials">
-            <div className="premium-testimonial">
-              <div className="testimonial-quote">
-                <p>
-                  "The JJRSF events have been truly transformational for me. The speakers were inspirational and I made
-                  connections that have helped advance my career."
-                </p>
-              </div>
-              <div className="testimonial-author">
-                <div className="author-avatar">JD</div>
-                <div className="author-info">
-                  <h4>John Doe</h4>
-                  <p>CEO, Tech Innovations</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="premium-testimonial">
-              <div className="testimonial-quote">
-                <p>
-                  "I've attended multiple JJRSF events and each one exceeds my expectations. The community they've built
-                  is supportive and the content is always relevant."
-                </p>
-              </div>
-              <div className="testimonial-author">
-                <div className="author-avatar">JS</div>
-                <div className="author-info">
-                  <h4>Jane Smith</h4>
-                  <p>Marketing Director</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="premium-testimonial">
-              <div className="testimonial-quote">
-                <p>
-                  "As a first-time attendee, I was blown away by the organization and quality of the event. The
-                  networking opportunities were invaluable for my professional growth."
-                </p>
-              </div>
-              <div className="testimonial-author">
-                <div className="author-avatar">RJ</div>
-                <div className="author-info">
-                  <h4>Robert Johnson</h4>
-                  <p>Community Leader</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
+     
       {/* About Section */}
       <section className="premium-about-section" id="about">
         <div className="premium-container">
@@ -485,94 +384,15 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Newsletter Section */}
-      <section className="premium-newsletter-section">
-        <div className="premium-container">
-          <div className="premium-newsletter-wrapper">
-            <div className="newsletter-decorative-element"></div>
-            <div className="premium-newsletter-content">
-              <div className="newsletter-header">
-                <h2>Stay Connected</h2>
-                <p>
-                  Interested in our events or have questions? Reach out to us directly for more information about
-                  upcoming events, exclusive content, and community news.
-                </p>
-              </div>
-              <div className="premium-contact-info">
-                <a href="https://cla.jjrsf.org/jjrsfoundation@gmail.com" className="premium-contact-button">
-                  <FontAwesomeIcon icon={faEnvelope} className="contact-icon" />
-                  jjrsfoundation@gmail.com
-                </a>
-                <p className="contact-note">We'd love to hear from you and answer any questions you might have!</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
+   
       {/* Footer */}
       <footer className="premium-footer" id="contact">
         <div className="footer-top-pattern"></div>
         <div className="premium-container">
-          <div className="premium-footer-content">
-            <div className="premium-footer-logo">
-              <img src={jjrsfLogo || "/placeholder.svg"} alt="JJRSF Logo" className="footer-logo" />
-              <h3>JJRSF Foundation</h3>
-              <p>Transformative Experiences for Growth and Connection</p>
-              <div className="premium-social-icons">
-                <a href="https://www.linkedin.com/showcase/jjrsf-cla/?viewAsMember=true" className="premium-social-icon" target="_blank" rel="noopener noreferrer">
-                  <FontAwesomeIcon icon={faLinkedinIn} />
-                </a>
-                <a href="https://www.youtube.com/@jesusjirehrapha4725" className="premium-social-icon" target="_blank" rel="noopener noreferrer">
-                  <FontAwesomeIcon icon={faYoutube} />
-                </a>
-                <a href="https://cla.jjrsf.org/cla.jjrsf.org" className="premium-social-icon" target="_blank" rel="noopener noreferrer">
-                  <FontAwesomeIcon icon={faGlobe} />
-                </a>
-                <a href="mailto:jjrsfoundation@gmail.com" className="premium-social-icon" target="_blank" rel="noopener noreferrer">
-                  <FontAwesomeIcon icon={faEnvelope} />
-                </a>
-              </div>
-            </div>
 
-            <div className="premium-footer-links">
-              <div className="footer-column">
-                <h4>Quick Links</h4>
-                <ul>
-                  <li>
-                    <a href="#home">Home</a>
-                  </li>
-                  <li>
-                    <a href="#events">Events</a>
-                  </li>
-                  <li>
-                    <a href="#about">About</a>
-                  </li>
-                  <li>
-                    <Link to="/admin/login">Admin Login</Link>
-                  </li>
-                </ul>
-              </div>
+           
 
-              <div className="footer-column">
-                <h4>Contact</h4>
-                <ul className="contact-list">
-                  <li>
-                    <FontAwesomeIcon icon={faEnvelope} />
-                    <span>info@jjrsfoundation.org</span>
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faPhone} />
-                    <span>(123) 456-7890</span>
-                  </li>
-                  <li>
-                    <FontAwesomeIcon icon={faMapMarkerAlt} />
-                    <span>123 Foundation St, City, ST 12345</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+              
 
           <div className="premium-footer-bottom">
             <p>&copy; {new Date().getFullYear()} JJRSF Foundation. All Rights Reserved.</p>
