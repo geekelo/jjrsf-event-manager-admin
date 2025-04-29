@@ -11,6 +11,7 @@ import {
   setCurrentEvent,
   setEditMode,
   updateEventVisibility,
+  deleteEvent, // Import the deleteEvent action
 } from "../redux/eventsSlice"
 import { fetchEventAttendees } from "../redux/attendeesSlice"
 import { fetchEventQuickRegistrations } from "../redux/quickRegistrationsSlice"
@@ -28,13 +29,14 @@ import EventFeedbackSection from "../components/event/EventFeedbackSection"
 import EventImageSection from "../components/event/EventImageSection"
 import StreamsSection from "../components/event/StreamsSection"
 import PasscodeModal from "../components/PasscodeModal"
+import DeleteConfirmationModal from "../components/deleteModal"
+import { Trash2 } from "lucide-react"
 
 function ManageEvent() {
   const { eventId } = useParams()
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  // Get event details from Redux store
   const {
     currentEvent: event,
     loading: eventLoading,
@@ -43,7 +45,6 @@ function ManageEvent() {
     events,
   } = useSelector((state) => state.events)
 
-  // Get attendees data from Redux store
   const {
     metrics,
     loading: attendeesLoading,
@@ -52,10 +53,9 @@ function ManageEvent() {
   } = useSelector((state) => state.attendees)
 
   const [showPasscodeModal, setShowPasscodeModal] = useState(false)
-  const [localEvent, setLocalEvent] = useState(null) // Add local state for immediate UI updates
-
-  // Check authentication on component mount
-  // Check authentication and fetch data on component mount
+  const [localEvent, setLocalEvent] = useState(null)
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false) // Manage delete modal state
+  const [deleteEventName, setDeleteEventName] = useState("") // Event name for delete confirmation
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -64,31 +64,23 @@ function ManageEvent() {
       return
     }
 
-    // If events are not loaded yet, fetch them
     if (events.length === 0) {
       dispatch(fetchEvents())
     } else {
-      // Set the current event from the events array
       dispatch(setCurrentEvent(eventId))
     }
 
-    // Only fetch attendees if we don't already have them for this event
     if (!currentEventId || currentEventId !== eventId) {
       dispatch(fetchEventAttendees(eventId))
     }
 
-    // Fetch quick registrations for this event
     dispatch(fetchEventQuickRegistrations(eventId))
 
-    // Cleanup on unmount
     return () => {
-      // Don't reset current event when navigating to attendee list
-      // We'll let the component decide when to reset
+      // Cleanup on unmount
     }
   }, [dispatch, eventId, navigate, events.length, currentEventId])
 
-  // Update the ManageEvent component to properly handle image updates
-  // Find the useEffect that updates localEvent when event changes
   useEffect(() => {
     if (event) {
       setLocalEvent(event)
@@ -96,7 +88,6 @@ function ManageEvent() {
     }
   }, [event])
 
-  // Show error toast if there's an error
   useEffect(() => {
     if (eventError) {
       toast.error(eventError)
@@ -106,7 +97,7 @@ function ManageEvent() {
     }
   }, [eventError, attendeesError])
 
-  const eventUrl = `${import.meta.env.VITE_FRONTEND_USER_URL}/events/${eventId}`;
+  const eventUrl = `${import.meta.env.VITE_FRONTEND_USER_URL}/events/${eventId}`
 
   const handleBack = () => {
     navigate("/events")
@@ -120,7 +111,6 @@ function ManageEvent() {
   }
 
   const updateEventData = (updatedData) => {
-    // Immediately update local state for UI
     const mappedUpdatedData = {
       id: eventId,
       name: updatedData.name,
@@ -134,13 +124,11 @@ function ManageEvent() {
       description: updatedData.description,
     }
 
-    // Update local state for immediate UI refresh
     setLocalEvent((prev) => ({
       ...prev,
       ...mappedUpdatedData,
     }))
 
-    // Map form field names to API field names
     const apiData = {
       name: updatedData.name,
       start_date: updatedData.startDate,
@@ -149,7 +137,7 @@ function ManageEvent() {
       location: updatedData.location,
       status: updatedData.status,
       onsite: updatedData.onsite,
-      online: updatedData.isOffline, // Note: isOffline maps to online in the API
+      online: updatedData.isOffline,
       description: updatedData.description,
     }
 
@@ -163,9 +151,7 @@ function ManageEvent() {
       })
   }
 
-  // Add a function to handle visibility toggle
   const handleVisibilityToggle = (newVisibility) => {
-    // Immediately update local state for UI
     setLocalEvent((prev) => ({
       ...prev,
       visibility: newVisibility,
@@ -178,10 +164,9 @@ function ManageEvent() {
         return Promise.resolve()
       })
       .catch((error) => {
-        // If API call fails, revert local state
         setLocalEvent((prev) => ({
           ...prev,
-          visibility: !newVisibility, // Revert to previous state
+          visibility: !newVisibility,
         }))
         toast.error(error || "Failed to update visibility")
         return Promise.reject(error)
@@ -194,7 +179,6 @@ function ManageEvent() {
   }
 
   const updateEventEvaluationHandler = (evaluationText) => {
-    // First update local state for immediate UI refresh
     setLocalEvent((prev) => ({
       ...prev,
       evaluation: evaluationText,
@@ -204,22 +188,19 @@ function ManageEvent() {
       .unwrap()
       .then(() => {
         toast.success("Evaluation saved successfully!")
-        return Promise.resolve() // Return a resolved promise on success
+        return Promise.resolve()
       })
       .catch((error) => {
-        // If API call fails, revert local state
         setLocalEvent((prev) => ({
           ...prev,
           evaluation: event.evaluation,
         }))
         toast.error(error || "Failed to update evaluation")
-        return Promise.reject(error) // Return a rejected promise on failure
+        return Promise.reject(error)
       })
   }
 
-  // Add a new function to handle evaluation deletion
   const deleteEventEvaluationHandler = () => {
-    // First update local state for immediate UI refresh
     setLocalEvent((prev) => ({
       ...prev,
       evaluation: null,
@@ -231,7 +212,6 @@ function ManageEvent() {
         return Promise.resolve()
       })
       .catch((error) => {
-        // If API call fails, revert local state
         setLocalEvent((prev) => ({
           ...prev,
           evaluation: event.evaluation,
@@ -244,7 +224,26 @@ function ManageEvent() {
     setShowPasscodeModal(false)
   }
 
-  // Update loading state to consider both event and attendees loading
+  const openDeleteModal = (eventName) => {
+    setDeleteEventName(eventName)
+    setDeleteModalOpen(true)
+  }
+
+  const handleDeleteEvent = () => {
+   const res = dispatch(deleteEvent(eventId))
+   
+      .unwrap()
+      .then(() => {
+        toast.success("Event deleted successfully")
+        navigate("/events") // Redirect after deletion
+      })
+      .catch((error) => {
+        toast.error(error || "Failed to delete event")
+      })
+      console.log(res, eventId)
+    setDeleteModalOpen(false) // Close the modal after action
+  }
+
   const loading = eventLoading || attendeesLoading
 
   if (loading && !localEvent) {
@@ -271,7 +270,6 @@ function ManageEvent() {
     )
   }
 
-  // Update the mappedEvent object to ensure imageUrl is properly passed
   const mappedEvent = localEvent
     ? {
         id: localEvent.id,
@@ -285,8 +283,8 @@ function ManageEvent() {
         isOffline: localEvent.online,
         description: localEvent.description,
         evaluation: localEvent.evaluation,
-        imageUrl: localEvent.image_url || null, // Ensure null if undefined
-        visibility: localEvent.visibility || false, // Add visibility with default to false
+        imageUrl: localEvent.image_url || null,
+        visibility: localEvent.visibility || false,
       }
     : null
 
@@ -318,7 +316,6 @@ function ManageEvent() {
           updateEventVisibility={handleVisibilityToggle}
         />
 
-        {/* Add the new Event Image Section */}
         <EventImageSection eventId={eventId} imageUrl={mappedEvent?.imageUrl} />
 
         <EventMetricsSection metrics={metrics} eventId={eventId} />
@@ -333,9 +330,24 @@ function ManageEvent() {
         <EventFeedbackSection eventId={eventId} eventName={mappedEvent?.name} />
 
         <StreamsSection event={mappedEvent} />
+
+        {/* Add the delete button */}
+        <button
+      className="delete-buttons"
+      onClick={() => openDeleteModal(eventName)}
+    >
+      <Trash2 className="deletes-icon" /> Delete Event
+    </button>
+
       </div>
 
       {showPasscodeModal && <PasscodeModal eventId={eventId} onClose={closePasscodeModal} />}
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleDeleteEvent}
+        eventName={deleteEventName}
+      />
     </div>
   )
 }

@@ -10,6 +10,10 @@
   .delete-button:hover {
     color: #c53030; 
   }
+  .modal-content {
+    width: 90%;
+    max-width: 400px;
+  }
   
   .modal-overlay {
     position: fixed;

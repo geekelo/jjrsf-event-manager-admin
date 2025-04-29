@@ -186,7 +186,7 @@ const HomePage = () => {
           <div className="premium-logo-container">
             <img src={jjrsfLogo || "/placeholder.svg"} alt="JJRSF Logo" className="premium-logo" />
             <div className="premium-logo-text">
-              <h1>JJRSF</h1>
+              <h1>JJRS</h1>
               <span className="premium-logo-tagline">Event Portal</span>
             </div>
           </div>
