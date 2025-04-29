@@ -14,9 +14,11 @@ import {
 } from "../redux/eventsSlice"
 import { fetchEventAttendees } from "../redux/attendeesSlice"
 import { fetchEventQuickRegistrations } from "../redux/quickRegistrationsSlice"
+import { sendReminder, sendBulkEmail, resetReminderStatus, resetBulkEmailStatus } from "../redux/notificationsSlice"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import "../stylesheets/manageEvent.css"
+import "../stylesheets/notifications.css"
 import { isAuthenticated } from "../lib/auth/token"
 
 // Import components
@@ -27,6 +29,7 @@ import EventEvaluationSection from "../components/event/EventEvaluationSection"
 import EventFeedbackSection from "../components/event/EventFeedbackSection"
 import EventImageSection from "../components/event/EventImageSection"
 import StreamsSection from "../components/event/StreamsSection"
+import EventNotificationsSection from "../components/event/EventNotificationsSection"
 import PasscodeModal from "../components/PasscodeModal"
 
 function ManageEvent() {
@@ -51,12 +54,14 @@ function ManageEvent() {
     currentEventId,
   } = useSelector((state) => state.attendees)
 
+  // Get notifications state from Redux store
+  const { reminderLoading, reminderError, reminderSuccess, bulkEmailLoading, bulkEmailError, bulkEmailSuccess } =
+    useSelector((state) => state.notifications)
+
   const [showPasscodeModal, setShowPasscodeModal] = useState(false)
   const [localEvent, setLocalEvent] = useState(null) // Add local state for immediate UI updates
 
-  // Check authentication on component mount
   // Check authentication and fetch data on component mount
-
   useEffect(() => {
     if (!isAuthenticated()) {
       toast.error("You must be logged in to access this page")
@@ -106,7 +111,27 @@ function ManageEvent() {
     }
   }, [eventError, attendeesError])
 
-  const eventUrl = `${import.meta.env.VITE_FRONTEND_USER_URL}/events/${eventId}`;
+  // Handle notification status changes
+  useEffect(() => {
+    if (reminderSuccess) {
+      toast.success("Reminders sent successfully to all registered attendees!")
+      dispatch(resetReminderStatus())
+    }
+    if (reminderError) {
+      toast.error(reminderError || "Failed to send reminders")
+      dispatch(resetReminderStatus())
+    }
+    if (bulkEmailSuccess) {
+      toast.success("Bulk email sent successfully!")
+      dispatch(resetBulkEmailStatus())
+    }
+    if (bulkEmailError) {
+      toast.error(bulkEmailError || "Failed to send bulk email")
+      dispatch(resetBulkEmailStatus())
+    }
+  }, [reminderSuccess, reminderError, bulkEmailSuccess, bulkEmailError, dispatch])
+
+  const eventUrl = `${import.meta.env.VITE_FRONTEND_USER_URL}/events/${eventId}`
 
   const handleBack = () => {
     navigate("/events")
@@ -240,6 +265,16 @@ function ManageEvent() {
       })
   }
 
+  // Handle sending reminders to attendees
+  const handleSendReminder = (eventId) => {
+    dispatch(sendReminder(eventId))
+  }
+
+  // Handle sending bulk emails
+  const handleSendBulkEmail = (emailData) => {
+    return dispatch(sendBulkEmail(emailData))
+  }
+
   const closePasscodeModal = () => {
     setShowPasscodeModal(false)
   }
@@ -322,6 +357,15 @@ function ManageEvent() {
         <EventImageSection eventId={eventId} imageUrl={mappedEvent?.imageUrl} />
 
         <EventMetricsSection metrics={metrics} eventId={eventId} />
+
+        {/* Add the new Notifications Section */}
+        <EventNotificationsSection
+          eventId={eventId}
+          onSendReminder={handleSendReminder}
+          onSendBulkEmail={handleSendBulkEmail}
+          reminderLoading={reminderLoading}
+          bulkEmailLoading={bulkEmailLoading}
+        />
 
         <EventEvaluationSection
           event={mappedEvent}
