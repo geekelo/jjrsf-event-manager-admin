@@ -279,8 +279,13 @@ const eventsSlice = createSlice({
         state.error = null
       })
       .addCase(deleteEvent.fulfilled, (state, action) => {
-        state.loading = false
-        state.events = state.events.filter((event) => event.id !== action.payload)
+        const deletedId = action.payload
+        state.events = state.events.filter(event => event.id !== deletedId)
+  
+        // Optionally clear current event if it's the one deleted
+        if (state.currentEvent?.id === deletedId) {
+          state.currentEvent = null
+        }
       })
       .addCase(deleteEvent.rejected, (state, action) => {
         state.loading = false

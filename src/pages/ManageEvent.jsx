@@ -230,6 +230,7 @@ function ManageEvent() {
   }
 
   const handleDeleteEvent = () => {
+    console.log(eventId)
    const res = dispatch(deleteEvent(eventId))
    
       .unwrap()
@@ -334,7 +335,7 @@ function ManageEvent() {
         {/* Add the delete button */}
         <button
       className="delete-buttons"
-      onClick={() => openDeleteModal(eventName)}
+      onClick={() => openDeleteModal(mappedEvent.name)}
     >
       <Trash2 className="deletes-icon" /> Delete Event
     </button>
