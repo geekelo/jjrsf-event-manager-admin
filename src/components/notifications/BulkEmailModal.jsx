@@ -42,6 +42,7 @@ const BulkEmailModal = ({ eventId, onClose, onSendEmail, isLoading }) => {
           width: "90%",
           maxWidth: "600px",
           margin: "0 auto",
+
         }}
       >
         <div className="modal-header">
@@ -93,7 +94,7 @@ const BulkEmailModal = ({ eventId, onClose, onSendEmail, isLoading }) => {
             </div>
           </div>
 
-          <div className="modal-footer">
+          <div className="modal-footers">
             <button type="button" className="cancel-button" onClick={onClose} disabled={isLoading}>
               Cancel
             </button>
