@@ -28,7 +28,7 @@ const AttendeeCard = ({ attendee, eventId }) => {
 
   const dispatch = useDispatch()
   const { loading } = useSelector((state) => state.notifications)
-
+console.log(attendee)
   // Handle missing properties gracefully
   const {
     id = "",
@@ -42,7 +42,7 @@ const AttendeeCard = ({ attendee, eventId }) => {
     country = "",
     gender = "",
     isMember = false,
-    preferredAttendance = "",
+    preferred_attendance = "",
     attendedOnline = false,
     attendedOffline = false,
     otp = "",
@@ -56,7 +56,7 @@ const AttendeeCard = ({ attendee, eventId }) => {
         setShowEmailModal(false)
       })
   }
-
+  const isMemberBool = isMember === true || isMember === "true";
   return (
     <div className="attendee-card">
       <div className="attendee-card-header">
@@ -115,15 +115,17 @@ const AttendeeCard = ({ attendee, eventId }) => {
           </div>
 
           <div className="attendee-tag">
-            <FontAwesomeIcon icon={faUsers} />
-            <span>Member:</span>
-            <span className={`tag-value ${isMember ? "positive" : "negative"}`}>{isMember ? "Yes" : "No"}</span>
-          </div>
+  <FontAwesomeIcon icon={faUsers} />
+  <span>Member:</span>
+  <span className={`tag-value ${isMemberBool ? "positive" : "negative"}`}>
+    {isMemberBool ? "Yes" : "No"}
+  </span>
+</div>
 
           <div className="attendee-tag">
             <FontAwesomeIcon icon={faGlobe} />
             <span>Preferred:</span>
-            <span className="tag-value">{preferredAttendance || "N/A"}</span>
+            <span className="tag-value">{preferred_attendance || ""}</span>
           </div>
         </div>
 
