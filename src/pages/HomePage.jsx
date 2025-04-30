@@ -239,7 +239,7 @@ const HomePage = () => {
                 Program Portal
               </h1>
               <p className="premium-hero-description">
-                Create and Manage programs seamlessly and effectively
+                Create and Manage programs seamlessly and effectively.
               </p>
             </div>
             <div className="premium-hero-login">
