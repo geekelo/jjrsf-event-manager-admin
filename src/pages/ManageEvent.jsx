@@ -104,7 +104,7 @@ function ManageEvent() {
       console.log("Event updated:", event)
     }
   }, [event])
-
+console.log(event)
   useEffect(() => {
     if (eventError) {
       toast.error(eventError)
@@ -113,28 +113,10 @@ function ManageEvent() {
       toast.error(attendeesError)
     }
   }, [eventError, attendeesError])
+  const uniqueId = event?.unique_id ?? '';
 
-  // Handle notification status changes
-  useEffect(() => {
-    if (reminderSuccess) {
-      toast.success("Reminders sent successfully to all registered attendees!")
-      dispatch(resetReminderStatus())
-    }
-    if (reminderError) {
-      toast.error(reminderError || "Failed to send reminders")
-      dispatch(resetReminderStatus())
-    }
-    if (bulkEmailSuccess) {
-      toast.success("Bulk email sent successfully!")
-      dispatch(resetBulkEmailStatus())
-    }
-    if (bulkEmailError) {
-      toast.error(bulkEmailError || "Failed to send bulk email")
-      dispatch(resetBulkEmailStatus())
-    }
-  }, [reminderSuccess, reminderError, bulkEmailSuccess, bulkEmailError, dispatch])
 
-  const eventUrl = `${import.meta.env.VITE_FRONTEND_USER_URL}/events/${eventId}`
+  const eventUrl = `${import.meta.env.VITE_FRONTEND_USER_URL}/events/${uniqueId}`
 
   const handleBack = () => {
     navigate("/events")
@@ -339,7 +321,7 @@ function ManageEvent() {
         visibility: localEvent.visibility || false,
       }
     : null
-
+console.log(mappedEvent)
   return (
     <div className="manage-event-page-background">
       <ToastContainer
