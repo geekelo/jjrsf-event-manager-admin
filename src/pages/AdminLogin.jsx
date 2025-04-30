@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import logo from "../assets/jjrsf-logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEye,
@@ -110,7 +111,7 @@ function AdminLoginPage() {
       <div className="admin-login-wrapper">
         <div className="admin-login-left">
           <img
-            src="/src/assets/jjrsf-logo.png"
+            src={logo}
             alt="Event Manager Admin Logo"
             className="admin-login-logo"
           />
