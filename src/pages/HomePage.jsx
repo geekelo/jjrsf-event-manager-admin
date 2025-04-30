@@ -234,7 +234,7 @@ const HomePage = () => {
             <div className="premium-hero-text">
               <span className="hero-kicker">Welcome to</span>
               <h1>
-                <span className="accent-text">JJRSF</span> Foundation
+                <span className="accent-text">JJRS</span> Foundation
                 <br />
                 Program Portal
               </h1>
