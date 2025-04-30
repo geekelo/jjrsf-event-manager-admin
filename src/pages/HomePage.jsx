@@ -349,7 +349,7 @@ const HomePage = () => {
             <div className="premium-about-content">
               <div className="premium-section-header left-aligned">
                 <span className="section-kicker">Our Story</span>
-                <h2>About JJRSF Foundation</h2>
+                <h2>About JJRS Foundation</h2>
               </div>
               <div className="section-decorator left-aligned">
                 <span></span>
@@ -358,7 +358,7 @@ const HomePage = () => {
               </div>
               <div className="premium-about-text">
                 <p>
-                  JJRSF Foundation is dedicated to fostering transformative experiences that inspire growth and create
+                  JJRS Foundation is dedicated to fostering transformative experiences that inspire growth and create
                   meaningful connections within our community.
                 </p>
                 <p>
