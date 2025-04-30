@@ -49,6 +49,25 @@ export const updateEvent = createAsyncThunk(
   },
 )
 
+// Async thunk for deleting an event
+export const deleteEvent = createAsyncThunk(
+  "events/deleteEvent",
+  async (eventId, { rejectWithValue, dispatch }) => {
+    try {
+      await axiosWithAuth.delete(`/api/v1/foundation_events/${eventId}?event_id=${eventId}`)
+
+      // Refresh event list after deletion
+      dispatch(fetchEvents())
+
+      return eventId 
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || error.response?.data?.error || "Failed to delete event. Please try again."
+      return rejectWithValue(errorMessage)
+    }
+  }
+)
+
 // Update event evaluation
 export const updateEventEvaluation = createAsyncThunk(
   "events/updateEventEvaluation",
@@ -252,6 +271,23 @@ const eventsSlice = createSlice({
         state.isEditMode = false
       })
       .addCase(updateEvent.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload
+      })
+      .addCase(deleteEvent.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(deleteEvent.fulfilled, (state, action) => {
+        const deletedId = action.payload
+        state.events = state.events.filter(event => event.id !== deletedId)
+  
+        // Optionally clear current event if it's the one deleted
+        if (state.currentEvent?.id === deletedId) {
+          state.currentEvent = null
+        }
+      })
+      .addCase(deleteEvent.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload
       })

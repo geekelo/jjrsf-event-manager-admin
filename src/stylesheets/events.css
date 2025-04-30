@@ -448,7 +448,7 @@
 }
 
 .event-menu-dropdown:hover .event-menu-content {
-  display: flex;
+  display: block;
 }
 
 .event-menu-content button {
