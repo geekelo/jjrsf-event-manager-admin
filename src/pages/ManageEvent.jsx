@@ -87,7 +87,7 @@ function ManageEvent() {
       console.log("Event updated:", event)
     }
   }, [event])
-
+console.log(event)
   useEffect(() => {
     if (eventError) {
       toast.error(eventError)
@@ -96,8 +96,10 @@ function ManageEvent() {
       toast.error(attendeesError)
     }
   }, [eventError, attendeesError])
+  const uniqueId = event?.unique_id ?? '';
 
-  const eventUrl = `${import.meta.env.VITE_FRONTEND_USER_URL}/events/${eventId}`
+
+  const eventUrl = `${import.meta.env.VITE_FRONTEND_USER_URL}/events/${uniqueId}`
 
   const handleBack = () => {
     navigate("/events")
@@ -288,7 +290,7 @@ function ManageEvent() {
         visibility: localEvent.visibility || false,
       }
     : null
-
+console.log(mappedEvent)
   return (
     <div className="manage-event-page-background">
       <ToastContainer
