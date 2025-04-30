@@ -67,6 +67,26 @@ const AttendeeList = () => {
     }
   }, [reduxLoading])
 
+  // Helper function to match gender values
+  const matchGender = (attendeeGender, filterGender) => {
+    if (!attendeeGender) return false
+
+    // Convert to lowercase for case-insensitive comparison
+    const attendeeGenderLower = attendeeGender.toLowerCase()
+    const filterGenderLower = filterGender.toLowerCase()
+
+    // Check for exact match first
+    if (attendeeGenderLower === filterGenderLower) return true
+
+    // Check for abbreviated forms
+    if (filterGenderLower === "m" && (attendeeGenderLower === "male" || attendeeGenderLower === "m")) return true
+    if (filterGenderLower === "f" && (attendeeGenderLower === "female" || attendeeGenderLower === "f")) return true
+    if (filterGenderLower === "male" && (attendeeGenderLower === "m" || attendeeGenderLower === "male")) return true
+    if (filterGenderLower === "female" && (attendeeGenderLower === "f" || attendeeGenderLower === "female")) return true
+
+    return false
+  }
+
   // Filter function to apply all filters at once
   const applyFilters = useCallback(() => {
     if (!Array.isArray(attendees)) return []
@@ -99,7 +119,7 @@ const AttendeeList = () => {
         (attendee.phone && attendee.phone.toLowerCase().includes(searchTerm.toLowerCase()))
 
       // Gender filter
-      const genderMatch = filters.gender === "all" || attendee.gender === filters.gender
+      const genderMatch = filters.gender === "all" || matchGender(attendee.gender, filters.gender)
 
       // Member status filter
       const memberMatch =
