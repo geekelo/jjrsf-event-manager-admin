@@ -37,16 +37,32 @@ const AttendeeCard = ({ attendee, eventId }) => {
     email = "",
     whatsapp = "",
     phone = "",
+    address = "", // Add support for single address field
     street = "",
     state = "",
     country = "",
     gender = "",
     isMember = false,
-    preferredAttendance = "",
+    member = false, // Add this to handle both property names
+    preferred_attendance = "", // Add this to handle snake_case property
+    preferredAttendance = "", // Keep this for backward compatibility
     attendedOnline = false,
+    attended_online = false, // Add this to handle snake_case property
     attendedOffline = false,
+    attended_offline = false, // Add this to handle snake_case property
     otp = "",
   } = attendee || {}
+
+  // Use the appropriate property based on what's available
+  const actualMemberStatus = isMember || member || false
+  const actualPreferredAttendance = preferredAttendance || preferred_attendance || ""
+  const actualAttendedOnline = attendedOnline || attended_online || false
+  const actualAttendedOffline = attendedOffline || attended_offline || false
+
+  // Format the address based on available fields
+  const formattedAddress =
+    address ||
+    (street || state || country ? `${street ? `${street}, ` : ""}${state ? `${state}, ` : ""}${country || ""}` : "N/A")
 
   const handleSendEmail = (emailData) => {
     // Pass the complete payload directly to the action
@@ -74,11 +90,7 @@ const AttendeeCard = ({ attendee, eventId }) => {
             <FontAwesomeIcon icon={faMapMarkerAlt} />
             <span>Address</span>
           </div>
-          <div className="info-value">
-            {street ? `${street}, ` : ""}
-            {state ? `${state}, ` : ""}
-            {country || "N/A"}
-          </div>
+          <div className="info-value">{formattedAddress}</div>
         </div>
 
         {/* Contact Details Section */}
@@ -109,7 +121,9 @@ const AttendeeCard = ({ attendee, eventId }) => {
         {/* Personal Details Section */}
         <div className="attendee-tags">
           <div className="attendee-tag">
-            <FontAwesomeIcon icon={gender === "Male" ? faMars : faVenus} />
+            <FontAwesomeIcon
+              icon={gender?.toLowerCase() === "m" || gender?.toLowerCase() === "male" ? faMars : faVenus}
+            />
             <span>Gender:</span>
             <span className="tag-value">{gender || "N/A"}</span>
           </div>
@@ -117,13 +131,15 @@ const AttendeeCard = ({ attendee, eventId }) => {
           <div className="attendee-tag">
             <FontAwesomeIcon icon={faUsers} />
             <span>Member:</span>
-            <span className={`tag-value ${isMember ? "positive" : "negative"}`}>{isMember ? "Yes" : "No"}</span>
+            <span className={`tag-value ${actualMemberStatus ? "positive" : "negative"}`}>
+              {actualMemberStatus ? "Yes" : "No"}
+            </span>
           </div>
 
           <div className="attendee-tag">
             <FontAwesomeIcon icon={faGlobe} />
             <span>Preferred:</span>
-            <span className="tag-value">{preferredAttendance || "N/A"}</span>
+            <span className="tag-value">{actualPreferredAttendance || "N/A"}</span>
           </div>
         </div>
 
@@ -131,8 +147,8 @@ const AttendeeCard = ({ attendee, eventId }) => {
         <div className="attendance-status">
           <h4>Attendance Status</h4>
           <div className="attendance-badges">
-            <div className={`attendance-badge ${attendedOnline ? "attended" : "not-attended"}`}>
-              {attendedOnline ? (
+            <div className={`attendance-badge ${actualAttendedOnline ? "attended" : "not-attended"}`}>
+              {actualAttendedOnline ? (
                 <>
                   <FontAwesomeIcon icon={faCheck} />
                   <span>Online</span>
@@ -141,8 +157,8 @@ const AttendeeCard = ({ attendee, eventId }) => {
                 <span>Online</span>
               )}
             </div>
-            <div className={`attendance-badge ${attendedOffline ? "attended" : "not-attended"}`}>
-              {attendedOffline ? (
+            <div className={`attendance-badge ${actualAttendedOffline ? "attended" : "not-attended"}`}>
+              {actualAttendedOffline ? (
                 <>
                   <FontAwesomeIcon icon={faCheck} />
                   <span>Offline</span>

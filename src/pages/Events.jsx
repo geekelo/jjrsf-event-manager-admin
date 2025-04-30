@@ -99,7 +99,7 @@ function EventsPage() {
       [name]: value,
     }))
   }
-console.log(filteredEvents.id)
+  console.log(filteredEvents.id)
   // Handle form submission
   const handleSubmitEvent = (e) => {
     e.preventDefault()
@@ -113,10 +113,13 @@ console.log(filteredEvents.id)
     // Dispatch the createEvent thunk
     dispatch(createEvent(newEventData))
       .unwrap()
-      .then(() => {
+      .then((createdEvent) => {
         // Close form and show success message
         setShowCreateForm(false)
         toast.success(`Event "${newEventData.name}" created successfully!`)
+
+        // Navigate to the newly created event's management page
+        navigate(`/events/${createdEvent.id}`)
 
         // Reset form data
         setNewEventData({

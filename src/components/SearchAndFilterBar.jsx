@@ -1,27 +1,22 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faSearch,
-  faFilter,
-  faTimes,
-  faChevronDown
-} from '@fortawesome/free-solid-svg-icons';
+"use client"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faSearch, faFilter, faTimes, faChevronDown } from "@fortawesome/free-solid-svg-icons"
 
-const SearchAndFilterBar = ({ 
-  searchTerm, 
-  setSearchTerm, 
-  filterActive, 
+const SearchAndFilterBar = ({
+  searchTerm,
+  setSearchTerm,
+  filterActive,
   toggleFilter,
-  filters, 
-  handleFilterChange, 
-  clearFilters 
+  filters,
+  handleFilterChange,
+  clearFilters,
 }) => {
   return (
     <>
       <div className="search-container">
         <div className="search-input-container">
           <FontAwesomeIcon icon={faSearch} className="search-icon" />
-          <input 
+          <input
             type="text"
             placeholder="Search by name, email or phone..."
             value={searchTerm}
@@ -29,55 +24,43 @@ const SearchAndFilterBar = ({
             className="search-input"
           />
           {searchTerm && (
-            <button 
-              className="clear-search-button"
-              onClick={() => setSearchTerm("")}
-              aria-label="Clear search"
-            >
+            <button className="clear-search-button" onClick={() => setSearchTerm("")} aria-label="Clear search">
               <FontAwesomeIcon icon={faTimes} />
             </button>
           )}
         </div>
-        
-        <button 
-          className={`filter-button ${filterActive ? 'active' : ''}`}
-          onClick={toggleFilter}
-        >
+
+        <button className={`filter-button ${filterActive ? "active" : ""}`} onClick={toggleFilter}>
           <FontAwesomeIcon icon={faFilter} />
           <span>Filter</span>
-          {(filters.gender !== 'all' || 
-            filters.memberStatus !== 'all' || 
-            filters.preferredAttendance !== 'all' ||
-            filters.attendance !== 'all') && (
-            <span className="filter-badge"></span>
-          )}
+          {(filters.gender !== "all" ||
+            filters.memberStatus !== "all" ||
+            filters.preferredAttendance !== "all" ||
+            filters.attendance !== "all") && <span className="filter-badge"></span>}
         </button>
       </div>
-      
+
       {filterActive && (
         <div className="filter-panel">
           <div className="filter-panel-content">
             <div className="filter-group">
               <label>Gender</label>
               <div className="select-wrapper">
-                <select 
-                  value={filters.gender}
-                  onChange={(e) => handleFilterChange('gender', e.target.value)}
-                >
+                <select value={filters.gender} onChange={(e) => handleFilterChange("gender", e.target.value)}>
                   <option value="all">All</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
                 </select>
                 <FontAwesomeIcon icon={faChevronDown} className="select-icon" />
               </div>
             </div>
-            
+
             <div className="filter-group">
               <label>Member Status</label>
               <div className="select-wrapper">
-                <select 
+                <select
                   value={filters.memberStatus}
-                  onChange={(e) => handleFilterChange('memberStatus', e.target.value)}
+                  onChange={(e) => handleFilterChange("memberStatus", e.target.value)}
                 >
                   <option value="all">All</option>
                   <option value="yes">Yes</option>
@@ -86,13 +69,13 @@ const SearchAndFilterBar = ({
                 <FontAwesomeIcon icon={faChevronDown} className="select-icon" />
               </div>
             </div>
-            
+
             <div className="filter-group">
               <label>Preferred Attendance</label>
               <div className="select-wrapper">
-                <select 
+                <select
                   value={filters.preferredAttendance}
-                  onChange={(e) => handleFilterChange('preferredAttendance', e.target.value)}
+                  onChange={(e) => handleFilterChange("preferredAttendance", e.target.value)}
                 >
                   <option value="all">All</option>
                   <option value="Online">Online</option>
@@ -101,14 +84,11 @@ const SearchAndFilterBar = ({
                 <FontAwesomeIcon icon={faChevronDown} className="select-icon" />
               </div>
             </div>
-            
+
             <div className="filter-group">
               <label>Attendance</label>
               <div className="select-wrapper">
-                <select 
-                  value={filters.attendance}
-                  onChange={(e) => handleFilterChange('attendance', e.target.value)}
-                >
+                <select value={filters.attendance} onChange={(e) => handleFilterChange("attendance", e.target.value)}>
                   <option value="all">All</option>
                   <option value="online">Attended Online</option>
                   <option value="offline">Attended Offline</option>
@@ -119,12 +99,9 @@ const SearchAndFilterBar = ({
               </div>
             </div>
           </div>
-          
+
           <div className="filter-actions">
-            <button 
-              className="clear-filters-button"
-              onClick={clearFilters}
-            >
+            <button className="clear-filters-button" onClick={clearFilters}>
               <FontAwesomeIcon icon={faTimes} />
               Clear Filters
             </button>
@@ -132,7 +109,7 @@ const SearchAndFilterBar = ({
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default SearchAndFilterBar;
+export default SearchAndFilterBar
