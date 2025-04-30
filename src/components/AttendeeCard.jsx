@@ -56,7 +56,7 @@ const AttendeeCard = ({ attendee, eventId }) => {
         setShowEmailModal(false)
       })
   }
-
+  const isMemberBool = isMember === true || isMember === "true";
   return (
     <div className="attendee-card">
       <div className="attendee-card-header">
@@ -115,10 +115,12 @@ const AttendeeCard = ({ attendee, eventId }) => {
           </div>
 
           <div className="attendee-tag">
-            <FontAwesomeIcon icon={faUsers} />
-            <span>Member:</span>
-            <span className={`tag-value ${isMember ? "positive" : "negative"}`}>{isMember ? "Yes" : "No"}</span>
-          </div>
+  <FontAwesomeIcon icon={faUsers} />
+  <span>Member:</span>
+  <span className={`tag-value ${isMemberBool ? "positive" : "negative"}`}>
+    {isMemberBool ? "Yes" : "No"}
+  </span>
+</div>
 
           <div className="attendee-tag">
             <FontAwesomeIcon icon={faGlobe} />
