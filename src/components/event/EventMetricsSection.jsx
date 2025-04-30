@@ -10,7 +10,7 @@ import {
   faArrowRight,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons"
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchEventQuickRegistrations } from "../../redux/quickRegistrationsSlice"
 
@@ -18,17 +18,13 @@ const EventMetricsSection = ({ metrics, eventId }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const { quickRegistrations, loading, error } = useSelector(
-    (state) => state.quickRegistrations
-  )
+  const { quickRegistrations, loading, error } = useSelector((state) => state.quickRegistrations)
 
   useEffect(() => {
     if (eventId) {
       dispatch(fetchEventQuickRegistrations(eventId))
     }
   }, [eventId, dispatch])
-
-  
 
   const navigateToAttendees = (type) => {
     navigate(`/events/${eventId}/attendees/${type}`)
@@ -169,9 +165,7 @@ const EventMetricsSection = ({ metrics, eventId }) => {
           </div>
           <div className="metric-content">
             <h3>Quick Registrations</h3>
-            <p className="metric-description">
-              Users who registered with minimal information
-            </p>
+            <p className="metric-description">Users who registered with minimal information</p>
             <div className="metric-value">
               {loading ? "Loading..." : error ? "Error" : quickRegistrations?.length || 0}
             </div>

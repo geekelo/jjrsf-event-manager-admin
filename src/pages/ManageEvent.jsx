@@ -15,9 +15,11 @@ import {
 } from "../redux/eventsSlice"
 import { fetchEventAttendees } from "../redux/attendeesSlice"
 import { fetchEventQuickRegistrations } from "../redux/quickRegistrationsSlice"
+import { sendReminder, sendBulkEmail, resetReminderStatus, resetBulkEmailStatus } from "../redux/notificationsSlice"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import "../stylesheets/manageEvent.css"
+import "../stylesheets/notifications.css"
 import { isAuthenticated } from "../lib/auth/token"
 
 // Import components
@@ -28,6 +30,7 @@ import EventEvaluationSection from "../components/event/EventEvaluationSection"
 import EventFeedbackSection from "../components/event/EventFeedbackSection"
 import EventImageSection from "../components/event/EventImageSection"
 import StreamsSection from "../components/event/StreamsSection"
+import EventNotificationsSection from "../components/event/EventNotificationsSection"
 import PasscodeModal from "../components/PasscodeModal"
 import DeleteConfirmationModal from "../components/deleteModal"
 import { Trash2 } from "lucide-react"
@@ -52,34 +55,48 @@ function ManageEvent() {
     currentEventId,
   } = useSelector((state) => state.attendees)
 
+  // Get notifications state from Redux store
+  const { reminderLoading, reminderError, reminderSuccess, bulkEmailLoading, bulkEmailError, bulkEmailSuccess } =
+    useSelector((state) => state.notifications)
+
   const [showPasscodeModal, setShowPasscodeModal] = useState(false)
   const [localEvent, setLocalEvent] = useState(null)
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false) // Manage delete modal state
   const [deleteEventName, setDeleteEventName] = useState("") // Event name for delete confirmation
+  const [deleting, setDeleting] = useState(false)
 
+
+  // Check authentication and fetch data on component mount
   useEffect(() => {
+    if (deleting) return
+  
     if (!isAuthenticated()) {
       toast.error("You must be logged in to access this page")
       navigate("/admin/login")
       return
     }
-
+  
+    const eventExists = events.find((e) => e.id === eventId)
+  
     if (events.length === 0) {
       dispatch(fetchEvents())
-    } else {
+    } else if (eventExists) {
       dispatch(setCurrentEvent(eventId))
+    } else {
+      // If event no longer exists (e.g. after deletion), don't try to fetch it
+      return
     }
-
+  
     if (!currentEventId || currentEventId !== eventId) {
       dispatch(fetchEventAttendees(eventId))
     }
-
-    dispatch(fetchEventQuickRegistrations(eventId))
-
-    return () => {
-      // Cleanup on unmount
+  
+    if (eventExists) {
+      dispatch(fetchEventQuickRegistrations(eventId))
     }
-  }, [dispatch, eventId, navigate, events.length, currentEventId])
+  
+    return () => {}
+  }, [dispatch, eventId, navigate, events, currentEventId, deleting])  
 
   useEffect(() => {
     if (event) {
@@ -222,6 +239,16 @@ console.log(event)
       })
   }
 
+  // Handle sending reminders to attendees
+  const handleSendReminder = (eventId) => {
+    dispatch(sendReminder(eventId))
+  }
+
+  // Handle sending bulk emails
+  const handleSendBulkEmail = (emailData) => {
+    return dispatch(sendBulkEmail(emailData))
+  }
+
   const closePasscodeModal = () => {
     setShowPasscodeModal(false)
   }
@@ -233,12 +260,16 @@ console.log(event)
 
   const handleDeleteEvent = () => {
     console.log(eventId)
+    setDeleting(true)
    const res = dispatch(deleteEvent(eventId))
    
       .unwrap()
       .then(() => {
         toast.success("Event deleted successfully")
-        navigate("/events") // Redirect after deletion
+        setTimeout(() => {
+          navigate("/events") // Redirect after deletion
+        }, 4000)
+       
       })
       .catch((error) => {
         toast.error(error || "Failed to delete event")
@@ -322,6 +353,15 @@ console.log(mappedEvent)
         <EventImageSection eventId={eventId} imageUrl={mappedEvent?.imageUrl} />
 
         <EventMetricsSection metrics={metrics} eventId={eventId} />
+
+        {/* Add the new Notifications Section */}
+        <EventNotificationsSection
+          eventId={eventId}
+          onSendReminder={handleSendReminder}
+          onSendBulkEmail={handleSendBulkEmail}
+          reminderLoading={reminderLoading}
+          bulkEmailLoading={bulkEmailLoading}
+        />
 
         <EventEvaluationSection
           event={mappedEvent}

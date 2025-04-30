@@ -1305,3 +1305,66 @@
 .primary-button:hover {
   background-color: #3a2065;
 }
+
+/* Add these styles to the existing attendeeList.css file */
+
+/* Action buttons container */
+.attendee-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.notes-button,
+.email-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.notes-button {
+  color: #442777;
+}
+
+.email-button {
+  color: #0f7b6c;
+}
+
+.notes-button:hover {
+  background-color: #e0e0e0;
+  border-color: #442777;
+  color: #331c5a;
+}
+
+.email-button:hover {
+  background-color: #e0f2f1;
+  border-color: #0f7b6c;
+  color: #0a5c50;
+}
+
+/* Email modal styles */
+.email-recipients-info {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .attendee-actions {
+    flex-direction: column;
+  }
+}

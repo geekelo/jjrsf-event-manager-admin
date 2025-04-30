@@ -234,12 +234,12 @@ const HomePage = () => {
             <div className="premium-hero-text">
               <span className="hero-kicker">Welcome to</span>
               <h1>
-                <span className="accent-text">JJRSF</span> Foundation
+                <span className="accent-text">JJRS</span> Foundation
                 <br />
                 Program Portal
               </h1>
               <p className="premium-hero-description">
-                Create and Manage programs seamlessly and effectively
+                Create and Manage programs seamlessly and effectively.
               </p>
             </div>
             <div className="premium-hero-login">
@@ -349,7 +349,7 @@ const HomePage = () => {
             <div className="premium-about-content">
               <div className="premium-section-header left-aligned">
                 <span className="section-kicker">Our Story</span>
-                <h2>About JJRSF Foundation</h2>
+                <h2>About JJRS Foundation</h2>
               </div>
               <div className="section-decorator left-aligned">
                 <span></span>
@@ -358,7 +358,7 @@ const HomePage = () => {
               </div>
               <div className="premium-about-text">
                 <p>
-                  JJRSF Foundation is dedicated to fostering transformative experiences that inspire growth and create
+                  JJRS Foundation is dedicated to fostering transformative experiences that inspire growth and create
                   meaningful connections within our community.
                 </p>
                 <p>
@@ -411,7 +411,7 @@ const HomePage = () => {
         <div className="footer-top-pattern"></div>
         <div className="premium-container">          
           <div className="premium-footer-bottom">
-            <p>&copy; {new Date().getFullYear()} JJRSF Foundation. All Rights Reserved.</p>
+            <p>&copy; {new Date().getFullYear()} JJRS Foundation. All Rights Reserved.</p>
           </div>
         </div>
       </footer>

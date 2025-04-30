@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faUser,
@@ -15,14 +16,22 @@ import {
   faCheck,
   faLock,
   faStickyNote,
+  faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons"
 import NotesModal from "./NotesModal"
+import DirectEmailModal from "./notifications/DirectEmailModal"
+import { sendDirectEmail } from "../redux/notificationsSlice"
 
-const AttendeeCard = ({ attendee }) => {
+const AttendeeCard = ({ attendee, eventId }) => {
   const [showNotesModal, setShowNotesModal] = useState(false)
+  const [showEmailModal, setShowEmailModal] = useState(false)
+
+  const dispatch = useDispatch()
+  const { loading } = useSelector((state) => state.notifications)
 
   // Handle missing properties gracefully
   const {
+    id = "",
     title = "",
     name = "Unknown",
     email = "",
@@ -38,6 +47,15 @@ const AttendeeCard = ({ attendee }) => {
     attendedOffline = false,
     otp = "",
   } = attendee || {}
+
+  const handleSendEmail = (emailData) => {
+    // Pass the complete payload directly to the action
+    dispatch(sendDirectEmail(emailData))
+      .unwrap()
+      .then(() => {
+        setShowEmailModal(false)
+      })
+  }
 
   return (
     <div className="attendee-card">
@@ -145,18 +163,36 @@ const AttendeeCard = ({ attendee }) => {
           <div className="otp-value">{otp || "N/A"}</div>
         </div>
 
-        {/* Notes Button */}
-        <div className="attendee-notes-section">
+        {/* Action Buttons */}
+        <div className="attendee-actions">
           <button className="notes-button" onClick={() => setShowNotesModal(true)}>
             <FontAwesomeIcon icon={faStickyNote} />
             <span>Notes</span>
           </button>
+
+          <button className="email-button" onClick={() => setShowEmailModal(true)}>
+            <FontAwesomeIcon icon={faPaperPlane} />
+            <span>Send Email</span>
+          </button>
         </div>
       </div>
 
-      {/* Notes Modal inside the card */}
+      {/* Notes Modal */}
       {showNotesModal && (
         <NotesModal attendee={attendee} isOpen={showNotesModal} onClose={() => setShowNotesModal(false)} />
+      )}
+
+      {/* Email Modal */}
+      {showEmailModal && (
+        <DirectEmailModal
+          eventId={eventId}
+          attendeeId={id}
+          attendeeName={name}
+          isOpen={showEmailModal}
+          onClose={() => setShowEmailModal(false)}
+          onSendEmail={handleSendEmail}
+          isLoading={loading}
+        />
       )}
     </div>
   )
