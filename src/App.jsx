@@ -12,7 +12,8 @@ import ProtectedRoute from "./components/auth/protectedRoute"
 import ManageStream from "./pages/manageStream"
 import EventFeedback from "./pages/EventFeedback"
 import HomePage from "./pages/HomePage"
-import Header from "./components/Header";
+import Header from "./components/Header"
+import UniqueAttendees from "./pages/uniqueAttendees"
 
 function App() {
   return (
@@ -63,7 +64,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-       
+
         <Route
           path="/events/:eventId/attendees/:type"
           element={
@@ -104,6 +105,15 @@ function App() {
           element={
             <ProtectedRoute>
               <ManageStream />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/attendees"
+          element={
+            <ProtectedRoute>
+              <UniqueAttendees />
             </ProtectedRoute>
           }
         />

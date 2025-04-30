@@ -1,119 +1,195 @@
-/* Notifications Section Styles */
-.event-notifications-section {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    padding: 20px;
-  }
-  
-  .notification-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .notification-action-description {
-    margin-bottom: 5px;
-  }
-  
-  .notification-action-description p {
-    color: #666;
-    font-size: 14px;
-    margin: 0;
-  }
-  
-  .remind-button,
-  .bulk-email-button {
-    align-self: flex-start;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    font-weight: 600;
-    transition: all 0.2s ease;
-  }
-  
-  .remind-button {
-    background-color: #4a6cf7;
-  }
-  
-  .bulk-email-button {
-    background-color: #6366f1;
-  }
-  
-  .remind-button:hover,
-  .bulk-email-button:hover {
-    opacity: 0.9;
-    transform: translateY(-2px);
-  }
-  
-  .remind-button:disabled,
-  .bulk-email-button:disabled {
-    background-color: #a0aec0;
-    cursor: not-allowed;
-    transform: none;
-  }
-  
-  /* Bulk Email Modal Styles */
-  .bulk-email-modal {
+/* Email Modal Styles */
+.email-modal {
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     width: 90%;
     max-width: 600px;
     margin: 0 auto;
-    padding: 20px;
     position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     max-height: 90vh;
+  }
+  
+  .email-modal-header {
+    background-color: #f8f9fa;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .email-modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #333;
+  }
+  
+  .email-modal-body {
+    padding: 20px;
     overflow-y: auto;
+    flex-grow: 1;
   }
   
-  @media (max-width: 768px) {
-    .bulk-email-modal {
-      width: 95%;
-      padding: 15px;
-    }
-  
-    .bulk-email-modal .form-group {
-      margin-bottom: 12px;
-    }
-  }
-  
-  .bulk-email-modal .modal-body {
-    max-height: 60vh;
-    overflow-y: auto;
-  }
-  
-  .bulk-email-modal .form-group {
-    margin-bottom: 16px;
-  }
-  
-  .bulk-email-modal label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 500;
-  }
-  
-  .bulk-email-modal input,
-  .bulk-email-modal select,
-  .bulk-email-modal textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-  
-  .bulk-email-modal textarea {
-    resize: vertical;
-    min-height: 120px;
-  }
-  
-  .bulk-email-modal .modal-footer {
+  .email-modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #e9ecef;
     display: flex;
     justify-content: flex-end;
     gap: 10px;
-    margin-top: 20px;
+    background-color: #f8f9fa;
+  }
+  
+  .email-form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .email-form .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .email-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #495057;
+  }
+  
+  .email-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .email-textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 1rem;
+    resize: vertical;
+    min-height: 150px;
+  }
+  
+  .email-recipients-info {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f0f8ff;
+    border-radius: 4px;
+    border-left: 4px solid #007bff;
+  }
+  
+  .send-email-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  
+  .send-email-button:hover {
+    background-color: #0069d9;
+  }
+  
+  .send-email-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
+  
+  .cancel-button {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  
+  .cancel-button:hover {
+    background-color: #5a6268;
+  }
+  
+  .cancel-button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+  
+  /* Metric Card Email Button Styles */
+  .metric-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  
+  .metrics-email-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    width: 100%;
+  }
+  
+  .metrics-email-button:hover {
+    background-color: #218838;
+  }
+  
+  .email-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .email-modal {
+      width: 95%;
+      max-height: 80vh;
+    }
+  
+    .email-modal-header h2 {
+      font-size: 1.1rem;
+    }
+  
+    .email-textarea {
+      min-height: 120px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .email-modal-footer {
+      flex-direction: column;
+    }
+  
+    .send-email-button,
+    .cancel-button {
+      width: 100%;
+    }
+  
+    .email-modal-header h2 {
+      font-size: 1rem;
+    }
   }
   
