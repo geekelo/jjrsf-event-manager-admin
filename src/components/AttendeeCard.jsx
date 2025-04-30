@@ -28,7 +28,7 @@ const AttendeeCard = ({ attendee, eventId }) => {
 
   const dispatch = useDispatch()
   const { loading } = useSelector((state) => state.notifications)
-
+console.log(attendee)
   // Handle missing properties gracefully
   const {
     id = "",
@@ -42,7 +42,7 @@ const AttendeeCard = ({ attendee, eventId }) => {
     country = "",
     gender = "",
     isMember = false,
-    preferredAttendance = "",
+    preferred_attendance = "",
     attendedOnline = false,
     attendedOffline = false,
     otp = "",
@@ -125,7 +125,7 @@ const AttendeeCard = ({ attendee, eventId }) => {
           <div className="attendee-tag">
             <FontAwesomeIcon icon={faGlobe} />
             <span>Preferred:</span>
-            <span className="tag-value">{preferredAttendance || "N/A"}</span>
+            <span className="tag-value">{preferred_attendance || ""}</span>
           </div>
         </div>
 
