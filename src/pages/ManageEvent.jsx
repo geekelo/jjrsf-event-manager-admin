@@ -56,30 +56,38 @@ function ManageEvent() {
   const [localEvent, setLocalEvent] = useState(null)
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false) // Manage delete modal state
   const [deleteEventName, setDeleteEventName] = useState("") // Event name for delete confirmation
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
+    if (deleting) return
+  
     if (!isAuthenticated()) {
       toast.error("You must be logged in to access this page")
       navigate("/admin/login")
       return
     }
-
+  
+    const eventExists = events.find((e) => e.id === eventId)
+  
     if (events.length === 0) {
       dispatch(fetchEvents())
-    } else {
+    } else if (eventExists) {
       dispatch(setCurrentEvent(eventId))
+    } else {
+      // If event no longer exists (e.g. after deletion), don't try to fetch it
+      return
     }
-
+  
     if (!currentEventId || currentEventId !== eventId) {
       dispatch(fetchEventAttendees(eventId))
     }
-
-    dispatch(fetchEventQuickRegistrations(eventId))
-
-    return () => {
-      // Cleanup on unmount
+  
+    if (eventExists) {
+      dispatch(fetchEventQuickRegistrations(eventId))
     }
-  }, [dispatch, eventId, navigate, events.length, currentEventId])
+  
+    return () => {}
+  }, [dispatch, eventId, navigate, events, currentEventId, deleting])  
 
   useEffect(() => {
     if (event) {
@@ -231,12 +239,16 @@ function ManageEvent() {
 
   const handleDeleteEvent = () => {
     console.log(eventId)
+    setDeleting(true)
    const res = dispatch(deleteEvent(eventId))
    
       .unwrap()
       .then(() => {
         toast.success("Event deleted successfully")
-        navigate("/events") // Redirect after deletion
+        setTimeout(() => {
+          navigate("/events") // Redirect after deletion
+        }, 4000)
+       
       })
       .catch((error) => {
         toast.error(error || "Failed to delete event")

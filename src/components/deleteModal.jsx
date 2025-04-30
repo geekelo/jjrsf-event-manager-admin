@@ -11,7 +11,7 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, eventName }) => {
           Are you sure you want to delete <strong>{eventName}</strong>? This action cannot be undone.
         </p>
         <div className="modal-actions">
-          <button className="cancel-button" onClick={onClose}>Cancel</button>
+          <button className="cancel-delete-button" onClick={onClose}>Cancel</button>
           <button className="delete-confirm-button" onClick={onConfirm}>Delete</button>
         </div>
       </div>

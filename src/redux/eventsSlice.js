@@ -54,7 +54,7 @@ export const deleteEvent = createAsyncThunk(
   "events/deleteEvent",
   async (eventId, { rejectWithValue, dispatch }) => {
     try {
-      await axiosWithAuth.delete(`/api/v1/foundation_events/${eventId}`)
+      await axiosWithAuth.delete(`/api/v1/foundation_events/${eventId}?event_id=${eventId}`)
 
       // Refresh event list after deletion
       dispatch(fetchEvents())
