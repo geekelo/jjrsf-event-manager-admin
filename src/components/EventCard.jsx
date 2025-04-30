@@ -39,11 +39,7 @@ const EventCard = ({ event, onManage, onViewDetails, getStatusBadgeClass, format
           <button className="event-menu-button">
             <FontAwesomeIcon icon={faEllipsisVertical} />
           </button>
-          <div className="event-menu-content">
-            <button onClick={() => onViewDetails(event)}>
-              <FontAwesomeIcon icon={faEye} /> View Details
-            </button>
-          </div>
+         
         </div>
       </div>
     </div>
