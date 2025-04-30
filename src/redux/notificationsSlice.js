@@ -44,16 +44,19 @@ export const sendBulkEmail = createAsyncThunk(
 // Send direct email to individual attendee
 export const sendDirectEmail = createAsyncThunk(
   "notifications/sendDirectEmail",
-  async ({ eventId, attendeeId, subject, body }, { rejectWithValue }) => {
+  async (payload, { rejectWithValue }) => {
     try {
-      const response = await axiosWithAuth.post("/api/v1/direct_email", {
-        event_id: eventId,
-        event_attendee_id: attendeeId,
-        event_email: {
-          subject: subject,
-          body: body,
-        },
-      })
+      // Pass the payload directly to the API without modification
+      // The payload should already be in the correct format:
+      // {
+      //   event_id: "event-id",
+      //   event_attendee_id: "attendee-id",
+      //   event_email: {
+      //     subject: "email-subject",
+      //     body: "email-body"
+      //   }
+      // }
+      const response = await axiosWithAuth.post("/api/v1/direct_email", payload)
       return response.data
     } catch (error) {
       const errorMessage =

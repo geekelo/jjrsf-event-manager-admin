@@ -21,11 +21,14 @@ const DirectEmailModal = ({ eventId, attendeeId, attendeeName, onClose, onSendEm
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    // Pass the complete payload structure directly to the parent component
     onSendEmail({
-      eventId,
-      attendeeId,
-      subject: formData.subject,
-      body: formData.body,
+      event_id: eventId,
+      event_attendee_id: attendeeId,
+      event_email: {
+        subject: formData.subject,
+        body: formData.body,
+      },
     })
   }
 

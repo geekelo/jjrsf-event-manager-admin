@@ -1,7 +1,10 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
 import { fetchEventQuickRegistrations } from "../redux/quickRegistrationsSlice"
+import { sendDirectEmail } from "../redux/notificationsSlice"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faArrowLeft,
@@ -18,45 +21,13 @@ import {
   faChevronDown,
   faCheck,
   faShieldAlt,
+  faPaperPlane,
+  faSpinner,
 } from "@fortawesome/free-solid-svg-icons"
 import Pagination from "../components/Pagination"
+import DirectEmailModal from "../components/notifications/DirectEmailModal"
 import "../stylesheets/attendeeList.css"
 import "../stylesheets/QuickRegistrations.css"
-
-// // Update the generateDummyQuickRegistrations function to include attendance and verification status
-// const generateDummyQuickRegistrations = (count) => {
-//   const genders = ["Male", "Female"]
-//   const registrations = []
-
-//   for (let i = 1; i <= count; i++) {
-//     const gender = genders[Math.floor(Math.random() * genders.length)]
-
-//     // Generate a random date within the last 30 days
-//     const randomDaysAgo = Math.floor(Math.random() * 30)
-//     const registrationDate = new Date()
-//     registrationDate.setDate(registrationDate.getDate() - randomDaysAgo)
-
-//     // Generate random attendance and verification status
-//     const attendedOnline = Math.random() > 0.5
-//     const attendedOffline = Math.random() > 0.5
-//     const verified = Math.random() > 0.3
-
-//     registrations.push({
-//       id: i,
-//       name: `Quick User ${i}`,
-//       email: `quick${i}@example.com`,
-//       phone: `+1 555-${String(i).padStart(3, "0")}-${Math.floor(1000 + Math.random() * 9000)}`,
-//       gender,
-//       otp: Math.floor(100000 + Math.random() * 900000).toString(), // 6-digit OTP
-//       registrationDate: registrationDate.toISOString(),
-//       attendedOnline,
-//       attendedOffline,
-//       verified,
-//     })
-//   }
-
-//   return registrations
-// }
 
 const QuickRegistrationsList = () => {
   const { eventId } = useParams()
@@ -65,13 +36,10 @@ const QuickRegistrationsList = () => {
 
   // Get event data from Redux store
   const { events } = useSelector((state) => state.events)
-  
+
   // Get quick registrations from Redux store
-  const { 
-    quickRegistrations,
-    loading,
-    error 
-  } = useSelector((state) => state.quickRegistrations)
+  const { quickRegistrations, loading, error } = useSelector((state) => state.quickRegistrations)
+  const { loading: emailLoading } = useSelector((state) => state.notifications)
 
   // Local state
   const [filteredRegistrations, setFilteredRegistrations] = useState([])
@@ -79,6 +47,8 @@ const QuickRegistrationsList = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [eventName, setEventName] = useState("Event Name")
   const [filterActive, setFilterActive] = useState(false)
+  const [showEmailModal, setShowEmailModal] = useState(false)
+  const [selectedRegistration, setSelectedRegistration] = useState(null)
 
   // Filters state
   const [filters, setFilters] = useState({
@@ -100,15 +70,12 @@ const QuickRegistrationsList = () => {
     if (currentEvent) {
       setEventName(currentEvent.name)
     }
-  
+
     // ✅ Fetch quick registrations from API
     if (eventId) {
-    const res =  dispatch(fetchEventQuickRegistrations(eventId))
-   
+      const res = dispatch(fetchEventQuickRegistrations(eventId))
     }
   }, [eventId, events, dispatch])
-  
- 
 
   // Apply filters and search to the quick registrations data
   useEffect(() => {
@@ -227,6 +194,20 @@ const QuickRegistrationsList = () => {
     })
   }
 
+  const handleOpenEmailModal = (registration) => {
+    setSelectedRegistration(registration)
+    setShowEmailModal(true)
+  }
+
+  const handleSendEmail = (emailData) => {
+    // Pass the complete payload directly to the action
+    dispatch(sendDirectEmail(emailData))
+      .unwrap()
+      .then(() => {
+        setShowEmailModal(false)
+      })
+  }
+
   if (loading) {
     return (
       <div className="attendee-list-page">
@@ -288,9 +269,10 @@ const QuickRegistrationsList = () => {
           <button className={`filter-button ${filterActive ? "active" : ""}`} onClick={toggleFilter}>
             <FontAwesomeIcon icon={faFilter} />
             <span>Filter</span>
-            {(filters.gender !== "all" || filters.dateRange !== "all" || 
-              filters.attendance !== "all" || filters.verification !== "all") && 
-              <span className="filter-badge"></span>}
+            {(filters.gender !== "all" ||
+              filters.dateRange !== "all" ||
+              filters.attendance !== "all" ||
+              filters.verification !== "all") && <span className="filter-badge"></span>}
           </button>
         </div>
 
@@ -456,6 +438,22 @@ const QuickRegistrationsList = () => {
                           </span>
                         </div>
                       </div>
+
+                      {/* Email Button */}
+                      <div className="quick-reg-actions">
+                        <button
+                          className="email-button"
+                          onClick={() => handleOpenEmailModal(registration)}
+                          disabled={emailLoading}
+                        >
+                          {emailLoading ? (
+                            <FontAwesomeIcon icon={faSpinner} spin />
+                          ) : (
+                            <FontAwesomeIcon icon={faPaperPlane} />
+                          )}
+                          <span>Send Email</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -476,14 +474,20 @@ const QuickRegistrationsList = () => {
               <FontAwesomeIcon icon={faUserPlus} size="3x" style={{ opacity: 0.3, marginBottom: "1rem" }} />
               <p>
                 No quick registrations found
-                {searchTerm || filters.gender !== "all" || filters.dateRange !== "all" || 
-                 filters.attendance !== "all" || filters.verification !== "all"
+                {searchTerm ||
+                filters.gender !== "all" ||
+                filters.dateRange !== "all" ||
+                filters.attendance !== "all" ||
+                filters.verification !== "all"
                   ? " matching your search criteria"
                   : ""}
                 .
               </p>
-              {(searchTerm || filters.gender !== "all" || filters.dateRange !== "all" || 
-                filters.attendance !== "all" || filters.verification !== "all") && (
+              {(searchTerm ||
+                filters.gender !== "all" ||
+                filters.dateRange !== "all" ||
+                filters.attendance !== "all" ||
+                filters.verification !== "all") && (
                 <button
                   className="clear-filters-button"
                   onClick={() => {
@@ -498,6 +502,18 @@ const QuickRegistrationsList = () => {
           )}
         </div>
       </div>
+
+      {/* Email Modal */}
+      {showEmailModal && selectedRegistration && (
+        <DirectEmailModal
+          eventId={eventId}
+          attendeeId={selectedRegistration.id}
+          attendeeName={selectedRegistration.name}
+          onClose={() => setShowEmailModal(false)}
+          onSendEmail={handleSendEmail}
+          isLoading={emailLoading}
+        />
+      )}
     </div>
   )
 }
