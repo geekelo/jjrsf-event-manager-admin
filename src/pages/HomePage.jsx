@@ -411,7 +411,7 @@ const HomePage = () => {
         <div className="footer-top-pattern"></div>
         <div className="premium-container">          
           <div className="premium-footer-bottom">
-            <p>&copy; {new Date().getFullYear()} JJRSF Foundation. All Rights Reserved.</p>
+            <p>&copy; {new Date().getFullYear()} JJRS Foundation. All Rights Reserved.</p>
           </div>
         </div>
       </footer>

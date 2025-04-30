@@ -1042,6 +1042,12 @@ button {
   height: 500px;
 }
 
+@media screen and (max-width: 768px) {
+  .about-image-container {
+    display: none;
+  } 
+}
+
 .about-image-background {
   position: absolute;
   top: 0;
