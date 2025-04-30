@@ -23,6 +23,7 @@ function EventsPage() {
 
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
+  const [isCreatingEvent, setIsCreatingEvent] = useState(false)
 
   // Form data for creating a new event
   const [newEventData, setNewEventData] = useState({
@@ -99,7 +100,7 @@ function EventsPage() {
       [name]: value,
     }))
   }
-  console.log(filteredEvents.id)
+
   // Handle form submission
   const handleSubmitEvent = (e) => {
     e.preventDefault()
@@ -110,16 +111,25 @@ function EventsPage() {
       return
     }
 
+    setIsCreatingEvent(true)
+
     // Dispatch the createEvent thunk
     dispatch(createEvent(newEventData))
       .unwrap()
-      .then((createdEvent) => {
+      .then(() => {
         // Close form and show success message
         setShowCreateForm(false)
         toast.success(`Event "${newEventData.name}" created successfully!`)
 
-        // Navigate to the newly created event's management page
-        navigate(`/events/${createdEvent.id}`)
+        // Refresh the events list without page refresh
+        dispatch(fetchEvents())
+          .unwrap()
+          .then(() => {
+            setIsCreatingEvent(false)
+          })
+          .catch(() => {
+            setIsCreatingEvent(false)
+          })
 
         // Reset form data
         setNewEventData({
@@ -135,6 +145,7 @@ function EventsPage() {
         })
       })
       .catch((error) => {
+        setIsCreatingEvent(false)
         toast.error(error || "Failed to create event")
       })
   }
@@ -215,10 +226,10 @@ function EventsPage() {
 
         {/* Events List */}
         <div className="events-list">
-          {loading ? (
+          {loading || isCreatingEvent ? (
             <div className="loading-container">
               <div className="spinner"></div>
-              <p>Loading events...</p>
+              <p>{isCreatingEvent ? "Creating event..." : "Loading events..."}</p>
             </div>
           ) : filteredEvents.length > 0 ? (
             filteredEvents.map((event) => (

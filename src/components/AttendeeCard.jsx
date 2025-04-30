@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import { useParams } from "react-router-dom" // Add this import
 import { useDispatch, useSelector } from "react-redux"
+import { sendDirectEmail } from "../redux/notificationsSlice"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faUser,
@@ -20,14 +22,17 @@ import {
 } from "@fortawesome/free-solid-svg-icons"
 import NotesModal from "./NotesModal"
 import DirectEmailModal from "./notifications/DirectEmailModal"
-import { sendDirectEmail } from "../redux/notificationsSlice"
 
 const AttendeeCard = ({ attendee, eventId }) => {
+  const { eventId: urlEventId } = useParams() // Extract from URL
   const [showNotesModal, setShowNotesModal] = useState(false)
   const [showEmailModal, setShowEmailModal] = useState(false)
 
   const dispatch = useDispatch()
   const { loading } = useSelector((state) => state.notifications)
+
+  // Get the actual event ID from props or URL
+  const actualEventId = eventId || urlEventId
 
   // Handle missing properties gracefully
   const {
@@ -65,11 +70,21 @@ const AttendeeCard = ({ attendee, eventId }) => {
     (street || state || country ? `${street ? `${street}, ` : ""}${state ? `${state}, ` : ""}${country || ""}` : "N/A")
 
   const handleSendEmail = (emailData) => {
-    // Pass the complete payload directly to the action
-    dispatch(sendDirectEmail(emailData))
+    // Ensure event_id is always included and correctly set
+    const completePayload = {
+      ...emailData,
+      event_id: actualEventId, // Use the extracted event ID
+    }
+    
+    console.log("Sending email with payload:", completePayload) // Debug log
+    
+    dispatch(sendDirectEmail(completePayload))
       .unwrap()
       .then(() => {
         setShowEmailModal(false)
+      })
+      .catch((error) => {
+        console.error("Failed to send email:", error)
       })
   }
 
@@ -204,7 +219,6 @@ const AttendeeCard = ({ attendee, eventId }) => {
           eventId={eventId}
           attendeeId={id}
           attendeeName={name}
-          isOpen={showEmailModal}
           onClose={() => setShowEmailModal(false)}
           onSendEmail={handleSendEmail}
           isLoading={loading}
