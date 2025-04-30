@@ -6,6 +6,7 @@ import platformReducer from "./platformSlice"
 import quickRegistrationsReducer from "./quickRegistrationsSlice"
 import feedbackReducer from "./feedbackSlice"
 import imageReducer from "./imageSlice"
+import notificationsReducer from "./notificationsSlice"
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     quickRegistrations: quickRegistrationsReducer,
     feedback: feedbackReducer,
     image: imageReducer,
+    notifications: notificationsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
