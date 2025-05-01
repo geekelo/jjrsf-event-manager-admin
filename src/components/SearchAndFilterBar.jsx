@@ -65,8 +65,8 @@ const SearchAndFilterBar = ({
                   onChange={(e) => handleFilterChange('gender', e.target.value)}
                 >
                   <option value="all">All</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
+                  <option value="m">Male</option>
+                  <option value="f">Female</option>
                 </select>
                 <FontAwesomeIcon icon={faChevronDown} className="select-icon" />
               </div>
@@ -95,8 +95,8 @@ const SearchAndFilterBar = ({
                   onChange={(e) => handleFilterChange('preferredAttendance', e.target.value)}
                 >
                   <option value="all">All</option>
-                  <option value="Online">Online</option>
-                  <option value="Offline">Offline</option>
+                  <option value="online">online</option>
+                  <option value="offline">offline</option>
                 </select>
                 <FontAwesomeIcon icon={faChevronDown} className="select-icon" />
               </div>
