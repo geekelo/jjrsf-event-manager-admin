@@ -63,8 +63,8 @@ const SearchAndFilterBar = ({
                   onChange={(e) => handleFilterChange("memberStatus", e.target.value)}
                 >
                   <option value="all">All</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
+                  <option value="no">Yes</option>
+                  <option value="yes">No</option>
                 </select>
                 <FontAwesomeIcon icon={faChevronDown} className="select-icon" />
               </div>
