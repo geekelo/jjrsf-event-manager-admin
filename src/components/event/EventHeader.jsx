@@ -12,7 +12,7 @@ const EventHeader = ({ event, handleBack }) => {
       >
         <FontAwesomeIcon icon={faArrowLeft} />
       </button>
-      <h1>Manage Event: {event.name}</h1>
+      <h1>Event: {event.name}</h1>
     </div>
   );
 };
