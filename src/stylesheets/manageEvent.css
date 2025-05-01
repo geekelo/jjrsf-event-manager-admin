@@ -24,10 +24,9 @@
 }
 
 .deletes-icon {
-  margin-right: 8px; 
-  font-size: 18px;  
+  margin-right: 8px;
+  font-size: 18px;
 }
-
 
 .manage-event-container {
   max-width: 1200px;
@@ -38,38 +37,69 @@
   padding: 30px;
 }
 
-/* Header Styles */
+/* Add these responsive styles for the EventHeader */
 .manage-event-header {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+  flex-wrap: wrap;
 }
 
 .back-button {
-  background-color: #f0f0f0;
+  background: none;
   border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  color: #333;
+  font-size: 1.2rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 16px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-right: 15px;
+  transition: background-color 0.2s;
 }
 
 .back-button:hover {
-  background-color: #e0e0e0;
-  transform: translateX(-3px);
+  background-color: #f0f0f0;
 }
 
-.manage-event-header h1 {
-  font-size: 28px;
-  font-weight: 700;
-  color: #333;
+.event-title {
+  font-size: 1.8rem;
   margin: 0;
+  font-weight: 600;
+  color: #333;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Tablet responsiveness */
+@media (max-width: 768px) {
+  .manage-event-header {
+    padding: 8px 0;
+  }
+
+  .event-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* Small tablet and large mobile responsiveness */
+@media (max-width: 576px) {
+  .manage-event-header {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .back-button {
+    margin-right: 10px;
+    padding: 6px 10px;
+  }
+
+  .event-title {
+    font-size: 1.3rem;
+  }
 }
 
 /* Section Styles */

@@ -46,16 +46,11 @@ export const sendDirectEmail = createAsyncThunk(
   "notifications/sendDirectEmail",
   async (payload, { rejectWithValue }) => {
     try {
-      // Pass the payload directly to the API without modification
-      // The payload should already be in the correct format:
-      // {
-      //   event_id: "event-id",
-      //   event_attendee_id: "attendee-id",
-      //   event_email: {
-      //     subject: "email-subject",
-      //     body: "email-body"
-      //   }
-      // }
+      // Ensure the payload has the correct structure with event_id
+      if (!payload.event_id) {
+        return rejectWithValue("Missing event ID. Please try again.")
+      }
+
       const response = await axiosWithAuth.post("/api/v1/direct_email", payload)
       return response.data
     } catch (error) {

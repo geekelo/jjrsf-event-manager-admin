@@ -23,6 +23,8 @@ import {
   faShieldAlt,
   faPaperPlane,
   faSpinner,
+  faGlobe,
+  faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons"
 import Pagination from "../components/Pagination"
 import DirectEmailModal from "../components/notifications/DirectEmailModal"
@@ -77,6 +79,26 @@ const QuickRegistrationsList = () => {
     }
   }, [eventId, events, dispatch])
 
+  // Helper function to match gender values
+  const matchGender = (regGender, filterGender) => {
+    if (!regGender) return false
+
+    // Convert to lowercase for case-insensitive comparison
+    const regGenderLower = regGender.toLowerCase()
+    const filterGenderLower = filterGender.toLowerCase()
+
+    // Check for exact match first
+    if (regGenderLower === filterGenderLower) return true
+
+    // Check for abbreviated forms
+    if (filterGenderLower === "m" && (regGenderLower === "male" || regGenderLower === "m")) return true
+    if (filterGenderLower === "f" && (regGenderLower === "female" || regGenderLower === "f")) return true
+    if (filterGenderLower === "male" && (regGenderLower === "m" || regGenderLower === "male")) return true
+    if (filterGenderLower === "female" && (regGenderLower === "f" || filterGenderLower === "female")) return true
+
+    return false
+  }
+
   // Apply filters and search to the quick registrations data
   useEffect(() => {
     if (quickRegistrations.length) {
@@ -89,7 +111,7 @@ const QuickRegistrationsList = () => {
           (reg.phone && reg.phone.toLowerCase().includes(searchTerm.toLowerCase()))
 
         // Gender filter
-        const genderMatch = filters.gender === "all" || reg.gender === filters.gender
+        const genderMatch = filters.gender === "all" || matchGender(reg.gender, filters.gender)
 
         // Date range filter
         let dateMatch = true
@@ -120,15 +142,18 @@ const QuickRegistrationsList = () => {
         }
 
         // Attendance filter
+        const attendedOnline = reg.attendedOnline || reg.attended_online || false
+        const attendedOffline = reg.attendedOffline || reg.attended_offline || false
+
         let attendanceMatch = true
         if (filters.attendance === "online") {
-          attendanceMatch = reg.attendedOnline && !reg.attendedOffline
+          attendanceMatch = attendedOnline && !attendedOffline
         } else if (filters.attendance === "offline") {
-          attendanceMatch = reg.attendedOffline && !reg.attendedOnline
+          attendanceMatch = attendedOffline && !attendedOnline
         } else if (filters.attendance === "both") {
-          attendanceMatch = reg.attendedOnline && reg.attendedOffline
+          attendanceMatch = attendedOnline && attendedOffline
         } else if (filters.attendance === "none") {
-          attendanceMatch = !reg.attendedOnline && !reg.attendedOffline
+          attendanceMatch = !attendedOnline && !attendedOffline
         }
 
         // Verification filter
@@ -208,6 +233,25 @@ const QuickRegistrationsList = () => {
       })
   }
 
+  // Helper function to get display gender
+  const getDisplayGender = (gender) => {
+    if (!gender) return "N/A"
+
+    const genderLower = gender.toLowerCase()
+    if (genderLower === "m" || genderLower === "male") return "Male"
+    if (genderLower === "f" || genderLower === "female") return "Female"
+    return gender // Return as is if not recognized
+  }
+
+  // Helper function to get gender icon
+  const getGenderIcon = (gender) => {
+    if (!gender) return faVenus
+
+    const genderLower = gender.toLowerCase()
+    if (genderLower === "m" || genderLower === "male") return faMars
+    return faVenus
+  }
+
   if (loading) {
     return (
       <div className="attendee-list-page">
@@ -284,8 +328,8 @@ const QuickRegistrationsList = () => {
                 <div className="select-wrapper">
                   <select value={filters.gender} onChange={(e) => handleFilterChange("gender", e.target.value)}>
                     <option value="all">All</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
                   </select>
                   <FontAwesomeIcon icon={faChevronDown} className="select-icon" />
                 </div>
@@ -348,115 +392,137 @@ const QuickRegistrationsList = () => {
           {filteredRegistrations.length > 0 ? (
             <>
               <div className="quick-reg-grid">
-                {displayedRegistrations.map((registration) => (
-                  <div key={registration.id} className="quick-reg-card">
-                    <div className="quick-reg-header">
-                      <h3 className="quick-reg-name">
-                        <FontAwesomeIcon icon={faUser} className="icon-primary" />
-                        {registration.name}
-                      </h3>
-                    </div>
+                {displayedRegistrations.map((registration) => {
+                  // Get preferred attendance value
+                  const preferredAttendance =
+                    registration.preferredAttendance || registration.preferred_attendance || "N/A"
+                  // Get attendance status
+                  const attendedOnline = registration.attendedOnline || registration.attended_online || false
+                  const attendedOffline = registration.attendedOffline || registration.attended_offline || false
 
-                    <div className="quick-reg-details">
-                      <div className="quick-reg-item">
-                        <div className="quick-reg-label">
-                          <FontAwesomeIcon icon={faEnvelope} />
-                          <span>Email:</span>
-                        </div>
-                        <div className="quick-reg-value">{registration.email || "N/A"}</div>
+                  return (
+                    <div key={registration.id} className="quick-reg-card">
+                      <div className="quick-reg-header">
+                        <h3 className="quick-reg-name">
+                          <FontAwesomeIcon icon={faUser} className="icon-primary" />
+                          {registration.name}
+                        </h3>
                       </div>
 
-                      <div className="quick-reg-item">
-                        <div className="quick-reg-label">
-                          <FontAwesomeIcon icon={faPhone} />
-                          <span>Phone:</span>
+                      <div className="quick-reg-details">
+                        {/* Address Section */}
+                        <div className="quick-reg-item">
+                          <div className="quick-reg-label">
+                            <FontAwesomeIcon icon={faMapMarkerAlt} />
+                            <span>Address:</span>
+                          </div>
+                          <div className="quick-reg-value">{registration.address || "N/A"}</div>
                         </div>
-                        <div className="quick-reg-value">{registration.phone || "N/A"}</div>
-                      </div>
 
-                      <div className="quick-reg-item">
-                        <div className="quick-reg-label">
-                          <FontAwesomeIcon icon={registration.gender === "Male" ? faMars : faVenus} />
-                          <span>Gender:</span>
+                        <div className="quick-reg-item">
+                          <div className="quick-reg-label">
+                            <FontAwesomeIcon icon={faEnvelope} />
+                            <span>Email:</span>
+                          </div>
+                          <div className="quick-reg-value">{registration.email || "N/A"}</div>
                         </div>
-                        <div className="quick-reg-value">{registration.gender || "N/A"}</div>
-                      </div>
 
-                      <div className="quick-reg-item">
-                        <div className="quick-reg-label">
-                          <FontAwesomeIcon icon={faLock} />
-                          <span>OTP:</span>
+                        <div className="quick-reg-item">
+                          <div className="quick-reg-label">
+                            <FontAwesomeIcon icon={faPhone} />
+                            <span>Phone:</span>
+                          </div>
+                          <div className="quick-reg-value">{registration.phone || "N/A"}</div>
                         </div>
-                        <div className="quick-reg-value otp-value">{registration.otp || "N/A"}</div>
-                      </div>
 
-                      {/* Attendance status */}
-                      <div className="quick-reg-item">
-                        <div className="quick-reg-label">
-                          <FontAwesomeIcon icon={faCheck} />
-                          <span>Attendance:</span>
+                        <div className="quick-reg-item">
+                          <div className="quick-reg-label">
+                            <FontAwesomeIcon icon={getGenderIcon(registration.gender)} />
+                            <span>Gender:</span>
+                          </div>
+                          <div className="quick-reg-value">{getDisplayGender(registration.gender)}</div>
                         </div>
-                        <div className="quick-reg-value">
-                          <div className="attendance-badges">
-                            <div
-                              className={`attendance-badge ${registration.attendedOnline ? "attended" : "not-attended"}`}
-                            >
-                              {registration.attendedOnline ? (
-                                <>
-                                  <FontAwesomeIcon icon={faCheck} />
+
+                        <div className="quick-reg-item">
+                          <div className="quick-reg-label">
+                            <FontAwesomeIcon icon={faGlobe} />
+                            <span>Preferred:</span>
+                          </div>
+                          <div className="quick-reg-value">{preferredAttendance}</div>
+                        </div>
+
+                        <div className="quick-reg-item">
+                          <div className="quick-reg-label">
+                            <FontAwesomeIcon icon={faLock} />
+                            <span>OTP:</span>
+                          </div>
+                          <div className="quick-reg-value otp-value">{registration.otp || "N/A"}</div>
+                        </div>
+
+                        {/* Attendance status */}
+                        <div className="quick-reg-item">
+                          <div className="quick-reg-label">
+                            <FontAwesomeIcon icon={faCheck} />
+                            <span>Attendance:</span>
+                          </div>
+                          <div className="quick-reg-value">
+                            <div className="attendance-badges">
+                              <div className={`attendance-badge ${attendedOnline ? "attended" : "not-attended"}`}>
+                                {attendedOnline ? (
+                                  <>
+                                    <FontAwesomeIcon icon={faCheck} />
+                                    <span>Online</span>
+                                  </>
+                                ) : (
                                   <span>Online</span>
-                                </>
-                              ) : (
-                                <span>Online</span>
-                              )}
-                            </div>
-                            <div
-                              className={`attendance-badge ${registration.attendedOffline ? "attended" : "not-attended"}`}
-                            >
-                              {registration.attendedOffline ? (
-                                <>
-                                  <FontAwesomeIcon icon={faCheck} />
+                                )}
+                              </div>
+                              <div className={`attendance-badge ${attendedOffline ? "attended" : "not-attended"}`}>
+                                {attendedOffline ? (
+                                  <>
+                                    <FontAwesomeIcon icon={faCheck} />
+                                    <span>Onsite</span>
+                                  </>
+                                ) : (
                                   <span>Onsite</span>
-                                </>
-                              ) : (
-                                <span>Onsite</span>
-                              )}
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Verification status */}
-                      <div className="quick-reg-item">
-                        <div className="quick-reg-label">
-                          <FontAwesomeIcon icon={faShieldAlt} />
-                          <span>Status:</span>
+                        {/* Verification status */}
+                        <div className="quick-reg-item">
+                          <div className="quick-reg-label">
+                            <FontAwesomeIcon icon={faShieldAlt} />
+                            <span>Status:</span>
+                          </div>
+                          <div className="quick-reg-value">
+                            <span className={`verification-badge ${registration.verified ? "verified" : "unverified"}`}>
+                              {registration.verified ? "Verified" : "Unverified"}
+                            </span>
+                          </div>
                         </div>
-                        <div className="quick-reg-value">
-                          <span className={`verification-badge ${registration.verified ? "verified" : "unverified"}`}>
-                            {registration.verified ? "Verified" : "Unverified"}
-                          </span>
-                        </div>
-                      </div>
 
-                      {/* Email Button */}
-                      <div className="quick-reg-actions">
-                        <button
-                          className="email-button"
-                          onClick={() => handleOpenEmailModal(registration)}
-                          disabled={emailLoading}
-                        >
-                          {emailLoading ? (
-                            <FontAwesomeIcon icon={faSpinner} spin />
-                          ) : (
-                            <FontAwesomeIcon icon={faPaperPlane} />
-                          )}
-                          <span>Send Email</span>
-                        </button>
+                        {/* Email Button */}
+                        <div className="quick-reg-actions">
+                          <button
+                            className="email-button"
+                            onClick={() => handleOpenEmailModal(registration)}
+                            disabled={emailLoading}
+                          >
+                            {emailLoading ? (
+                              <FontAwesomeIcon icon={faSpinner} spin />
+                            ) : (
+                              <FontAwesomeIcon icon={faPaperPlane} />
+                            )}
+                            <span>Send Email</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
 
               {filteredRegistrations.length > itemsPerPage && (

@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import { useParams } from "react-router-dom" // Add this import
 import { useDispatch, useSelector } from "react-redux"
+import { sendDirectEmail } from "../redux/notificationsSlice"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faUser,
@@ -20,15 +22,18 @@ import {
 } from "@fortawesome/free-solid-svg-icons"
 import NotesModal from "./NotesModal"
 import DirectEmailModal from "./notifications/DirectEmailModal"
-import { sendDirectEmail } from "../redux/notificationsSlice"
 
 const AttendeeCard = ({ attendee, eventId }) => {
+  const { eventId: urlEventId } = useParams() // Extract from URL
   const [showNotesModal, setShowNotesModal] = useState(false)
   const [showEmailModal, setShowEmailModal] = useState(false)
 
   const dispatch = useDispatch()
   const { loading } = useSelector((state) => state.notifications)
-console.log(attendee)
+
+  // Get the actual event ID from props or URL
+  const actualEventId = eventId || urlEventId
+
   // Handle missing properties gracefully
   const {
     id = "",
@@ -37,26 +42,52 @@ console.log(attendee)
     email = "",
     whatsapp = "",
     phone = "",
+    address = "", // Add support for single address field
     street = "",
     state = "",
     country = "",
     gender = "",
     isMember = false,
-    preferred_attendance = "",
+    member = false, // Add this to handle both property names
+    preferred_attendance = "", // Add this to handle snake_case property
+    preferredAttendance = "", // Keep this for backward compatibility
     attendedOnline = false,
+    attended_online = false, // Add this to handle snake_case property
     attendedOffline = false,
+    attended_offline = false, // Add this to handle snake_case property
     otp = "",
   } = attendee || {}
 
+  // Use the appropriate property based on what's available
+  const actualMemberStatus = isMember || member || false
+  const actualPreferredAttendance = preferredAttendance || preferred_attendance || ""
+  const actualAttendedOnline = attendedOnline || attended_online || false
+  const actualAttendedOffline = attendedOffline || attended_offline || false
+
+  // Format the address based on available fields
+  const formattedAddress =
+    address ||
+    (street || state || country ? `${street ? `${street}, ` : ""}${state ? `${state}, ` : ""}${country || ""}` : "N/A")
+
   const handleSendEmail = (emailData) => {
-    // Pass the complete payload directly to the action
-    dispatch(sendDirectEmail(emailData))
+    // Ensure event_id is always included and correctly set
+    const completePayload = {
+      ...emailData,
+      event_id: actualEventId, // Use the extracted event ID
+    }
+    
+    console.log("Sending email with payload:", completePayload) // Debug log
+    
+    dispatch(sendDirectEmail(completePayload))
       .unwrap()
       .then(() => {
         setShowEmailModal(false)
       })
+      .catch((error) => {
+        console.error("Failed to send email:", error)
+      })
   }
-  const isMemberBool = isMember === true || isMember === "true";
+
   return (
     <div className="attendee-card">
       <div className="attendee-card-header">
@@ -74,11 +105,7 @@ console.log(attendee)
             <FontAwesomeIcon icon={faMapMarkerAlt} />
             <span>Address</span>
           </div>
-          <div className="info-value">
-            {street ? `${street}, ` : ""}
-            {state ? `${state}, ` : ""}
-            {country || "N/A"}
-          </div>
+          <div className="info-value">{formattedAddress}</div>
         </div>
 
         {/* Contact Details Section */}
@@ -109,23 +136,25 @@ console.log(attendee)
         {/* Personal Details Section */}
         <div className="attendee-tags">
           <div className="attendee-tag">
-            <FontAwesomeIcon icon={gender === "Male" ? faMars : faVenus} />
+            <FontAwesomeIcon
+              icon={gender?.toLowerCase() === "m" || gender?.toLowerCase() === "male" ? faMars : faVenus}
+            />
             <span>Gender:</span>
             <span className="tag-value">{gender || "N/A"}</span>
           </div>
 
           <div className="attendee-tag">
-  <FontAwesomeIcon icon={faUsers} />
-  <span>Member:</span>
-  <span className={`tag-value ${isMemberBool ? "positive" : "negative"}`}>
-    {isMemberBool ? "Yes" : "No"}
-  </span>
-</div>
+            <FontAwesomeIcon icon={faUsers} />
+            <span>Member:</span>
+            <span className={`tag-value ${actualMemberStatus ? "positive" : "negative"}`}>
+              {actualMemberStatus ? "Yes" : "No"}
+            </span>
+          </div>
 
           <div className="attendee-tag">
             <FontAwesomeIcon icon={faGlobe} />
             <span>Preferred:</span>
-            <span className="tag-value">{preferred_attendance || ""}</span>
+            <span className="tag-value">{actualPreferredAttendance || "N/A"}</span>
           </div>
         </div>
 
@@ -133,8 +162,8 @@ console.log(attendee)
         <div className="attendance-status">
           <h4>Attendance Status</h4>
           <div className="attendance-badges">
-            <div className={`attendance-badge ${attendedOnline ? "attended" : "not-attended"}`}>
-              {attendedOnline ? (
+            <div className={`attendance-badge ${actualAttendedOnline ? "attended" : "not-attended"}`}>
+              {actualAttendedOnline ? (
                 <>
                   <FontAwesomeIcon icon={faCheck} />
                   <span>Online</span>
@@ -143,8 +172,8 @@ console.log(attendee)
                 <span>Online</span>
               )}
             </div>
-            <div className={`attendance-badge ${attendedOffline ? "attended" : "not-attended"}`}>
-              {attendedOffline ? (
+            <div className={`attendance-badge ${actualAttendedOffline ? "attended" : "not-attended"}`}>
+              {actualAttendedOffline ? (
                 <>
                   <FontAwesomeIcon icon={faCheck} />
                   <span>Offline</span>
@@ -190,7 +219,6 @@ console.log(attendee)
           eventId={eventId}
           attendeeId={id}
           attendeeName={name}
-          isOpen={showEmailModal}
           onClose={() => setShowEmailModal(false)}
           onSendEmail={handleSendEmail}
           isLoading={loading}
