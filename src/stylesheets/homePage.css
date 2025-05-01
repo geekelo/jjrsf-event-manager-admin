@@ -1830,6 +1830,11 @@ button {
     margin-left: 0;
     margin-top: 15px;
   }
+  .hero-form-options{
+    flex-direction: column;
+    justify-content: start;
+    align-items: self-start;
+  }
 }
 
 /* Active nav link */
