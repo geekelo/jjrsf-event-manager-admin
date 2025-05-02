@@ -72,6 +72,8 @@ const UniqueAttendees = () => {
     return new Date(dateString).toLocaleDateString("en-US", options)
   }
 
+  console.log(uniqueAttendees)
+
   return (
     <div className="unique-attendees-page">
       <div className="unique-attendees-container">

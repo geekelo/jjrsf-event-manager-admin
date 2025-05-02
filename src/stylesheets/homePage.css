@@ -1835,6 +1835,17 @@ button {
     justify-content: start;
     align-items: self-start;
   }
+  
+.hero-login-form-container{
+  max-width: 100%;
+  width: 100%;
+
+}
+.premium-hero-login {
+  width: 100%;
+  max-width: 100%;
+
+}
 }
 
 /* Active nav link */
