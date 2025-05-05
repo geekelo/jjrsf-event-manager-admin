@@ -12,200 +12,198 @@ import "../stylesheets/attendeeList.css"
 import { fetchEventAttendees } from "../redux/attendeesSlice"
 
 const AttendeeList = () => {
-  // Remove uniqueAttendees (not needed)
-const { eventId, type } = useParams()
-const navigate = useNavigate()
-const dispatch = useDispatch()
+  const { eventId, type } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-// Redux state
-const { attendees, loading: reduxLoading, error, currentEventId } = useSelector((state) => state.attendees)
-const { events } = useSelector((state) => state.events)
+  // Redux state
+  const { attendees, loading: reduxLoading, error, currentEventId } = useSelector((state) => state.attendees);
+  const { events } = useSelector((state) => state.events);
 
-// Local state
-const [filteredAttendees, setFilteredAttendees] = useState([])
-const [displayedAttendees, setDisplayedAttendees] = useState([])
-const [loading, setLoading] = useState(true)
-const [searchTerm, setSearchTerm] = useState("")
-const [filterActive, setFilterActive] = useState(false)
-const [eventName, setEventName] = useState("Event Name")
-const [dataFetched, setDataFetched] = useState(false)
+  // Local state
+  const [filteredAttendees, setFilteredAttendees] = useState([]);
+  const [displayedAttendees, setDisplayedAttendees] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterActive, setFilterActive] = useState(false);
+  const [eventName, setEventName] = useState('Event Name');
+  const [dataFetched, setDataFetched] = useState(false);
 
-const [currentPage, setCurrentPage] = useState(1)
-const [itemsPerPage, setItemsPerPage] = useState(10)
-const [totalPages, setTotalPages] = useState(1)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
 
-const [filters, setFilters] = useState({
-  gender: "all",
-  memberStatus: "all",
-  preferredAttendance: "all",
-  attendance: "all",
-  familyType: 'all', 
-})
-
-// Set event name
-useEffect(() => {
-  const currentEvent = events.find((event) => event.id === eventId)
-  if (currentEvent) {
-    setEventName(currentEvent.name)
-  }
-}, [eventId, events])
-
-// Fetch attendees if needed
-useEffect(() => {
-  if (!dataFetched || currentEventId !== eventId) {
-    dispatch(fetchEventAttendees(eventId))
-    setDataFetched(true)
-  }
-}, [dispatch, eventId, dataFetched, currentEventId])
-
-// Sync local loading state
-useEffect(() => {
-  setLoading(reduxLoading)
-}, [reduxLoading])
-const applyFilters = useCallback(() => {
-  if (!Array.isArray(attendees)) return []
-
-  return attendees.filter((attendee) => {
-    let typeMatch = true
-    switch (type) {
-      case "online":
-        typeMatch = attendee.attendedOnline && !attendee.attendedOffline
-        break
-      case "offline":
-        typeMatch = attendee.attendedOffline && !attendee.attendedOnline
-        break
-      case "both":
-        typeMatch = attendee.attendedOnline && attendee.attendedOffline
-        break
-      case "absent":
-        typeMatch = !attendee.attendedOnline && !attendee.attendedOffline
-        break
-      case "registered":
-      default:
-        typeMatch = true
-    }
-
-    if (!typeMatch) return false
-
-    const searchLower = searchTerm.toLowerCase()
-    const searchMatch =
-      searchTerm === "" ||
-      `${attendee.title ? attendee.title + " " : ""}${attendee.name}`.toLowerCase().includes(searchLower) ||
-      (attendee.email && attendee.email.toLowerCase().includes(searchLower)) ||
-      (attendee.phone && attendee.phone.toLowerCase().includes(searchLower))
-
-    const genderMatch = filters.gender === "all" || attendee.gender === filters.gender
-    const memberMatch =
-      filters.memberStatus === "all" ||
-      (filters.memberStatus === "yes" && attendee.isMember) ||
-      (filters.memberStatus === "no" && !attendee.isMember)
-    const preferredMatch =
-      filters.preferredAttendance === "all" ||
-       attendee.preferredAttendance === "offline" && filters.preferredAttendance ||
-       attendee.preferredAttendance === "online" && filters.preferredAttendance
-
-
-    let attendanceMatch = true
-    if (filters.attendance === "online") {
-      attendanceMatch = attendee.attendedOnline && !attendee.attendedOffline
-    } else if (filters.attendance === "offline") {
-      attendanceMatch = attendee.attendedOffline && !attendee.attendedOnline
-    } else if (filters.attendance === "both") {
-      attendanceMatch = attendee.attendedOnline && attendee.attendedOffline
-    } else if (filters.attendance === "none") {
-      attendanceMatch = !attendee.attendedOnline && !attendee.attendedOffline
-    }
-
-    return searchMatch && genderMatch && memberMatch && preferredMatch && attendanceMatch
-  })
-}, [attendees, type, searchTerm, filters])
-
-console.log(attendees)
-// Apply filtersz
-useEffect(() => {
-  const filtered = applyFilters()
-  setFilteredAttendees(filtered)
-  setTotalPages(Math.max(1, Math.ceil(filtered.length / itemsPerPage)))
-  setCurrentPage(1)
-}, [applyFilters, itemsPerPage])
-
-// Paginate results
-useEffect(() => {
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  setDisplayedAttendees(filteredAttendees.slice(startIndex, endIndex))
-}, [filteredAttendees, currentPage, itemsPerPage])
-
-// Handlers
-const handleBack = () => navigate(`/events/${eventId}`)
-
-const toggleFilter = () => setFilterActive((prev) => !prev)
-
-const handleFilterChange = (key, value) => {
-  setFilters((prev) => ({ ...prev, [key]: value }))
-}
-
-const clearFilters = () => {
-  setFilters({
-    gender: "all",
-    memberStatus: "all",
-    preferredAttendance: "all",
-    attendance: "all",
+  const [filters, setFilters] = useState({
+    gender: 'all',
+    memberStatus: 'all',
+    preferredAttendance: 'all',
+    attendance: 'all',
     familyType: 'all',
-  })
-  setSearchTerm("")
-}
+  });
 
-const handlePageChange = (page) => {
-  setCurrentPage(page)
-  document.querySelector(".attendee-content")?.scrollIntoView({ behavior: "smooth" })
-}
+  // Set event name
+  useEffect(() => {
+    const currentEvent = events.find((event) => event.id === eventId);
+    if (currentEvent) {
+      setEventName(currentEvent.name);
+    }
+  }, [eventId, events]);
 
-const handleItemsPerPageChange = (newItemsPerPage) => {
-  setItemsPerPage(newItemsPerPage)
-}
+  // Fetch attendees if needed
+  useEffect(() => {
+    if (!dataFetched || currentEventId !== eventId) {
+      dispatch(fetchEventAttendees(eventId));
+      setDataFetched(true);
+    }
+  }, [dispatch, eventId, dataFetched, currentEventId]);
 
-const getTypeLabel = () => {
-  switch (type) {
-    case "registered":
-      return "All Registered"
-    case "online":
-      return "Attended Online"
-    case "offline":
-      return "Attended Onsite"
-    case "both":
-      return "Attended Both"
-    case "absent":
-      return "Did Not Attend"
-    default:
-      return ""
+  // Sync local loading state
+  useEffect(() => {
+    setLoading(reduxLoading);
+  }, [reduxLoading]);
+
+  // Apply filters
+  const applyFilters = useCallback(() => {
+    if (!Array.isArray(attendees)) return [];
+
+    return attendees.filter((attendee) => {
+      // Filter by type (based on URL param)
+      let typeMatch = true;
+      switch (type) {
+        case 'online':
+          typeMatch = attendee.attendedOnline && !attendee.attendedOffline;
+          break;
+        case 'offline':
+          typeMatch = attendee.attendedOffline && !attendee.attendedOnline;
+          break;
+        case 'both':
+          typeMatch = attendee.attendedOnline && attendee.attendedOffline;
+          break;
+        case 'absent':
+          typeMatch = !attendee.attendedOnline && !attendee.attendedOffline;
+          break;
+        case 'registered':
+        default:
+          typeMatch = true;
+      }
+      if (!typeMatch) return false;
+
+      const searchLower = searchTerm.toLowerCase();
+      const searchMatch =
+        searchTerm === '' ||
+        `${attendee.title ? attendee.title + ' ' : ''}${attendee.name}`.toLowerCase().includes(searchLower) ||
+        (attendee.email && attendee.email.toLowerCase().includes(searchLower)) ||
+        (attendee.phone && attendee.phone.toLowerCase().includes(searchLower));
+
+      const genderMatch = filters.gender === 'all' || attendee.gender === filters.gender;
+      const memberMatch =
+        filters.memberStatus === 'all' ||
+        (filters.memberStatus === 'yes' && attendee.isMember) ||
+        (filters.memberStatus === 'no' && !attendee.isMember);
+
+      const preferredMatch =
+        filters.preferredAttendance === 'all' || attendee.preferredAttendance === filters.preferredAttendance;
+
+      let attendanceMatch = true;
+      if (filters.attendance === 'online') {
+        attendanceMatch = attendee.attendedOnline && !attendee.attendedOffline;
+      } else if (filters.attendance === 'offline') {
+        attendanceMatch = attendee.attendedOffline && !attendee.attendedOnline;
+      } else if (filters.attendance === 'both') {
+        attendanceMatch = attendee.attendedOnline && attendee.attendedOffline;
+      } else if (filters.attendance === 'none') {
+        attendanceMatch = !attendee.attendedOnline && !attendee.attendedOffline;
+      }
+
+      const familyMatch =
+        filters.familyType === 'all' ||
+        (filters.familyType === 'family' && attendee.isFamily) ||
+        (filters.familyType === 'person' && !attendee.isFamily);
+
+      return searchMatch && genderMatch && memberMatch && preferredMatch && attendanceMatch && familyMatch;
+    });
+  }, [attendees, type, searchTerm, filters]);
+
+  // Filter attendees when filters/search change
+  useEffect(() => {
+    const filtered = applyFilters();
+    setFilteredAttendees(filtered);
+    setTotalPages(Math.max(1, Math.ceil(filtered.length / itemsPerPage)));
+    setCurrentPage(1);
+  }, [applyFilters, itemsPerPage]);
+
+  // Paginate results
+  useEffect(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    setDisplayedAttendees(filteredAttendees.slice(startIndex, endIndex));
+  }, [filteredAttendees, currentPage, itemsPerPage]);
+
+  // Handlers
+  const handleBack = () => navigate(`/events/${eventId}`);
+  const toggleFilter = () => setFilterActive((prev) => !prev);
+  const handleFilterChange = (key, value) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+  const clearFilters = () => {
+    setFilters({
+      gender: 'all',
+      memberStatus: 'all',
+      preferredAttendance: 'all',
+      attendance: 'all',
+      familyType: 'all',
+    });
+    setSearchTerm('');
+  };
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    document.querySelector('.attendee-content')?.scrollIntoView({ behavior: 'smooth' });
+  };
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(newItemsPerPage);
+  };
+
+  const getTypeLabel = () => {
+    switch (type) {
+      case 'registered':
+        return 'All Registered';
+      case 'online':
+        return 'Attended Online';
+      case 'offline':
+        return 'Attended Onsite';
+      case 'both':
+        return 'Attended Both';
+      case 'absent':
+        return 'Did Not Attend';
+      default:
+        return '';
+    }
+  };
+
+  // Render
+  if (loading && !error) {
+    return (
+      <div className="attendee-list-page">
+        <div className="loading-container">
+          <div className="spinner"></div>
+          <p>Loading attendees...</p>
+        </div>
+      </div>
+    );
   }
-}
 
-// Render
-if (loading && !error) {
-  return (
-    <div className="attendee-list-page">
-      <div className="loading-container">
-        <div className="spinner"></div>
-        <p>Loading attendees...</p>
+  if (error) {
+    return (
+      <div className="attendee-list-page">
+        <div className="loading-container">
+          <p className="error-message">Error loading attendees: {error}</p>
+          <button className="primary-button" onClick={handleBack}>
+            Back to Event
+          </button>
+        </div>
       </div>
-    </div>
-  )
-}
-
-if (error) {
-  return (
-    <div className="attendee-list-page">
-      <div className="loading-container">
-        <p className="error-message">Error loading attendees: {error}</p>
-        <button className="primary-button" onClick={handleBack}>
-          Back to Event
-        </button>
-      </div>
-    </div>
-  )
-}
+    );
+  }
 
   
 
