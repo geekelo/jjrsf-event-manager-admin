@@ -116,7 +116,7 @@ console.log(event)
   const uniqueId = event?.unique_id ?? '';
 
 
-  const eventUrl = `${import.meta.env.VITE_FRONTEND_USER_URL}/events/${uniqueId}`
+  const eventUrl = `${import.meta.env.VITE_FRONTEND_USER_URL}/event/${uniqueId}`
 
   const handleBack = () => {
     navigate("/events")
