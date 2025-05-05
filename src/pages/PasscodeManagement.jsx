@@ -36,12 +36,14 @@ const PasscodeManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const { items: passcodes, loading } = useSelector((state) => state.frontDesk);
-
   useEffect(() => {
     if (eventId) {
-      dispatch(fetchFrontDesks(eventId)).then((res) => {});
+      dispatch(fetchFrontDesks(eventId)).then((res) => {
+        console.log("Fetched frontdesk passcodes:", res.payload);
+      });
     }
   }, [dispatch, eventId]);
+  
 
   useEffect(() => {}, [passcodes]);
 
@@ -164,13 +166,22 @@ const PasscodeManagement = () => {
       month: "short",
       day: "numeric",
     });
-  const maskPasscode = (passcode) => {
-    if (!passcode || typeof passcode !== "string" || "number") return "••••";
-    const visibleDigits = 4; // You can adjust this number to show more or fewer digits
-    const masked = "•".repeat(Math.max(0, passcode.length - visibleDigits));
-    return masked + passcode.slice(-visibleDigits);
-  };
 
+    const maskPasscode = (passcode) => {
+      const passStr = passcode?.toString() || "";
+      const visibleChars = 4 || 6;
+    
+      if (passStr.length <= visibleChars) {
+        return "•".repeat(passStr.length);
+      }
+    
+      const maskedPart = "•".repeat(passStr.length - visibleChars);
+      const visiblePart = passStr.slice(-visibleChars);
+    
+      return maskedPart + visiblePart;
+    };
+    
+    
   const filteredPasscodes =
     passcodes?.filter((p) =>
       p.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -245,9 +256,8 @@ const PasscodeManagement = () => {
                         <td>
                           <div className="passcode-value-container">
                             <span className="passcode-value">
-                              {showPasscode[passcode.id]
-                                ? passcode.passcode
-                                : maskPasscode(passcode.passcode)}
+                            {showPasscode[passcode.id] === true ? passcode.pin : maskPasscode(passcode.pin)}
+
                             </span>
                             <button
                               onClick={() =>
