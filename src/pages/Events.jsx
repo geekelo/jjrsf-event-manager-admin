@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
-import { fetchEvents, setSearchTerm, setFilters, createEvent } from "../redux/eventsSlice"
+import { fetchEvents, setSearchTerm, setFilters, createEvent, filterEvents } from "../redux/eventsSlice"
 import EventsHeader from "../components/EventsHeader"
 import EventCard from "../components/EventCard"
 import CreateEventModal from "../components/CreateEventModal"
@@ -160,12 +160,12 @@ function EventsPage() {
     const { name, value } = e.target
     dispatch(setFilters({ [name]: value }))
   }
-
-  // Apply filters
   const handleApplyFilters = () => {
     setShowFilters(false)
+    const filteredEvents = filterEvents(events, searchTerm, filters)
+    setFilteredEvents(filteredEvents) 
   }
-
+  
   // Handle view event details
   const handleViewDetails = (event) => {
     navigate(`/events/${event.id}`)
