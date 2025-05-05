@@ -865,6 +865,12 @@
   letter-spacing: 1px;
 }
 
+.family-status {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
 /* Notes Button Styles */
 .attendee-notes-section {
   margin-top: 15px;
