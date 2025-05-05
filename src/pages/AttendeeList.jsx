@@ -39,6 +39,7 @@ const [filters, setFilters] = useState({
   memberStatus: "all",
   preferredAttendance: "all",
   attendance: "all",
+  familyType: 'all', 
 })
 
 // Set event name
@@ -119,7 +120,7 @@ const applyFilters = useCallback(() => {
   })
 }, [attendees, type, searchTerm, filters])
 
-
+console.log(attendees)
 // Apply filtersz
 useEffect(() => {
   const filtered = applyFilters()
@@ -150,6 +151,7 @@ const clearFilters = () => {
     memberStatus: "all",
     preferredAttendance: "all",
     attendance: "all",
+    familyType: 'all',
   })
   setSearchTerm("")
 }

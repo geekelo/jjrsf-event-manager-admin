@@ -47,7 +47,7 @@ function ManageEvent() {
     isEditMode,
     events,
   } = useSelector((state) => state.events)
-
+console.log(events)
   const {
     metrics,
     loading: attendeesLoading,

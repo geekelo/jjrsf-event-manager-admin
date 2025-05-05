@@ -132,6 +132,32 @@ const AttendeeCard = ({ attendee, eventId }) => {
           </div>
           <div className="info-value">{phone || "N/A"}</div>
         </div>
+        {/* Family Info Section */}
+<div className="attendee-family-info">
+  <h4>Family Info</h4>
+  <div className="family-status">
+    <FontAwesomeIcon icon={faUsers} />
+    <span>Family:</span>
+    <span className={`tag-value ${attendee.family ? "positive" : "negative"}`}>
+      {attendee.family ? "Yes" : "No"}
+    </span>
+  </div>
+
+  {attendee.family_members && attendee.family_members.length > 0 && (
+    <div className="family-members-list">
+      <h5>Family Members:</h5>
+      <ul>
+        {attendee.family_members.map((member, index) => (
+          <li key={index}>
+            <FontAwesomeIcon icon={faUser} className="member-icon" />
+            {member}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+</div>
+
 
         {/* Personal Details Section */}
         <div className="attendee-tags">

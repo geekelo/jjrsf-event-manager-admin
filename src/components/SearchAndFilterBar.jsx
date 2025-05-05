@@ -34,9 +34,11 @@ const SearchAndFilterBar = ({
           <FontAwesomeIcon icon={faFilter} />
           <span>Filter</span>
           {(filters.gender !== "all" ||
-            filters.memberStatus !== "all" ||
-            filters.preferredAttendance !== "all" ||
-            filters.attendance !== "all") && <span className="filter-badge"></span>}
+  filters.memberStatus !== "all" ||
+  filters.preferredAttendance !== "all" ||
+  filters.attendance !== "all" ||
+  filters.familyType !== "all") && <span className="filter-badge"></span>}
+
         </button>
       </div>
 
@@ -84,6 +86,20 @@ const SearchAndFilterBar = ({
                 <FontAwesomeIcon icon={faChevronDown} className="select-icon" />
               </div>
             </div>
+            <div className="filter-group">
+  <label>Family / Person</label>
+  <div className="select-wrapper">
+    <select
+      value={filters.familyType}
+      onChange={(e) => handleFilterChange("familyType", e.target.value)}
+    >
+      <option value="all">All</option>
+      <option value="family">Family</option>
+      <option value="person">Person</option>
+    </select>
+    <FontAwesomeIcon icon={faChevronDown} className="select-icon" />
+  </div>
+</div>
 
             <div className="filter-group">
               <label>Attendance</label>

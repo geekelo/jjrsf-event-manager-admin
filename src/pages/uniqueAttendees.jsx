@@ -23,7 +23,8 @@ const UniqueAttendees = () => {
 
   // Fetch unique attendees on component mount
   useEffect(() => {
-    dispatch(fetchUniqueAttendees())
+ const res =   dispatch(fetchUniqueAttendees())
+ console.log(res)
   }, [dispatch])
 
   // Filter attendees based on search term
