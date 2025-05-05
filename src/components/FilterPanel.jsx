@@ -13,6 +13,7 @@ const FilterPanel = ({ filters, onClose, onChange, onApply }) => {
       </div>
 
       <div className="filter-panel-content">
+        {/* Status Filter */}
         <div className="filter-group">
           <label className="filter-label">Status</label>
           <select name="status" className="filter-select" value={filters.status} onChange={onChange}>
@@ -23,6 +24,7 @@ const FilterPanel = ({ filters, onClose, onChange, onApply }) => {
           </select>
         </div>
 
+        {/* Date Range Filter */}
         <div className="filter-group">
           <label className="filter-label">Date Range</label>
           <select name="dateRange" className="filter-select" value={filters.dateRange} onChange={onChange}>
@@ -33,16 +35,19 @@ const FilterPanel = ({ filters, onClose, onChange, onApply }) => {
           </select>
         </div>
 
+        {/* Sort By Filter */}
         <div className="filter-group">
           <label className="filter-label">
             <FontAwesomeIcon icon={faSort} /> Sort By
           </label>
-          <select name="sort" value={filters.sort || ""} onChange={onChange} className="filter-select">
+          <select name="sortBy" value={filters.sortBy} onChange={onChange} className="filter-select">
             <option value="">Default</option>
             <option value="name_asc">Name (A-Z)</option>
             <option value="name_desc">Name (Z-A)</option>
             <option value="date_asc">Date (Oldest first)</option>
             <option value="date_desc">Date (Latest first)</option>
+            <option value="latest_first">Latest Created (Newest first)</option>
+            <option value="oldest">Oldest Created (Oldest first)</option>
           </select>
         </div>
       </div>

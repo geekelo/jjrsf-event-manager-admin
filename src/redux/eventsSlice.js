@@ -139,6 +139,55 @@ export const updateEventVisibility = createAsyncThunk(
   },
 )
 
+export const filterEvents = (events, searchTerm, filters) => {
+  // Step 1: Filter the events
+  let filtered = events.filter((event) => {
+    const matchesSearch =
+      !searchTerm ||
+      event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (event.description && event.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (event.location && event.location.toLowerCase().includes(searchTerm.toLowerCase()))
+
+    const matchesStatus = filters.status === "all" || event.status === filters.status
+
+    let matchesDate = true
+    const today = new Date()
+    const eventStartDate = new Date(event.start_date)
+
+    // Handle different date filters
+    if (filters.dateRange === "upcoming30") {
+      const thirtyDaysFromNow = new Date()
+      thirtyDaysFromNow.setDate(today.getDate() + 30)
+      matchesDate = eventStartDate >= today && eventStartDate <= thirtyDaysFromNow
+    } else if (filters.dateRange === "upcoming90") {
+      const ninetyDaysFromNow = new Date()
+      ninetyDaysFromNow.setDate(today.getDate() + 90)
+      matchesDate = eventStartDate >= today && eventStartDate <= ninetyDaysFromNow
+    } else if (filters.dateRange === "past") {
+      matchesDate = eventStartDate < today
+    }
+
+    return matchesSearch && matchesStatus && matchesDate
+  })
+
+  // Step 2: Sort the filtered events based on selected sorting criteria
+  if (filters.sortBy === "date_asc") {
+    filtered.sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
+  } else if (filters.sortBy === "date_desc") {
+    filtered.sort((a, b) => new Date(b.start_date) - new Date(a.start_date))
+  } else if (filters.sortBy === "latest_first") {
+    filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+  } else if (filters.sortBy === "oldest") {
+    filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+  } else if (filters.sortBy === "name_asc") {
+    filtered.sort((a, b) => a.name.localeCompare(b.name))
+  } else if (filters.sortBy === "name_desc") {
+    filtered.sort((a, b) => b.name.localeCompare(a.name))
+  }
+
+  return filtered
+}
+
 // Initial state
 const initialState = {
   events: [],
@@ -185,11 +234,6 @@ const eventsSlice = createSlice({
       if (index !== -1) {
         state.events[index] = { ...state.events[index], ...action.payload }
         state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
-
-        // Also update currentEvent if it matches the updated event
-        if (state.currentEvent && state.currentEvent.id === action.payload.id) {
-          state.currentEvent = { ...state.currentEvent, ...action.payload }
-        }
       }
     },
     setCurrentEvent: (state, action) => {
@@ -208,8 +252,12 @@ const eventsSlice = createSlice({
     },
     // Manually update current event in state
     updateCurrentEvent: (state, action) => {
-      if (state.currentEvent && state.currentEvent.id === action.payload.id) {
-        state.currentEvent = { ...state.currentEvent, ...action.payload }
+      if (state.currentEventId) {
+        const index = state.events.findIndex((event) => event.id === state.currentEventId)
+        if (index !== -1) {
+          state.events[index] = { ...state.events[index], ...action.payload }
+          state.currentEvent = state.events[index]
+        }
       }
     },
   },
@@ -217,20 +265,11 @@ const eventsSlice = createSlice({
     builder
       .addCase(fetchEvents.pending, (state) => {
         state.loading = true
-        state.error = null
       })
       .addCase(fetchEvents.fulfilled, (state, action) => {
         state.loading = false
         state.events = action.payload
-        state.filteredEvents = filterEvents(action.payload, state.searchTerm, state.filters)
-
-        // Also update currentEvent if it exists
-        if (state.currentEvent) {
-          const updatedEvent = action.payload.find((event) => event.id === state.currentEvent.id)
-          if (updatedEvent) {
-            state.currentEvent = updatedEvent
-          }
-        }
+        state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
       })
       .addCase(fetchEvents.rejected, (state, action) => {
         state.loading = false
@@ -238,7 +277,6 @@ const eventsSlice = createSlice({
       })
       .addCase(createEvent.pending, (state) => {
         state.loading = true
-        state.error = null
       })
       .addCase(createEvent.fulfilled, (state, action) => {
         state.loading = false
@@ -251,21 +289,13 @@ const eventsSlice = createSlice({
       })
       .addCase(updateEvent.pending, (state) => {
         state.loading = true
-        state.error = null
       })
       .addCase(updateEvent.fulfilled, (state, action) => {
         state.loading = false
-        // Update in events array
-        const index = state.events.findIndex((event) => event.id === action.payload.id)
-        if (index !== -1) {
-          state.events[index] = action.payload
-          state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
-        }
-        // Update current event
-        if (state.currentEvent && state.currentEvent.id === action.payload.id) {
-          state.currentEvent = action.payload
-        }
-        state.isEditMode = false
+        state.events = state.events.map((event) =>
+          event.id === action.payload.id ? action.payload : event
+        )
+        state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
       })
       .addCase(updateEvent.rejected, (state, action) => {
         state.loading = false
@@ -273,16 +303,11 @@ const eventsSlice = createSlice({
       })
       .addCase(deleteEvent.pending, (state) => {
         state.loading = true
-        state.error = null
       })
       .addCase(deleteEvent.fulfilled, (state, action) => {
-        const deletedId = action.payload
-        state.events = state.events.filter((event) => event.id !== deletedId)
-
-        // Optionally clear current event if it's the one deleted
-        if (state.currentEvent?.id === deletedId) {
-          state.currentEvent = null
-        }
+        state.loading = false
+        state.events = state.events.filter((event) => event.id !== action.payload)
+        state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
       })
       .addCase(deleteEvent.rejected, (state, action) => {
         state.loading = false
@@ -290,20 +315,13 @@ const eventsSlice = createSlice({
       })
       .addCase(updateEventEvaluation.pending, (state) => {
         state.loading = true
-        state.error = null
       })
       .addCase(updateEventEvaluation.fulfilled, (state, action) => {
         state.loading = false
-        // Update in events array
-        const index = state.events.findIndex((event) => event.id === action.payload.id)
-        if (index !== -1) {
-          state.events[index] = action.payload
-          state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
-        }
-        // Update current event
-        if (state.currentEvent && state.currentEvent.id === action.payload.id) {
-          state.currentEvent = action.payload
-        }
+        state.events = state.events.map((event) =>
+          event.id === action.payload.id ? action.payload : event
+        )
+        state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
       })
       .addCase(updateEventEvaluation.rejected, (state, action) => {
         state.loading = false
@@ -311,42 +329,27 @@ const eventsSlice = createSlice({
       })
       .addCase(deleteEventEvaluation.pending, (state) => {
         state.loading = true
-        state.error = null
       })
       .addCase(deleteEventEvaluation.fulfilled, (state, action) => {
         state.loading = false
-        // Update in events array
-        const index = state.events.findIndex((event) => event.id === action.payload.id)
-        if (index !== -1) {
-          state.events[index] = action.payload
-          state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
-        }
-        // Update current event
-        if (state.currentEvent && state.currentEvent.id === action.payload.id) {
-          state.currentEvent = action.payload
-        }
+        state.events = state.events.map((event) =>
+          event.id === action.payload.id ? action.payload : event
+        )
+        state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
       })
       .addCase(deleteEventEvaluation.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload
       })
-      // Add cases for updateEventVisibility
       .addCase(updateEventVisibility.pending, (state) => {
         state.loading = true
-        state.error = null
       })
       .addCase(updateEventVisibility.fulfilled, (state, action) => {
         state.loading = false
-        // Update in events array
-        const index = state.events.findIndex((event) => event.id === action.payload.id)
-        if (index !== -1) {
-          state.events[index] = action.payload
-          state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
-        }
-        // Update current event
-        if (state.currentEvent && state.currentEvent.id === action.payload.id) {
-          state.currentEvent = action.payload
-        }
+        state.events = state.events.map((event) =>
+          event.id === action.payload.id ? action.payload : event
+        )
+        state.filteredEvents = filterEvents(state.events, state.searchTerm, state.filters)
       })
       .addCase(updateEventVisibility.rejected, (state, action) => {
         state.loading = false
@@ -354,51 +357,6 @@ const eventsSlice = createSlice({
       })
   },
 })
-
-// Helper function to filter and sort events
-const filterEvents = (events, searchTerm, filters) => {
-  return events
-    .filter((event) => {
-      // Text search
-      const matchesSearch =
-        !searchTerm ||
-        event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (event.description && event.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (event.location && event.location.toLowerCase().includes(searchTerm.toLowerCase()))
-
-      // Status filter
-      const matchesStatus = filters.status === "all" || event.status === filters.status
-
-      // Date range filter
-      let matchesDate = true
-      const today = new Date()
-      const eventStartDate = new Date(event.start_date)
-
-      if (filters.dateRange === "upcoming30") {
-        const thirtyDaysFromNow = new Date()
-        thirtyDaysFromNow.setDate(today.getDate() + 30)
-        matchesDate = eventStartDate >= today && eventStartDate <= thirtyDaysFromNow
-      } else if (filters.dateRange === "upcoming90") {
-        const ninetyDaysFromNow = new Date()
-        ninetyDaysFromNow.setDate(today.getDate() + 90)
-        matchesDate = eventStartDate >= today && eventStartDate <= ninetyDaysFromNow
-      } else if (filters.dateRange === "past") {
-        matchesDate = eventStartDate < today
-      }
-
-      return matchesSearch && matchesStatus && matchesDate
-    })
-    .sort((a, b) => {
-      if (filters.sortBy === "date") {
-        return new Date(a.start_date) - new Date(b.start_date)
-      } else if (filters.sortBy === "name") {
-        return a.name.localeCompare(b.name)
-      } else if (filters.sortBy === "status") {
-        return a.status.localeCompare(b.status)
-      }
-      return 0
-    })
-}
 
 export const {
   setSearchTerm,
