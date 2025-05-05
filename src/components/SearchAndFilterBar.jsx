@@ -87,19 +87,21 @@ const SearchAndFilterBar = ({
               </div>
             </div>
             <div className="filter-group">
-  <label>Family / Person</label>
+  <label htmlFor="familyType">Family/Person:</label>
   <div className="select-wrapper">
-    <select
-      value={filters.familyType}
-      onChange={(e) => handleFilterChange("familyType", e.target.value)}
-    >
-      <option value="all">All</option>
-      <option value="family">Family</option>
-      <option value="person">Person</option>
-    </select>
-    <FontAwesomeIcon icon={faChevronDown} className="select-icon" />
+  <select
+    id="familyType"
+    value={filters.familyType}
+    onChange={(e) => handleFilterChange("familyType", e.target.value)}
+  >
+    <option value="all">All</option>
+    <option value="family">Family</option>
+    <option value="person">Person</option>
+  </select>
+  <FontAwesomeIcon icon={faChevronDown} className="select-icon" />
   </div>
 </div>
+
 
             <div className="filter-group">
               <label>Attendance</label>
