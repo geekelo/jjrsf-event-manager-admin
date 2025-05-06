@@ -36,8 +36,8 @@ const EventDetailsSection = ({
     registrationDeadline: "",
     location: "",
     status: "",
-    isOnsite: false,
-    isOffline: false,
+    online: false,
+    onsite: false,
     description: "",
   })
 
@@ -53,8 +53,8 @@ const EventDetailsSection = ({
         registrationDeadline: event.registrationDeadline || "",
         location: event.location || "",
         status: event.status || "upcoming",
-        isOnsite: event.isOnsite || false,
-        isOffline: event.isOffline || false,
+        online: event.online || false,
+        onsite: event.onsite || false,
         description: event.description || "",
       })
     }
@@ -205,24 +205,24 @@ const EventDetailsSection = ({
                 <div className="checkbox-item">
                   <input
                     type="checkbox"
-                    id="isOnsite"
-                    name="isOnsite"
-                    checked={editFormData.isOnsite}
+                    id="online"
+                    name="online"
+                    checked={editFormData.online}
                     onChange={handleChange}
                   />
-                  <label htmlFor="isOnsite" className="checkbox-label">
+                  <label htmlFor="online" className="checkbox-label">
                     <FontAwesomeIcon icon={faBuilding} className="checkbox-icon" /> Onsite
                   </label>
                 </div>
                 <div className="checkbox-item">
                   <input
                     type="checkbox"
-                    id="isOffline"
-                    name="isOffline"
-                    checked={editFormData.isOffline}
+                    id="onsite"
+                    name="onsite"
+                    checked={editFormData.onsite}
                     onChange={handleChange}
                   />
-                  <label htmlFor="isOffline" className="checkbox-label">
+                  <label htmlFor="onsite" className="checkbox-label">
                     <FontAwesomeIcon icon={faLaptop} className="checkbox-icon" /> Online
                   </label>
                 </div>
@@ -322,19 +322,19 @@ const EventDetailsSection = ({
               <FontAwesomeIcon icon={faLaptop} className="field-icon" /> Event Type
             </div>
             <div className="detail-value">
-              {event.isOnsite && event.isOffline ? (
+              {event.online && event.onsite ? (
                 <span>
                   <FontAwesomeIcon icon={faBuilding} className="checkbox-icon" /> Onsite &
                   <FontAwesomeIcon icon={faLaptop} className="checkbox-icon" style={{ marginLeft: "10px" }} /> Online
                   (Hybrid)
                 </span>
-              ) : event.isOnsite ? (
+              ) : event.online ? (
                 <span>
-                  <FontAwesomeIcon icon={faBuilding} className="checkbox-icon" /> Onsite
+                  <FontAwesomeIcon icon={faBuilding} className="checkbox-icon" /> Online
                 </span>
-              ) : event.isOffline ? (
+              ) : event.onsite ? (
                 <span>
-                  <FontAwesomeIcon icon={faLaptop} className="checkbox-icon" /> Online
+                  <FontAwesomeIcon icon={faLaptop} className="checkbox-icon" /> Onsite
                 </span>
               ) : (
                 "Not specified"
