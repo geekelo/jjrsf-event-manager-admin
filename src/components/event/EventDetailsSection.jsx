@@ -385,6 +385,7 @@ const EventDetailsSection = ({
               Type
             </div>
             <div className="detail-value">
+              {console.log(event)}
               {event.online && event.onsite ? (
                 <span>
                   <FontAwesomeIcon
