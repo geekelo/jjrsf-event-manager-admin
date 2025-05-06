@@ -211,7 +211,7 @@ const EventDetailsSection = ({
                     onChange={handleChange}
                   />
                   <label htmlFor="online" className="checkbox-label">
-                    <FontAwesomeIcon icon={faBuilding} className="checkbox-icon" /> Onsite
+                    <FontAwesomeIcon icon={faBuilding} className="checkbox-icon" /> Online
                   </label>
                 </div>
                 <div className="checkbox-item">
@@ -223,7 +223,7 @@ const EventDetailsSection = ({
                     onChange={handleChange}
                   />
                   <label htmlFor="onsite" className="checkbox-label">
-                    <FontAwesomeIcon icon={faLaptop} className="checkbox-icon" /> Online
+                    <FontAwesomeIcon icon={faLaptop} className="checkbox-icon" /> Onsite
                   </label>
                 </div>
               </div>
