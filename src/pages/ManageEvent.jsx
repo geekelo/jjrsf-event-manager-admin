@@ -156,7 +156,7 @@ console.log(event)
       location: updatedData.location,
       status: updatedData.status,
       onsite: updatedData.onsite,
-      online: updatedData.isOffline,
+      online: updatedData.online,
       description: updatedData.description,
     }
 
