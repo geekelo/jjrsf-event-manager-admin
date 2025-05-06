@@ -138,8 +138,8 @@ console.log(event)
       registration_deadline: updatedData.registrationDeadline,
       location: updatedData.location,
       status: updatedData.status,
-      onsite: updatedData.isOnsite,
-      online: updatedData.isOffline,
+      onsite: updatedData.onsite,
+      online: updatedData.online,
       description: updatedData.description,
     }
 
