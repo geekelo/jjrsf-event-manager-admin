@@ -17,14 +17,14 @@ import { isAuthenticated } from "../lib/auth/token"
 function EventsPage() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-
+  
   // Get data from Redux store
   const { filteredEvents, loading, error, searchTerm, filters } = useSelector((state) => state.events)
-
+  
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
   const [isCreatingEvent, setIsCreatingEvent] = useState(false)
-
+  
   // Form data for creating a new event
   const [newEventData, setNewEventData] = useState({
     name: "",
@@ -37,7 +37,7 @@ function EventsPage() {
     onsite: false,
     online: false,
   })
-
+  
   // Check authentication on component mount
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -45,36 +45,31 @@ function EventsPage() {
       navigate("/admin/login")
     }
   }, [navigate])
-
+  
   // Fetch events on component mount
   useEffect(() => {
     if (isAuthenticated()) {
       dispatch(fetchEvents())
     }
   }, [dispatch])
-
-  // Show error toast if there's an error
-  useEffect(() => {
-    if (error) {
-      toast.error(error)
-    }
-  }, [error])
-
+  
+  // === ✅ REMOVED error toast useEffect completely ===
+  
   // Handle search input change
   const handleSearch = (e) => {
     dispatch(setSearchTerm(e.target.value))
   }
-
+  
   // Handle clicking the manage button
   const handleManageEvent = (eventId) => {
     navigate(`/events/${eventId}`)
   }
-
+  
   // Handle creating a new event
   const handleCreateEvent = () => {
     setShowCreateForm(true)
   }
-
+  
   // Handle closing the create form modal
   const handleCloseForm = () => {
     setShowCreateForm(false)
@@ -91,7 +86,7 @@ function EventsPage() {
       online: false,
     })
   }
-
+  
   // Handle form input changes
   const handleFormChange = (e) => {
     const { name, value } = e.target
@@ -100,19 +95,19 @@ function EventsPage() {
       [name]: value,
     }))
   }
-
+  
   // Handle form submission
   const handleSubmitEvent = (e) => {
     e.preventDefault()
-
+  
     // Validation
     if (!newEventData.name || !newEventData.start_date || !newEventData.location) {
       toast.error("Please fill in all required fields")
       return
     }
-
+  
     setIsCreatingEvent(true)
-
+  
     // Dispatch the createEvent thunk
     dispatch(createEvent(newEventData))
       .unwrap()
@@ -120,7 +115,7 @@ function EventsPage() {
         // Close form and show success message
         setShowCreateForm(false)
         toast.success(`Event "${newEventData.name}" created successfully!`)
-
+  
         // Refresh the events list without page refresh
         dispatch(fetchEvents())
           .unwrap()
@@ -130,7 +125,7 @@ function EventsPage() {
           .catch(() => {
             setIsCreatingEvent(false)
           })
-
+  
         // Reset form data
         setNewEventData({
           name: "",
@@ -149,34 +144,35 @@ function EventsPage() {
         toast.error(error || "Failed to create event")
       })
   }
-
+  
   // Toggle filter panel
   const handleToggleFilters = () => {
     setShowFilters(!showFilters)
   }
-
+  
   // Update filters
   const handleFilterChange = (e) => {
     const { name, value } = e.target
     dispatch(setFilters({ [name]: value }))
   }
+  
   const handleApplyFilters = () => {
     setShowFilters(false)
     const filteredEvents = filterEvents(events, searchTerm, filters)
-    setFilteredEvents(filteredEvents) 
+    setFilteredEvents(filteredEvents)
   }
   
   // Handle view event details
   const handleViewDetails = (event) => {
     navigate(`/events/${event.id}`)
   }
-
+  
   // Format date to display in a more readable format
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" }
     return new Date(dateString).toLocaleDateString("en-US", options)
   }
-
+  
   // Get status badge class based on event status
   const getStatusBadgeClass = (status) => {
     switch (status) {
@@ -190,6 +186,7 @@ function EventsPage() {
         return ""
     }
   }
+  
 
   return (
     <div className="events-page-background">
