@@ -15,7 +15,7 @@ import {
 } from "../redux/eventsSlice"
 import { fetchEventAttendees } from "../redux/attendeesSlice"
 import { fetchEventQuickRegistrations } from "../redux/quickRegistrationsSlice"
-import { sendReminder, sendBulkEmail, resetReminderStatus, resetBulkEmailStatus } from "../redux/notificationsSlice"
+import { sendReminder, sendBulkEmail } from "../redux/notificationsSlice"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import "../stylesheets/manageEvent.css"
@@ -47,7 +47,7 @@ function ManageEvent() {
     isEditMode,
     events,
   } = useSelector((state) => state.events)
-console.log(events)
+  console.log(events)
   const {
     metrics,
     loading: attendeesLoading,
@@ -65,19 +65,18 @@ console.log(events)
   const [deleteEventName, setDeleteEventName] = useState("") // Event name for delete confirmation
   const [deleting, setDeleting] = useState(false)
 
-
   // Check authentication and fetch data on component mount
   useEffect(() => {
     if (deleting) return
-  
+
     if (!isAuthenticated()) {
       toast.error("You must be logged in to access this page")
       navigate("/admin/login")
       return
     }
-  
+
     const eventExists = events.find((e) => e.id === eventId)
-  
+
     if (events.length === 0) {
       dispatch(fetchEvents())
     } else if (eventExists) {
@@ -86,17 +85,17 @@ console.log(events)
       // If event no longer exists (e.g. after deletion), don't try to fetch it
       return
     }
-  
+
     if (!currentEventId || currentEventId !== eventId) {
       dispatch(fetchEventAttendees(eventId))
     }
-  
+
     if (eventExists) {
       dispatch(fetchEventQuickRegistrations(eventId))
     }
-  
+
     return () => {}
-  }, [dispatch, eventId, navigate, events, currentEventId, deleting])  
+  }, [dispatch, eventId, navigate, events, currentEventId, deleting])
 
   useEffect(() => {
     if (event) {
@@ -104,7 +103,7 @@ console.log(events)
       console.log("Event updated:", event)
     }
   }, [event])
-console.log(event)
+  console.log(event)
   useEffect(() => {
     if (eventError) {
       toast.error(eventError)
@@ -113,8 +112,7 @@ console.log(event)
       toast.error(attendeesError)
     }
   }, [eventError, attendeesError])
-  const uniqueId = event?.unique_id ?? '';
-
+  const uniqueId = event?.unique_id ?? ""
 
   const eventUrl = `${import.meta.env.VITE_FRONTEND_USER_URL}/event/${uniqueId}`
 
@@ -134,8 +132,11 @@ console.log(event)
       id: eventId,
       name: updatedData.name,
       start_date: updatedData.startDate,
+      start_time: updatedData.startTime,
       end_date: updatedData.endDate,
+      end_time: updatedData.endTime,
       registration_deadline: updatedData.registrationDeadline,
+      registration_deadline_time: updatedData.registrationDeadlineTime,
       location: updatedData.location,
       status: updatedData.status,
       onsite: updatedData.onsite,
@@ -151,8 +152,11 @@ console.log(event)
     const apiData = {
       name: updatedData.name,
       start_date: updatedData.startDate,
+      start_time: updatedData.startTime,
       end_date: updatedData.endDate,
+      end_time: updatedData.endTime,
       registration_deadline: updatedData.registrationDeadline,
+      registration_deadline_time: updatedData.registrationDeadlineTime,
       location: updatedData.location,
       status: updatedData.status,
       onsite: updatedData.onsite,
@@ -261,20 +265,19 @@ console.log(event)
   const handleDeleteEvent = () => {
     console.log(eventId)
     setDeleting(true)
-   const res = dispatch(deleteEvent(eventId))
-   
+    const res = dispatch(deleteEvent(eventId))
+
       .unwrap()
       .then(() => {
         toast.success("Event deleted successfully")
         setTimeout(() => {
           navigate("/events") // Redirect after deletion
         }, 4000)
-       
       })
       .catch((error) => {
         toast.error(error || "Failed to delete event")
       })
-      console.log(res, eventId)
+    console.log(res, eventId)
     setDeleteModalOpen(false) // Close the modal after action
   }
 
@@ -309,8 +312,11 @@ console.log(event)
         id: localEvent.id,
         name: localEvent.name,
         startDate: localEvent.start_date,
+        startTime: localEvent.start_time,
         endDate: localEvent.end_date,
+        endTime: localEvent.end_time,
         registrationDeadline: localEvent.registration_deadline,
+        registrationDeadlineTime: localEvent.registration_deadline_time,
         location: localEvent.location,
         status: localEvent.status,
         onsite: localEvent.onsite,
@@ -321,7 +327,7 @@ console.log(event)
         visibility: localEvent.visibility || false,
       }
     : null
-console.log(mappedEvent)
+  console.log(mappedEvent)
   return (
     <div className="manage-event-page-background">
       <ToastContainer
@@ -375,13 +381,9 @@ console.log(mappedEvent)
         <StreamsSection event={mappedEvent} />
 
         {/* Add the delete button */}
-        <button
-      className="delete-buttons"
-      onClick={() => openDeleteModal(mappedEvent.name)}
-    >
-      <Trash2 className="deletes-icon" /> Delete Event
-    </button>
-
+        <button className="delete-buttons" onClick={() => openDeleteModal(mappedEvent.name)}>
+          <Trash2 className="deletes-icon" /> Delete Event
+        </button>
       </div>
 
       {showPasscodeModal && <PasscodeModal eventId={eventId} onClose={closePasscodeModal} />}
