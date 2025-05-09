@@ -1,25 +1,27 @@
-import React, { useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faSave, faCalendarCheck, faMapMarkerAlt, faGlobe } from '@fortawesome/free-solid-svg-icons';
+"use client"
+
+import { useRef } from "react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faTimes, faSave, faCalendarCheck, faMapMarkerAlt, faGlobe } from "@fortawesome/free-solid-svg-icons"
 
 const CreateEventModal = ({ newEventData, onClose, onSubmit, onChange }) => {
-  const modalRef = useRef(null);
+  const modalRef = useRef(null)
 
   const handleClickOutside = (e) => {
     if (modalRef.current && !modalRef.current.contains(e.target)) {
-      onClose();
+      onClose()
     }
-  };
+  }
 
   const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
+    const { name, checked } = e.target
     onChange({
       target: {
         name: name,
-        value: checked
-      }
-    });
-  };
+        value: checked,
+      },
+    })
+  }
 
   return (
     <div className="modal-overlay" onClick={handleClickOutside}>
@@ -34,7 +36,9 @@ const CreateEventModal = ({ newEventData, onClose, onSubmit, onChange }) => {
         <form onSubmit={onSubmit} className="create-event-form">
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="name">Event Name <span className="required">*</span></label>
+              <label htmlFor="name">
+                Event Name <span className="required">*</span>
+              </label>
               <input
                 type="text"
                 id="name"
@@ -49,12 +53,27 @@ const CreateEventModal = ({ newEventData, onClose, onSubmit, onChange }) => {
 
           <div className="form-row two-columns">
             <div className="form-group">
-              <label htmlFor="start_date">Start Date <span className="required">*</span></label>
+              <label htmlFor="start_date">
+                Start Date <span className="required">*</span>
+              </label>
               <input
                 type="date"
                 id="start_date"
                 name="start_date"
                 value={newEventData.start_date}
+                onChange={onChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="start_time">
+                Start Time <span className="required">*</span>
+              </label>
+              <input
+                type="time"
+                id="start_time"
+                name="start_time"
+                value={newEventData.start_time || ""}
                 onChange={onChange}
                 required
               />
@@ -70,22 +89,45 @@ const CreateEventModal = ({ newEventData, onClose, onSubmit, onChange }) => {
                 min={newEventData.start_date}
               />
             </div>
+            <div className="form-group">
+              <label htmlFor="end_time">End Time</label>
+              <input
+                type="time"
+                id="end_time"
+                name="end_time"
+                value={newEventData.end_time || ""}
+                onChange={onChange}
+              />
+            </div>
           </div>
 
           {/* Registration Deadline Field */}
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="registration_deadline">
-                <FontAwesomeIcon icon={faCalendarCheck} className="form-icon" /> 
+                <FontAwesomeIcon icon={faCalendarCheck} className="form-icon" />
                 Registration Deadline
               </label>
               <input
                 type="date"
                 id="registration_deadline"
                 name="registration_deadline"
-                value={newEventData.registration_deadline || ''}
+                value={newEventData.registration_deadline || ""}
                 onChange={onChange}
                 max={newEventData.start_date} // Deadline should be before start date
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="registration_deadline_time">
+                <FontAwesomeIcon icon={faCalendarCheck} className="form-icon" />
+                Registration Deadline Time
+              </label>
+              <input
+                type="time"
+                id="registration_deadline_time"
+                name="registration_deadline_time"
+                value={newEventData.registration_deadline_time || ""}
+                onChange={onChange}
               />
             </div>
           </div>
@@ -126,7 +168,7 @@ const CreateEventModal = ({ newEventData, onClose, onSubmit, onChange }) => {
                     Online
                   </label>
                 </div>
-                
+
                 <div className="checkbox-option">
                   <input
                     type="checkbox"
@@ -147,12 +189,7 @@ const CreateEventModal = ({ newEventData, onClose, onSubmit, onChange }) => {
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="status">Status</label>
-              <select
-                id="status"
-                name="status"
-                value={newEventData.status}
-                onChange={onChange}
-              >
+              <select id="status" name="status" value={newEventData.status} onChange={onChange}>
                 <option value="ongoing">Ongoing</option>
                 <option value="upcoming">Upcoming</option>
                 <option value="completed">Completed</option>
@@ -185,7 +222,7 @@ const CreateEventModal = ({ newEventData, onClose, onSubmit, onChange }) => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CreateEventModal;
+export default CreateEventModal
