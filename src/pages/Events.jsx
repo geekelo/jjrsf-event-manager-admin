@@ -36,6 +36,9 @@ function EventsPage() {
     registration_deadline: "",
     onsite: false,
     online: false,
+    start_time:"",
+end_time: "",
+registration_deadline_time: ""
   })
   
   // Check authentication on component mount

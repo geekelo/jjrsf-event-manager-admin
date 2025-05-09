@@ -39,6 +39,9 @@ const EventDetailsSection = ({
     isOnsite: false,
     isOffline: false,
     description: "",
+    start_time: "",
+end_time:"",
+registration_deadline_time:""
   })
 
   const [visibilityLoading, setVisibilityLoading] = useState(false)
@@ -56,6 +59,10 @@ const EventDetailsSection = ({
         isOnsite: event.isOnsite || false,
         isOffline: event.isOffline || false,
         description: event.description || "",
+        start_time: event.start_time || "",
+        end_time: event.end_time || "",
+registration_deadline_time: event.registration_deadline_time || ""
+
       })
     }
   }, [event])
@@ -171,6 +178,49 @@ const EventDetailsSection = ({
                 max={editFormData.startDate}
               />
             </div>
+
+            <div className="form-group">
+              <label htmlFor="startTime">
+                <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> Start Time
+              </label>
+              <input
+                type="time"
+                id="startTime"
+                name="startTime"
+                value={editFormData.start_time}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="endTime">
+                <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> End Time
+              </label>
+              <input
+                type="time"
+                id="endTime"
+                name="endTime"
+                value={editFormData.end_time}
+                onChange={handleChange}
+                min={editFormData.start_time}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="registrationDeadlineTime">
+                <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> Registration Deadline Time
+              </label>
+              <input
+                type="date"
+                id="registrationDeadlineTime"
+                name="registrationDeadlineTime"
+                value={editFormData.registration_deadline_time}
+                onChange={handleChange}
+                max={editFormData.start_time}
+              />
+            </div>
+
 
             <div className="form-group">
               <label htmlFor="location">
