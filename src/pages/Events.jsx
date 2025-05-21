@@ -187,7 +187,6 @@ registration_deadline_time: ""
     }
   }
   
-console.log(filteredEvents)
   return (
     <div className="events-page-background">
       <ToastContainer
