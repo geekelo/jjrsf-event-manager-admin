@@ -171,10 +171,7 @@ registration_deadline_time: ""
   }
   
   // Format date to display in a more readable format
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "long", day: "numeric" }
-    return new Date(dateString).toLocaleDateString("en-US", options)
-  }
+  
   
   // Get status badge class based on event status
   const getStatusBadgeClass = (status) => {
@@ -190,7 +187,7 @@ registration_deadline_time: ""
     }
   }
   
-
+console.log(filteredEvents)
   return (
     <div className="events-page-background">
       <ToastContainer
@@ -243,11 +240,13 @@ registration_deadline_time: ""
                   location: event.location,
                   description: event.description,
                   status: event.status,
+                  register:event.registration_deadline,
+
                 }}
                 onManage={handleManageEvent}
                 onViewDetails={() => handleViewDetails(event)}
                 getStatusBadgeClass={getStatusBadgeClass}
-                formatDate={formatDate}
+               
               />
             ))
           ) : (
