@@ -62,7 +62,25 @@ const attendeesSlice = createSlice({
         if (action.payload.data === null || action.payload.data === undefined) {
           state.attendees = []
         } else {
-          state.attendees = action.payload.data
+          // Transform the data to ensure consistent property naming
+          state.attendees = action.payload.data.map((attendee) => ({
+            ...attendee,
+            // Ensure we have camelCase properties for consistency in the app
+            // while preserving the original snake_case properties from the API
+            id: attendee.id,
+            name: attendee.name,
+            email: attendee.email,
+            phone: attendee.phone,
+            gender: attendee.gender,
+            isMember: attendee.member,
+            preferredAttendance: attendee.preferred_attendance,
+            attendedOnline: attendee.attended_online,
+            attendedOffline: attendee.attended_offline,
+            isFamily: attendee.family,
+            familyMembers: attendee.family_members,
+            createdAt: attendee.created_at,
+            updatedAt: attendee.updated_at,
+          }))
         }
 
         state.currentEventId = action.payload.eventId // Store the current event ID
@@ -79,11 +97,14 @@ const attendeesSlice = createSlice({
         // Count different attendance types if we have attendees
         if (state.attendees.length > 0) {
           state.attendees.forEach((attendee) => {
-            if (attendee.attendedOnline && attendee.attendedOffline) {
+            if (
+              (attendee.attended_online || attendee.attendedOnline) &&
+              (attendee.attended_offline || attendee.attendedOffline)
+            ) {
               metrics.totalAttendedBoth++
-            } else if (attendee.attendedOnline) {
+            } else if (attendee.attended_online || attendee.attendedOnline) {
               metrics.totalAttendedOnline++
-            } else if (attendee.attendedOffline) {
+            } else if (attendee.attended_offline || attendee.attendedOffline) {
               metrics.totalAttendedOffline++
             } else {
               metrics.totalDidNotAttend++

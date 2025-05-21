@@ -32,12 +32,15 @@ const EventDetailsSection = ({
   const [editFormData, setEditFormData] = useState({
     name: "",
     startDate: "",
+    startTime: "",
     endDate: "",
+    endTime: "",
     registrationDeadline: "",
+    registrationDeadlineTime: "",
     location: "",
     status: "",
-    isOnsite: false,
-    isOffline: false,
+    online: false,
+    onsite: false,
     description: "",
     start_time: "",
 end_time:"",
@@ -52,12 +55,15 @@ registration_deadline_time:""
       setEditFormData({
         name: event.name || "",
         startDate: event.startDate || "",
+        startTime: event.startTime || "",
         endDate: event.endDate || "",
+        endTime: event.endTime || "",
         registrationDeadline: event.registrationDeadline || "",
+        registrationDeadlineTime: event.registrationDeadlineTime || "",
         location: event.location || "",
         status: event.status || "upcoming",
-        isOnsite: event.isOnsite || false,
-        isOffline: event.isOffline || false,
+        online: event.online || false,
+        onsite: event.onsite || false,
         description: event.description || "",
         start_time: event.start_time || "",
         end_time: event.end_time || "",
@@ -152,6 +158,20 @@ registration_deadline_time: event.registration_deadline_time || ""
             </div>
 
             <div className="form-group">
+              <label htmlFor="startTime">
+                <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> Start Time
+              </label>
+              <input
+                type="time"
+                id="startTime"
+                name="startTime"
+                value={editFormData.startTime}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
               <label htmlFor="endDate">
                 <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> End Date
               </label>
@@ -163,6 +183,13 @@ registration_deadline_time: event.registration_deadline_time || ""
                 onChange={handleChange}
                 min={editFormData.startDate}
               />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="endTime">
+                <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> End Time
+              </label>
+              <input type="time" id="endTime" name="endTime" value={editFormData.endTime} onChange={handleChange} />
             </div>
 
             <div className="form-group">
@@ -180,47 +207,17 @@ registration_deadline_time: event.registration_deadline_time || ""
             </div>
 
             <div className="form-group">
-              <label htmlFor="startTime">
-                <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> Start Time
-              </label>
-              <input
-                type="time"
-                id="startTime"
-                name="startTime"
-                value={editFormData.start_time}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="endTime">
-                <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> End Time
-              </label>
-              <input
-                type="time"
-                id="endTime"
-                name="endTime"
-                value={editFormData.end_time}
-                onChange={handleChange}
-                min={editFormData.start_time}
-              />
-            </div>
-
-            <div className="form-group">
               <label htmlFor="registrationDeadlineTime">
                 <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> Registration Deadline Time
               </label>
               <input
-                type="date"
+                type="time"
                 id="registrationDeadlineTime"
                 name="registrationDeadlineTime"
-                value={editFormData.registration_deadline_time}
+                value={editFormData.registrationDeadlineTime}
                 onChange={handleChange}
-                max={editFormData.start_time}
               />
             </div>
-
 
             <div className="form-group">
               <label htmlFor="location">
@@ -255,25 +252,25 @@ registration_deadline_time: event.registration_deadline_time || ""
                 <div className="checkbox-item">
                   <input
                     type="checkbox"
-                    id="isOnsite"
-                    name="isOnsite"
-                    checked={editFormData.isOnsite}
+                    id="online"
+                    name="online"
+                    checked={editFormData.online}
                     onChange={handleChange}
                   />
-                  <label htmlFor="isOnsite" className="checkbox-label">
-                    <FontAwesomeIcon icon={faBuilding} className="checkbox-icon" /> Onsite
+                  <label htmlFor="online" className="checkbox-label">
+                    <FontAwesomeIcon icon={faBuilding} className="checkbox-icon" /> Online
                   </label>
                 </div>
                 <div className="checkbox-item">
                   <input
                     type="checkbox"
-                    id="isOffline"
-                    name="isOffline"
-                    checked={editFormData.isOffline}
+                    id="onsite"
+                    name="onsite"
+                    checked={editFormData.onsite}
                     onChange={handleChange}
                   />
-                  <label htmlFor="isOffline" className="checkbox-label">
-                    <FontAwesomeIcon icon={faLaptop} className="checkbox-icon" /> Online
+                  <label htmlFor="onsite" className="checkbox-label">
+                    <FontAwesomeIcon icon={faLaptop} className="checkbox-icon" /> Onsite
                   </label>
                 </div>
               </div>
@@ -337,6 +334,13 @@ registration_deadline_time: event.registration_deadline_time || ""
 
           <div className="detail-item">
             <div className="detail-label">
+              <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> Start Time
+            </div>
+            <div className="detail-value">{event.startTime || "Not specified"}</div>
+          </div>
+
+          <div className="detail-item">
+            <div className="detail-label">
               <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> End Date
             </div>
             <div className="detail-value">{event.endDate || "Not specified"}</div>
@@ -344,9 +348,23 @@ registration_deadline_time: event.registration_deadline_time || ""
 
           <div className="detail-item">
             <div className="detail-label">
+              <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> End Time
+            </div>
+            <div className="detail-value">{event.endTime || "Not specified"}</div>
+          </div>
+
+          <div className="detail-item">
+            <div className="detail-label">
               <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> Registration Deadline
             </div>
             <div className="detail-value">{event.registrationDeadline || "Not specified"}</div>
+          </div>
+
+          <div className="detail-item">
+            <div className="detail-label">
+              <FontAwesomeIcon icon={faCalendarAlt} className="field-icon" /> Registration Deadline Time
+            </div>
+            <div className="detail-value">{event.registrationDeadlineTime || "Not specified"}</div>
           </div>
 
           <div className="detail-item">
@@ -372,19 +390,20 @@ registration_deadline_time: event.registration_deadline_time || ""
               <FontAwesomeIcon icon={faLaptop} className="field-icon" /> Event Type
             </div>
             <div className="detail-value">
-              {event.isOnsite && event.isOffline ? (
+              {console.log(event)}
+              {event.online && event.onsite ? (
                 <span>
-                  <FontAwesomeIcon icon={faBuilding} className="checkbox-icon" /> Onsite &
+                  <FontAwesomeIcon icon={faBuilding} className="checkbox-icon" /> Onsite &nbsp;
                   <FontAwesomeIcon icon={faLaptop} className="checkbox-icon" style={{ marginLeft: "10px" }} /> Online
                   (Hybrid)
                 </span>
-              ) : event.isOnsite ? (
-                <span>
-                  <FontAwesomeIcon icon={faBuilding} className="checkbox-icon" /> Onsite
-                </span>
-              ) : event.isOffline ? (
+              ) : event.online ? (
                 <span>
                   <FontAwesomeIcon icon={faLaptop} className="checkbox-icon" /> Online
+                </span>
+              ) : event.onsite ? (
+                <span>
+                  <FontAwesomeIcon icon={faBuilding} className="checkbox-icon" /> Onsite
                 </span>
               ) : (
                 "Not specified"
