@@ -1,8 +1,9 @@
 "use client"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCalendarDays, faLocationDot, faEllipsisVertical, faEye } from "@fortawesome/free-solid-svg-icons"
+import { formatDate } from "./utils/date"
 
-const EventCard = ({ event, onManage, onViewDetails, getStatusBadgeClass, formatDate }) => {
+const EventCard = ({ event, onManage, onViewDetails, getStatusBadgeClass }) => {
   return (
     <div className="event-card">
       <div className="event-card-content">
@@ -15,13 +16,14 @@ const EventCard = ({ event, onManage, onViewDetails, getStatusBadgeClass, format
 
         <div className="event-dates">
           <FontAwesomeIcon icon={faCalendarDays} className="event-icon" />
-          {event.start_date === event.end_date ? (
-            <p>{formatDate(event.start_date)}</p>
+          {event.startDate === event.endDate ? (
+            <p>{formatDate(event.startDate)}</p>
           ) : (
             <p>
-              {formatDate(event.start_date)} - {formatDate(event.end_date)}
+              {formatDate(event.startDate)} - {formatDate(event.endDate)}
             </p>
           )}
+         
         </div>
 
         <p className="event-location">

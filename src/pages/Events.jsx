@@ -36,6 +36,9 @@ function EventsPage() {
     registration_deadline: "",
     onsite: false,
     online: false,
+    start_time:"",
+end_time: "",
+registration_deadline_time: ""
   })
   
   // Check authentication on component mount
@@ -168,10 +171,7 @@ function EventsPage() {
   }
   
   // Format date to display in a more readable format
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "long", day: "numeric" }
-    return new Date(dateString).toLocaleDateString("en-US", options)
-  }
+  
   
   // Get status badge class based on event status
   const getStatusBadgeClass = (status) => {
@@ -187,7 +187,6 @@ function EventsPage() {
     }
   }
   
-
   return (
     <div className="events-page-background">
       <ToastContainer
@@ -240,11 +239,13 @@ function EventsPage() {
                   location: event.location,
                   description: event.description,
                   status: event.status,
+                  register:event.registration_deadline,
+
                 }}
                 onManage={handleManageEvent}
                 onViewDetails={() => handleViewDetails(event)}
                 getStatusBadgeClass={getStatusBadgeClass}
-                formatDate={formatDate}
+               
               />
             ))
           ) : (

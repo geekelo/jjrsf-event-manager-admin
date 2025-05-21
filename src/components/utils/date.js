@@ -1,4 +1,9 @@
 export const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
-  };
+  if (!dateString) return "";
+  const normalizedDateString = dateString.replace(/-/g, "/");
+  const date = new Date(normalizedDateString);
+  if (isNaN(date)) return "Invalid date";
+
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return date.toLocaleDateString('en-US', options);
+};

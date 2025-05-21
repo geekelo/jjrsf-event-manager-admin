@@ -42,6 +42,9 @@ const EventDetailsSection = ({
     online: false,
     onsite: false,
     description: "",
+    start_time: "",
+end_time:"",
+registration_deadline_time:""
   })
 
   const [visibilityLoading, setVisibilityLoading] = useState(false)
@@ -62,6 +65,10 @@ const EventDetailsSection = ({
         online: event.online || false,
         onsite: event.onsite || false,
         description: event.description || "",
+        start_time: event.start_time || "",
+        end_time: event.end_time || "",
+registration_deadline_time: event.registration_deadline_time || ""
+
       })
     }
   }, [event])
