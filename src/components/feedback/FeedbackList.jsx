@@ -22,10 +22,14 @@ const FeedbackList = ({ feedbacks = [], activeTab, loading }) => {
   }
 
   const feedbackData = feedbacks.map((f) => f.feedback || f)
+const filtered = feedbackData.filter((f) => {
+  if (activeTab === "reviews") {
+    return f.review && f.review.trim().length > 0;
+  } else {
+    return f.testimony && f.testimony.trim().length > 0;
+  }
+});
 
-  const filtered = feedbackData.filter((f) =>
-    activeTab === "reviews" ? f.review?.trim() !== "" : f.testimony?.trim() !== "",
-  )
 
   if (loading) {
     return (
