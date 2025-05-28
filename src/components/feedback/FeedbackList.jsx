@@ -42,10 +42,13 @@ const filtered = feedbackData.filter((f) => {
 
   return (
     <div className="feedback-list-container">
-      <h3 className="feedback-list-title">
-        <FontAwesomeIcon icon={activeTab === "reviews" ? faComments : faQuoteRight} />
-        {activeTab === "reviews" ? "Reviews" : "Testimonies"}
-      </h3>
+     <h3 className="feedback-list-title">
+  <FontAwesomeIcon icon={activeTab === "reviews" ? faComments : faQuoteRight} />
+  {activeTab === "reviews"
+    ? `Reviews (${feedbackData.filter(f => f.review && f.review.trim().length > 0).length})`
+    : `Testimonies (${feedbackData.filter(f => f.testimony && f.testimony.trim().length > 0).length})`}
+</h3>
+
 
       {filtered.length === 0 ? (
         <div className="no-feedback-message">
