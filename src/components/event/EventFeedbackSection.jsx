@@ -34,7 +34,7 @@ const EventFeedbackSection = ({ eventId, eventName }) => {
     <section className="feedback-section-card">
       <div className="section-header">
         <h2>
-          <FontAwesomeIcon icon={faStar} /> Event Feedback {loading ? "(Loading...)" : `(${feedbackCount})`}
+          <FontAwesomeIcon icon={faStar} /> Event Feedback {loading ? "" : `(${feedbackCount})`}
         </h2>
       </div>
 
