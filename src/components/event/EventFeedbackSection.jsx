@@ -34,14 +34,14 @@ const EventFeedbackSection = ({ eventId, eventName }) => {
     <section className="feedback-section-card">
       <div className="section-header">
         <h2>
-          <FontAwesomeIcon icon={faStar} /> Event Feedback
+          <FontAwesomeIcon icon={faStar} /> Event Feedback {loading ? "(Loading...)" : `(${feedbackCount})`}
         </h2>
       </div>
 
       <div className="feedback-action-container">
         <button className="manage-streams-button" onClick={navigateToFeedback} disabled={loading}>
           <span className="button-text">
-            View All Feedback {loading ? "(Loading...)" : `(${feedbackCount})`}
+            View All Feedback 
           </span>
           <span className="button-icon">
             <FontAwesomeIcon icon={faArrowRight} />
